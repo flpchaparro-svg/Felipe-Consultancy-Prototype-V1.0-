@@ -44,7 +44,7 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
 
     const svg = d3.select(svgRef.current);
     const gold = '#C5A059';
-    const strokeW = 1.15; // Increased stroke weight as requested (+ ~15% from 1.0 for impact)
+    const strokeW = 1.25; // Increased stroke weight slightly (+~5% from previous 1.15-1.2) for better clarity
 
     // Clear and fade in new scene
     svg.selectAll('g').transition().duration(400).style('opacity', 0).remove();
@@ -62,13 +62,13 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
         .attr('fill', 'none')
         .attr('stroke', gold)
         .attr('stroke-width', strokeW)
-        .attr('opacity', (d) => 0.65 - (d * 0.08));
+        .attr('opacity', (d) => 0.7 - (d * 0.08));
 
       timer = d3.timer((elapsed) => {
-        const mx = (mouseRef.current.x - width / 2) * 0.06;
-        const my = (mouseRef.current.y - height / 2) * 0.06;
+        const mx = (mouseRef.current.x - width / 2) * 0.08;
+        const my = (mouseRef.current.y - height / 2) * 0.08;
         mainG.attr('transform', `translate(${width / 2 + mx}, ${height / 2 + my})`);
-        circles.attr('r', (d) => (d + 1) * 45 + Math.sin(elapsed * 0.002 + d) * 6);
+        circles.attr('r', (d) => (d + 1) * 45 + Math.sin(elapsed * 0.0025 + d) * 7);
       });
     };
 
@@ -96,9 +96,9 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
           const dx = mx - n.x;
           const dy = my - n.y;
           const dist = Math.sqrt(dx*dx + dy*dy);
-          if (dist < 180) {
-            n.x -= dx * 0.025;
-            n.y -= dy * 0.025;
+          if (dist < 200) {
+            n.x -= dx * 0.03;
+            n.y -= dy * 0.03;
           }
         });
 
@@ -108,7 +108,7 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
             const dx = nodes[i].x - nodes[j].x;
             const dy = nodes[i].y - nodes[j].y;
             const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 120) links.push({ s: nodes[i], t: nodes[j], o: 1 - dist/120 });
+            if (dist < 130) links.push({ s: nodes[i], t: nodes[j], o: 1 - dist/130 });
           }
         }
 
@@ -117,11 +117,11 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
           .merge(lines as any)
           .attr('x1', d => d.s.x).attr('y1', d => d.s.y)
           .attr('x2', d => d.t.x).attr('y2', d => d.t.y)
-          .attr('stroke', gold).attr('stroke-width', strokeW).attr('opacity', d => d.o * 0.45);
+          .attr('stroke', gold).attr('stroke-width', strokeW).attr('opacity', d => d.o * 0.5);
         lines.exit().remove();
 
         const dots = nodeG.selectAll('circle').data(nodes);
-        dots.enter().append('circle').attr('r', 2.2).attr('fill', gold)
+        dots.enter().append('circle').attr('r', 2.5).attr('fill', gold)
           .merge(dots as any)
           .attr('cx', d => d.x).attr('cy', d => d.y);
         dots.exit().remove();
@@ -129,8 +129,8 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
     };
 
     const renderFlow = () => {
-      const cols = 20;
-      const rows = 12;
+      const cols = 22;
+      const rows = 14;
       const cellW = width / cols;
       const cellH = height / rows;
 
@@ -145,8 +145,8 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
             const y = r * cellH + cellH/2;
             const dx = mx - x;
             const dy = my - y;
-            const angle = Math.atan2(dy, dx) + elapsed * 0.0012;
-            const len = 14;
+            const angle = Math.atan2(dy, dx) + elapsed * 0.0015;
+            const len = 15;
 
             g.append('line')
               .attr('x1', x).attr('y1', y)
@@ -154,47 +154,47 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
               .attr('y2', y + Math.sin(angle) * len)
               .attr('stroke', gold)
               .attr('stroke-width', strokeW)
-              .attr('opacity', 0.28);
+              .attr('opacity', 0.32);
           }
         }
       });
     };
 
     const renderNeural = () => {
-      const points = d3.range(60).map(i => ({
+      const points = d3.range(65).map(i => ({
         id: i,
         angle: Math.random() * Math.PI * 2,
-        r: 50 + Math.random() * 160,
-        speed: 0.025 + Math.random() * 0.035
+        r: 60 + Math.random() * 170,
+        speed: 0.03 + Math.random() * 0.04
       }));
 
       timer = d3.timer((elapsed) => {
         g.selectAll('*').remove();
-        const mx = (mouseRef.current.x - width/2) * 0.12;
-        const my = (mouseRef.current.y - height/2) * 0.12;
+        const mx = (mouseRef.current.x - width/2) * 0.15;
+        const my = (mouseRef.current.y - height/2) * 0.15;
 
         points.forEach(p => {
-          const x = width/2 + mx + Math.cos(elapsed * 0.001 * p.speed + p.angle) * p.r;
-          const y = height/2 + my + Math.sin(elapsed * 0.001 * p.speed + p.angle) * p.r;
+          const x = width/2 + mx + Math.cos(elapsed * 0.0012 * p.speed + p.angle) * p.r;
+          const y = height/2 + my + Math.sin(elapsed * 0.0012 * p.speed + p.angle) * p.r;
           
           g.append('circle')
             .attr('cx', x).attr('cy', y)
-            .attr('r', 1.6)
+            .attr('r', 1.8)
             .attr('fill', gold)
-            .attr('opacity', 0.65);
+            .attr('opacity', 0.7);
 
-          if (Math.random() > 0.95) {
+          if (Math.random() > 0.94) {
             g.append('line')
               .attr('x1', width/2 + mx).attr('y1', height/2 + my)
               .attr('x2', x).attr('y2', y)
-              .attr('stroke', gold).attr('stroke-width', strokeW * 0.4).attr('opacity', 0.18);
+              .attr('stroke', gold).attr('stroke-width', strokeW * 0.45).attr('opacity', 0.2);
           }
         });
       });
     };
 
     const renderSequential = () => {
-      const bars = 16;
+      const bars = 18;
       const barW = width / bars;
       const data = d3.range(bars).map(() => Math.random());
 
@@ -205,17 +205,17 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
         data.forEach((d, i) => {
           const x = i * barW;
           const dist = Math.abs(mx - (x + barW/2));
-          const h = 45 + (1 - Math.min(dist/280, 1)) * 130 + Math.sin(elapsed * 0.004 + i) * 18;
+          const h = 50 + (1 - Math.min(dist/300, 1)) * 140 + Math.sin(elapsed * 0.005 + i) * 20;
           
           g.append('rect')
-            .attr('x', x + 5)
+            .attr('x', x + 6)
             .attr('y', height/2 - h/2)
-            .attr('width', barW - 10)
+            .attr('width', barW - 12)
             .attr('height', h)
             .attr('fill', 'none')
             .attr('stroke', gold)
             .attr('stroke-width', strokeW)
-            .attr('opacity', 0.55);
+            .attr('opacity', 0.6);
         });
       });
     };
@@ -223,20 +223,20 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
     const renderWaves = () => {
       timer = d3.timer((elapsed) => {
         g.selectAll('path').remove();
-        const my = mouseRef.current.y * 0.12;
+        const my = mouseRef.current.y * 0.15;
         
         const line = d3.line().curve(d3.curveBasis);
-        for (let i = 0; i < 3; i++) {
-          const points = d3.range(0, width + 60, 60).map(x => [
+        for (let i = 0; i < 4; i++) {
+          const points = d3.range(0, width + 80, 80).map(x => [
             x, 
-            height/2 + Math.sin(x * 0.01 + elapsed * 0.0022 + i) * (35 + my + i * 12)
+            height/2 + Math.sin(x * 0.012 + elapsed * 0.0025 + i) * (40 + my + i * 15)
           ]);
           g.append('path')
             .attr('d', line(points as any))
             .attr('fill', 'none')
             .attr('stroke', gold)
             .attr('stroke-width', strokeW)
-            .attr('opacity', 0.65 - i * 0.12);
+            .attr('opacity', 0.7 - i * 0.15);
         }
       });
     };
@@ -244,28 +244,28 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type }) => {
     const renderDashboard = () => {
       timer = d3.timer((elapsed) => {
         g.selectAll('*').remove();
-        const mx = (mouseRef.current.x - width/2) * 0.04;
-        const my = (mouseRef.current.y - height/2) * 0.04;
+        const mx = (mouseRef.current.x - width/2) * 0.05;
+        const my = (mouseRef.current.y - height/2) * 0.05;
 
         const center = { x: width/2 + mx, y: height/2 + my };
         
-        for (let i = 0; i < 4; i++) {
-          const r = 55 + i * 38;
+        for (let i = 0; i < 5; i++) {
+          const r = 60 + i * 40;
           const arc = d3.arc()
             .innerRadius(r)
-            .outerRadius(r + 1.2)
-            .startAngle(elapsed * 0.001 * (i+1))
-            .endAngle(elapsed * 0.001 * (i+1) + Math.PI * 0.75);
+            .outerRadius(r + 1.5)
+            .startAngle(elapsed * 0.0012 * (i+1))
+            .endAngle(elapsed * 0.0012 * (i+1) + Math.PI * 0.8);
           
           g.append('path')
             .attr('d', arc as any)
             .attr('fill', gold)
-            .attr('opacity', 0.55)
+            .attr('opacity', 0.6)
             .attr('transform', `translate(${center.x}, ${center.y})`);
         }
         
-        g.append('line').attr('x1', 0).attr('y1', center.y).attr('x2', width).attr('y2', center.y).attr('stroke', gold).attr('opacity', 0.18);
-        g.append('line').attr('x1', center.x).attr('y1', 0).attr('x2', center.x).attr('y2', height).attr('stroke', gold).attr('opacity', 0.18);
+        g.append('line').attr('x1', 0).attr('y1', center.y).attr('x2', width).attr('y2', center.y).attr('stroke', gold).attr('opacity', 0.22);
+        g.append('line').attr('x1', center.x).attr('y1', 0).attr('x2', center.x).attr('y2', height).attr('stroke', gold).attr('opacity', 0.22);
       });
     };
 

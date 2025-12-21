@@ -65,24 +65,13 @@ const D3Background: React.FC = () => {
         .force("charge", d3.forceManyBody().strength(-20))
         .velocityDecay(0.4)
         .on("tick", () => {
-          svg.selectAll("circle").attr("cx", (d: any) => d.x).attr("cy", (d: any) => d.y);
+          svg.selectAll("circle")
+            .attr("cx", (d: any) => d.x)
+            .attr("cy", (d: any) => d.y)
+            .attr("opacity", 0.08); // Reduced from 0.2 to 0.08 for clarity
         });
-
-      const onMouseMove = (e: MouseEvent) => {
-        sim.alpha(0.3).restart();
-        survivors.forEach(d => {
-          const dx = d.x - e.clientX;
-          const dy = d.y - e.clientY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 250) { 
-             const force = (250 - dist) / 250; 
-             d.vx += (dx / dist) * force * 5; 
-             d.vy += (dy / dist) * force * 5; 
-          }
-        });
-      };
-      window.addEventListener("mousemove", onMouseMove);
-      return () => window.removeEventListener("mousemove", onMouseMove);
+      
+      // Removed mousemove listener from floating phase to prioritize UI interaction
     };
 
     const explosionTimer = d3.timer((elapsed) => {
