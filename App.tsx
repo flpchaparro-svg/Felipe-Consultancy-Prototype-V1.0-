@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import CustomCursor from './components/CustomCursor';
 import BentoGrid from './components/BentoGrid';
 import Modal from './components/Modal';
 import D3Background from './components/D3Background';
@@ -12,13 +11,13 @@ const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrambleText, setScrambleText] = useState("STRATEGIST");
-  const [deploymentCounter, setDeploymentCounter] = useState(0.00);
+  const [deploymentCounter, setDeploymentCounter] = useState(13.42); // Starting closer to target for a "waking up" feel
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     
-    // Scramble logic
+    // Scramble logic for branding titles
     const roles = ["STRATEGIST", "ARCHITECT", "ENGINEER"];
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let roleIndex = 0;
@@ -39,23 +38,22 @@ const App: React.FC = () => {
       }, 45);
     }, 3000);
 
-    // Counter logic
-    const targetDays = 14.00;
-    let current = 0.00;
+    // SMARTER, SMOOTHER COUNTER
+    // Simulates an industrial readout that settles on 14.00 but remains "alive"
+    const targetValue = 14.00;
     const counterInterval = setInterval(() => {
-      if (current < targetDays) {
-        current += 0.23;
-        if (current > targetDays) current = targetDays;
-        setDeploymentCounter(Number(current.toFixed(2)));
-      } else {
-        clearInterval(counterInterval);
-        // Jitter simulation
-        setInterval(() => {
-          const variance = (Math.random() * 0.4) - 0.2;
-          setDeploymentCounter(Number((targetDays + variance).toFixed(2)));
-        }, 3000);
-      }
-    }, 30);
+      setDeploymentCounter(prev => {
+        if (prev < targetValue - 0.05) {
+          // Smooth asymptotic approach
+          const step = (targetValue - prev) * 0.12;
+          return Number((prev + step).toFixed(2));
+        }
+        // Micro-fluctuations once target area is reached
+        const jitter = (Math.random() - 0.5) * 0.04;
+        const result = targetValue + jitter;
+        return Number(Math.max(13.92, Math.min(14.08, result)).toFixed(2));
+      });
+    }, 120);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -71,20 +69,20 @@ const App: React.FC = () => {
 
   return (
     <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC]">
-      <CustomCursor />
       <D3Background />
 
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 border-b ${scrolled ? 'bg-[#FFF2EC]/90 backdrop-blur-md border-black/5 shadow-sm py-3' : 'border-transparent'}`}>
         <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#1a1a1a]">Felipe Chaparro</div>
         <div className="hidden md:flex items-center gap-12">
+          <a href="#hero" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Origins</a>
           <a href="#services" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Architecture</a>
           <a href="#protocol" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Protocol</a>
-          <a href="#" className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#1a1a1a] hover:border-[#1a1a1a] transition-colors">
+          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#1a1a1a] hover:border-[#1a1a1a] transition-colors">
             Audit My System
           </a>
         </div>
-        <button className="md:hidden p-2">
+        <button className="md:hidden p-2 text-[#1a1a1a]">
           <Menu className="w-6 h-6" />
         </button>
       </nav>
@@ -115,7 +113,7 @@ const App: React.FC = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '0.8s' }}>
-              <a href="#" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#E21E3F]">
+              <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#E21E3F]">
                 <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
                 <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
               </a>
@@ -158,18 +156,18 @@ const App: React.FC = () => {
                   <span className="font-mono text-xs text-[#1a1a1a]/30 group-hover:text-[#E21E3F] group-hover:translate-x-1 transition-all duration-300">{item.id}</span>
                 </div>
                 <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:translate-x-1 transition-transform duration-500">{item.title}</h3>
-                <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed max-w-sm">{item.text}</p>
+                <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed max-sm">{item.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Revenue Engine Section (Existing BentoGrid) */}
+      {/* Bento Grid Section */}
       <BentoGrid onServiceClick={handleServiceClick} />
 
       {/* Philosophy Section */}
-      <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden">
+      <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-white/5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-[1600px] mx-auto relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
@@ -218,7 +216,7 @@ const App: React.FC = () => {
             <div className="hidden md:block pb-2 text-right">
               <p className="font-mono text-[10px] text-[#1a1a1a]/40 tracking-widest mb-1">AVG_DEPLOYMENT_TIME</p>
               <p className="font-sans text-4xl font-light text-[#1a1a1a]">
-                <span className={`tabular-nums transition-colors duration-300 ${deploymentCounter === 14 ? 'text-[#E21E3F]' : ''}`}>{deploymentCounter.toFixed(2)}</span> DAYS
+                <span className={`tabular-nums tabular-nums transition-colors duration-300 ${deploymentCounter >= 14 ? 'text-[#E21E3F]' : ''}`}>{deploymentCounter.toFixed(2)}</span> DAYS
               </p>
             </div>
           </div>
@@ -248,7 +246,7 @@ const App: React.FC = () => {
             ))}
           </div>
 
-          <a href="#" className="block mt-32 w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group hover-trigger transition-transform hover:-translate-y-1 duration-500">
+          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="block mt-32 w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group transition-transform hover:-translate-y-1 duration-500">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none"></div>
             <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
               <div className="text-center md:text-left">
@@ -283,7 +281,7 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="mt-16 md:mt-0">
-              <a href="#" className="group flex flex-col items-start gap-1">
+              <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="group flex flex-col items-start gap-1">
                 <div className="flex items-center gap-4">
                   <span className="font-mono text-xs text-white/40 group-hover:text-[#E21E3F] transition-colors duration-300">01</span>
                   <span className="text-2xl md:text-3xl font-sans font-light border-b border-white/20 pb-1 group-hover:border-[#E21E3F] group-hover:text-white transition-all duration-300">Initiate Growth Protocol</span>
@@ -298,9 +296,9 @@ const App: React.FC = () => {
             <div>
               <span className="font-mono text-[10px] text-white/30 mb-8 block tracking-widest">/ INDEX</span>
               <ul className="space-y-4">
+                <li><a href="#hero" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Origins</a></li>
                 <li><a href="#services" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Architecture</a></li>
                 <li><a href="#protocol" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Protocol</a></li>
-                <li><a href="#philosophy" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Philosophy</a></li>
               </ul>
             </div>
             <div>

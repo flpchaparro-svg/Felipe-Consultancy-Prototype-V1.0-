@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-// Fixed: Added ArrowRight to the imports from lucide-react
 import { X, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
 import { ServiceDetail } from '../types';
 import { COLORS } from '../constants';
@@ -46,7 +45,8 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
           >
             <div className="flex flex-col">
               {/* Header Visual */}
-              <div className="h-40 bg-[#1a1a1a] relative border-b border-black/10 overflow-hidden">
+              <div className="h-48 bg-[#1a1a1a] relative border-b border-black/10 overflow-hidden">
+                 {/* D3 visualization inside modal still uses Gold strokes as requested */}
                  <ViewportViz type={service.visualPrompt} />
                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent opacity-60" />
                  <button 
@@ -59,7 +59,7 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
 
               <div className="p-8 lg:p-16">
                 <div className="mb-12">
-                  <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.4em] font-bold mb-4 block uppercase">System_Blueprint_2024</span>
+                  <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.4em] font-bold mb-4 block uppercase">System_Blueprint_2025</span>
                   <h2 className="text-5xl lg:text-7xl font-serif font-light leading-none mb-4">
                     {service.title}
                   </h2>
@@ -92,15 +92,15 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
 
                 <div className="mt-16 pt-12 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-8">
                   <div className="text-[10px] font-mono opacity-30 tracking-tighter">
-                    UID: {service.id.toUpperCase()}_REV_ENG_v4.0.0
+                    UID: {service.id.toUpperCase()}_REV_ENG_v5.0.0
                   </div>
-                  <button 
-                    onClick={() => alert("Initiating protocol...")}
+                  <a 
+                    href="https://meetings-ap1.hubspot.com/felipe"
+                    target="_blank"
                     className="group flex items-center gap-4 px-10 py-5 bg-[#1a1a1a] text-white hover:bg-[#E21E3F] transition-all duration-500 text-xs font-bold tracking-widest uppercase"
                   >
-                    {/* Fixed: Replaced LucideIcons.ArrowRight with direct ArrowRight component */}
-                    Deploy Module <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                    Initiate Deployment <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
                 </div>
               </div>
             </div>
