@@ -21,6 +21,14 @@ const D3Background: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
 
+    // Initial mouse state
+    const mouse = { x: width / 2, y: height / 2 };
+    const onMouseMove = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    };
+    window.addEventListener('mousemove', onMouseMove);
+
     let nodes = d3.range(120).map((i) => {
       const angle = Math.random() * 2 * Math.PI;
       return { 
@@ -53,6 +61,9 @@ const D3Background: React.FC = () => {
       .attr("opacity", 0.3);
 
     const startFloatingPhase = (survivors: any[]) => {
+      // PERFORMANCE: Remove mouse interaction after settling to avoid background drag on main UI
+      window.removeEventListener('mousemove', onMouseMove);
+      
       linkSelection.remove();
       nodeSelection.filter((d: any) => !d.isSurvivor).remove();
       
@@ -68,20 +79,26 @@ const D3Background: React.FC = () => {
           svg.selectAll("circle")
             .attr("cx", (d: any) => d.x)
             .attr("cy", (d: any) => d.y)
-            .attr("opacity", 0.08); // Reduced from 0.2 to 0.08 for clarity
+            .attr("opacity", 0.08); // Reduced to 0.08 for maximum hero text contrast
         });
-      
-      // Removed mousemove listener from floating phase to prioritize UI interaction
     };
 
     const explosionTimer = d3.timer((elapsed) => {
       nodes.forEach(d => {
+        // Slight mouse attraction during explosion phase
+        const dx = mouse.x - (width / 2 + Math.cos(d.angle) * d.dist);
+        const dy = mouse.y - (height / 2 + Math.sin(d.angle) * d.dist);
+        const distToMouse = Math.sqrt(dx * dx + dy * dy);
+        const pull = Math.max(0, 1 - distToMouse / 500) * 0.05;
+
         if (d.isSurvivor) {
           if (d.dist < 200) { d.dist += d.speed * 2; }
           else { d.dist += 0.1; }
         } else {
           d.dist += d.speed * (elapsed * 0.05);
         }
+        
+        d.angle += pull;
       });
 
       linkSelection
@@ -121,6 +138,7 @@ const D3Background: React.FC = () => {
       explosionTimer.stop();
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', onMouseMove);
     };
   }, []);
 

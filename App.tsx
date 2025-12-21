@@ -230,11 +230,11 @@ const App: React.FC = () => {
               { phase: "04 // Scale", title: "The Watchtower", text: "I transition to active monitoring. Monthly optimization and feature updates to keep the revenue engine running.", est: "Ongoing" }
             ].map((step, idx) => (
               <div key={idx} className="group relative p-8 md:pt-12 md:pr-8 border-l-2 border-dashed border-black/20 md:border-l-0 transition-all duration-500 hover:bg-white hover:shadow-2xl z-10">
-                <div className="hidden md:block absolute top-0 left-0 w-full h-[2px] bg-[#E21E3F] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
-                <div className="absolute top-[-5px] left-[-5px] md:left-0 w-2.5 h-2.5 bg-[#1a1a1a] rounded-full group-hover:bg-[#E21E3F] transition-colors duration-300 z-20"></div>
+                <div className="hidden md:block absolute top-0 left-0 w-full h-[2px] bg-[#C5A059] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                <div className="absolute top-[-5px] left-[-5px] md:left-0 w-2.5 h-2.5 bg-[#1a1a1a] rounded-full group-hover:bg-[#C5A059] transition-colors duration-300 z-20"></div>
                 <div className="flex flex-col h-full justify-between gap-6">
                   <div>
-                    <span className="font-mono text-xs text-[#1a1a1a]/40 mb-3 block group-hover:text-[#E21E3F] transition-colors tracking-widest uppercase">{step.phase}</span>
+                    <span className="font-mono text-xs text-[#C5A059]/60 mb-3 block group-hover:text-[#C5A059] transition-colors tracking-widest uppercase">{step.phase}</span>
                     <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:translate-x-1 transition-transform duration-300">{step.title}</h3>
                     <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{step.text}</p>
                   </div>
@@ -320,7 +320,7 @@ const App: React.FC = () => {
             <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
             <div className="flex gap-6 mt-4 md:mt-0">
               <span>LATENCY: 8ms</span>
-              <span>BUILD: v2.8.1</span>
+              <span>BUILD: v2.8.2</span>
             </div>
           </div>
         </div>
