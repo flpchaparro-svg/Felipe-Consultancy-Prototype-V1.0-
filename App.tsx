@@ -234,7 +234,8 @@ const App: React.FC = () => {
                 <div className="absolute top-[-5px] left-[-5px] md:left-0 w-2.5 h-2.5 bg-[#1a1a1a] rounded-full group-hover:bg-[#C5A059] transition-colors duration-300 z-20"></div>
                 <div className="flex flex-col h-full justify-between gap-6">
                   <div>
-                    <span className="font-mono text-xs text-[#C5A059]/60 mb-3 block group-hover:text-[#C5A059] transition-colors tracking-widest uppercase">{step.phase}</span>
+                    {/* UPDATED: Phase label changed to Gold for architectural prominence */}
+                    <span className="font-mono text-xs text-[#C5A059]/80 mb-3 block group-hover:text-[#C5A059] transition-colors tracking-widest uppercase">{step.phase}</span>
                     <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:translate-x-1 transition-transform duration-300">{step.title}</h3>
                     <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{step.text}</p>
                   </div>

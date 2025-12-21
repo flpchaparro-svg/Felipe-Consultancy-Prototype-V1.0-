@@ -85,18 +85,18 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 interactive-bento flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
                 >
                   <div className="flex justify-between items-start z-10">
-                    <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#E21E3F]' : 'opacity-30'}`}>0{idx + 1}</span>
-                    {/* Red Down Arrow as requested */}
+                    <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#C5A059]' : 'opacity-30'}`}>0{idx + 1}</span>
+                    {/* Gold Down Arrow as requested */}
                     <motion.div 
                       animate={isActive ? { y: [0, 6, 0] } : {}}
                       transition={{ repeat: Infinity, duration: 2 }}
                     >
-                      <LucideIcons.ChevronDown className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#E21E3F] opacity-100' : 'text-black opacity-10 group-hover:opacity-60'}`} />
+                      <LucideIcons.ChevronDown className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-black opacity-10 group-hover:opacity-60'}`} />
                     </motion.div>
                   </div>
                   <div className="z-10">
                     <h4 className="text-2xl font-serif uppercase tracking-tight leading-tight mb-2">{service.title}</h4>
-                    <div className={`text-[9px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center gap-2 ${isActive ? 'text-[#E21E3F] opacity-100' : 'text-[#E21E3F] opacity-0 group-hover:opacity-100'}`}>
+                    <div className={`text-[9px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center gap-2 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-[#C5A059] opacity-0 group-hover:opacity-100'}`}>
                       [ OPEN PROTOCOL ] <LucideIcons.ArrowRight className="w-3 h-3" />
                     </div>
                   </div>
@@ -126,20 +126,20 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 interactive-bento flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
                 >
                   <div className="flex justify-between items-start z-10">
-                    <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#E21E3F]' : 'opacity-30'}`}>{displayLabel}</span>
-                    {/* Red Left Arrow for 04, 05, 06 */}
+                    <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#C5A059]' : 'opacity-30'}`}>{displayLabel}</span>
+                    {/* Gold Left Arrow for 04, 05, 06 */}
                     {!isNoArrow && (
                       <motion.div 
                         animate={isActive ? { x: [0, -6, 0] } : {}}
                         transition={{ repeat: Infinity, duration: 2 }}
                       >
-                        <LucideIcons.ChevronLeft className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#E21E3F] opacity-100' : 'text-black opacity-10 group-hover:opacity-60'}`} />
+                        <LucideIcons.ChevronLeft className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-black opacity-10 group-hover:opacity-60'}`} />
                       </motion.div>
                     )}
                   </div>
                   <div className="z-10">
                     <h4 className="text-xl font-serif uppercase tracking-tight leading-tight mb-2">{service.title}</h4>
-                    <div className={`text-[9px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300 ${isActive ? 'text-[#E21E3F] opacity-100 translate-x-1' : 'text-[#E21E3F] opacity-0 group-hover:opacity-100'}`}>
+                    <div className={`text-[9px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300 ${isActive ? 'text-[#C5A059] opacity-100 translate-x-1' : 'text-[#C5A059] opacity-0 group-hover:opacity-100'}`}>
                       [ SPECS ]
                     </div>
                   </div>

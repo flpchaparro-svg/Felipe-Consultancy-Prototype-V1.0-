@@ -73,7 +73,8 @@ const D3Background: React.FC = () => {
       });
 
       const sim = d3.forceSimulation(survivors)
-        .force("charge", d3.forceManyBody().strength(-20))
+        // POLISH: Increased charge force for better spacing
+        .force("charge", d3.forceManyBody().strength(-30))
         .velocityDecay(0.4)
         .on("tick", () => {
           svg.selectAll("circle")
