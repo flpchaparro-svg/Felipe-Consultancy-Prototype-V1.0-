@@ -1,141 +1,330 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomCursor from './components/CustomCursor';
 import BentoGrid from './components/BentoGrid';
 import Modal from './components/Modal';
+import D3Background from './components/D3Background';
 import { ServiceDetail } from './types';
-import { Menu, Search, ArrowRight } from 'lucide-react';
+import { Menu, ArrowRight, ArrowUpRight, AlertTriangle, Layers, Clock, EyeOff, Microscope, Palette, Briefcase, Database, Zap, Cpu, Users } from 'lucide-react';
 
 const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [scrambleText, setScrambleText] = useState("STRATEGIST");
+  const [deploymentCounter, setDeploymentCounter] = useState(0.00);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    
+    // Scramble logic
+    const roles = ["STRATEGIST", "ARCHITECT", "ENGINEER"];
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let roleIndex = 0;
+    
+    const scrambleInterval = setInterval(() => {
+      roleIndex = (roleIndex + 1) % roles.length;
+      const target = roles[roleIndex];
+      let iterations = 0;
+      const interval = setInterval(() => {
+        setScrambleText(prev => 
+          target.split("").map((letter, index) => {
+            if (index < iterations) return target[index];
+            return chars[Math.floor(Math.random() * chars.length)];
+          }).join("")
+        );
+        if (iterations >= target.length) clearInterval(interval);
+        iterations += 1 / 3;
+      }, 45);
+    }, 3000);
+
+    // Counter logic
+    const targetDays = 14.00;
+    let current = 0.00;
+    const counterInterval = setInterval(() => {
+      if (current < targetDays) {
+        current += 0.23;
+        if (current > targetDays) current = targetDays;
+        setDeploymentCounter(Number(current.toFixed(2)));
+      } else {
+        clearInterval(counterInterval);
+        // Jitter simulation
+        setInterval(() => {
+          const variance = (Math.random() * 0.4) - 0.2;
+          setDeploymentCounter(Number((targetDays + variance).toFixed(2)));
+        }, 3000);
+      }
+    }, 30);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearInterval(scrambleInterval);
+      clearInterval(counterInterval);
+    };
+  }, []);
 
   const handleServiceClick = (service: ServiceDetail) => {
     setSelectedService(service);
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <div className="min-h-screen selection:bg-[#E21E3F] selection:text-white">
+    <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC]">
       <CustomCursor />
-      
+      <D3Background />
+
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-[80] p-6 lg:p-10 flex justify-between items-center mix-blend-difference">
-        <div className="text-white text-xl font-serif tracking-tighter">
-          REVENUE_ENGINE_
+      <nav className={`fixed top-0 w-full z-50 px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 border-b ${scrolled ? 'bg-[#FFF2EC]/90 backdrop-blur-md border-black/5 shadow-sm py-3' : 'border-transparent'}`}>
+        <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#1a1a1a]">Felipe Chaparro</div>
+        <div className="hidden md:flex items-center gap-12">
+          <a href="#services" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Architecture</a>
+          <a href="#protocol" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Protocol</a>
+          <a href="#" className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#1a1a1a] hover:border-[#1a1a1a] transition-colors">
+            Audit My System
+          </a>
         </div>
-        <div className="flex items-center gap-8">
-          <button className="hidden lg:block text-white text-xs font-semibold tracking-widest uppercase">Architecture</button>
-          <button className="hidden lg:block text-white text-xs font-semibold tracking-widest uppercase">Systems</button>
-          <button className="hidden lg:block text-white text-xs font-semibold tracking-widest uppercase">Intel</button>
-          <button className="text-white p-2">
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
+        <button className="md:hidden p-2">
+          <Menu className="w-6 h-6" />
+        </button>
       </nav>
 
       {/* Hero Section */}
-      <header className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden bg-[#1a1a1a]">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="w-full h-full border-[1px] border-white/5 grid grid-cols-12 grid-rows-12" />
-        </div>
-        
-        <div className="relative z-10 text-center">
-          <span className="text-[#E21E3F] text-sm tracking-[0.5em] font-medium mb-6 block uppercase animate-pulse">
-            High-Performance Growth Strategy
-          </span>
-          <h1 className="text-7xl lg:text-[12rem] font-serif leading-[0.85] text-white tracking-tighter mb-12">
-            Architecting <br /> <span className="italic">Revenue.</span>
-          </h1>
-          <div className="flex flex-col lg:flex-row gap-6 items-center justify-center">
-            <button className="px-10 py-5 bg-[#E21E3F] text-white text-sm font-bold tracking-widest uppercase hover:bg-white hover:text-[#1a1a1a] transition-all duration-500">
-              Initial Assessment
-            </button>
-            <button className="px-10 py-5 border border-white/20 text-white text-sm font-bold tracking-widest uppercase hover:bg-white/10 transition-all duration-500">
-              View Methodology
-            </button>
-          </div>
-        </div>
-        
-        <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
-          <div className="text-white/40 text-[10px] font-mono max-w-[200px]">
-            EST. 2024 // MELBOURNE_HQ <br />
-            PROTOCOL_V3.1.2_BETA
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="w-px h-16 bg-white/20" />
-            <span className="text-white/20 text-[10px] font-mono rotate-90 origin-bottom-right mb-2">SCROLL_SYSTEM</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Services Section */}
-      <BentoGrid onServiceClick={handleServiceClick} />
-
-      {/* Philosophy Section */}
-      <section className="py-32 px-6 lg:px-12 bg-[#1a1a1a] text-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl lg:text-7xl font-serif leading-tight mb-16">
-            We operate at the intersection of <span className="text-[#E21E3F]">code</span>, <span className="italic">design</span>, and <span className="text-[#E21E3F]">behavioral psychology.</span>
-          </h2>
-          <div className="grid md:grid-cols-3 gap-12 border-t border-white/10 pt-16">
-            <div>
-              <span className="text-[#E21E3F] font-mono text-xs mb-4 block">01 // PRECISION</span>
-              <p className="text-white/60 text-sm leading-relaxed">Everything is measured. If it doesn't move the needle, it doesn't belong in the engine.</p>
+      <section id="hero" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
+        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
+          <div className="lg:col-span-10 flex flex-col justify-center">
+            <div className="flex items-center gap-6 mb-10 overflow-hidden">
+              <span className="h-[1px] w-16 bg-[#1a1a1a] animate-extend-line"></span>
+              <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">
+                Business Growth 
+                <span className="font-mono text-[#E21E3F] font-bold tracking-widest ml-2">{scrambleText}</span>
+              </span>
             </div>
-            <div>
-              <span className="text-[#E21E3F] font-mono text-xs mb-4 block">02 // SCALE</span>
-              <p className="text-white/60 text-sm leading-relaxed">Systems are built to break at 10x current volume. We build for the 100x horizon.</p>
-            </div>
-            <div>
-              <span className="text-[#E21E3F] font-mono text-xs mb-4 block">03 // AUTONOMY</span>
-              <p className="text-white/60 text-sm leading-relaxed">The goal is a self-healing revenue environment that reduces cognitive overhead.</p>
+
+            <h1 className="font-serif text-7xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tight text-[#1a1a1a] mb-10">
+              <div className="overflow-hidden">
+                <span className="block reveal-text">I Don't Run <span className="italic font-medium text-[#1a1a1a]/60">An&nbsp;Agency.</span></span>
+              </div>
+              <div className="overflow-hidden">
+                <span className="block reveal-text" style={{ animationDelay: '0.1s' }}>I Build Revenue Engines.</span>
+              </div>
+            </h1>
+            
+            <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-16 max-w-2xl border-l border-black/20 pl-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              Agencies are slow. Freelancers are unreliable. I am neither. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. You work directly with me. No juniors. No fluff.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <a href="#" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#E21E3F]">
+                <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
+                <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
+              </a>
+
+              <a href="#services" className="relative group px-8 py-5 flex items-center gap-3">
+                <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] group-hover:text-[#E21E3F] transition-colors duration-300">See The Engine</span>
+                <ArrowRight className="w-4 h-4 text-[#1a1a1a] group-hover:translate-y-1 group-hover:text-[#E21E3F] transition-all duration-300 rotate-90" />
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-black/20 group-hover:bg-[#E21E3F] transition-colors duration-300"></span>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-20 px-6 lg:px-12 bg-[#FFF2EC] border-t border-black/5 text-[#1a1a1a]">
-        <div className="max-w-screen-2xl mx-auto flex flex-col lg:flex-row justify-between items-start gap-12">
-          <div className="max-w-md">
-            <h3 className="text-4xl font-serif mb-6 leading-none">Ready to engineer your growth?</h3>
-            <p className="text-[#1a1a1a]/60 mb-8 font-light italic">Currently accepting 2 new high-volume enterprise clients for Q4.</p>
-            <button className="flex items-center gap-4 group text-sm font-bold tracking-[0.2em] uppercase">
-              Start Project Inquiry <div className="w-12 h-12 bg-[#1a1a1a] text-white rounded-full flex items-center justify-center group-hover:bg-[#E21E3F] transition-all"><ArrowRight className="w-5 h-5" /></div>
-            </button>
+      {/* Friction Audit Section */}
+      <section id="process" className="w-full border-t border-black/10 relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
+        <div className="max-w-[1600px] mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-12">
+            <div className="max-w-xl">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block">/ The Friction Audit</span>
+              <h2 className="font-serif text-5xl font-light mb-6">Is Your Business Suffering from <span className="italic">Operational Drag?</span></h2>
+              <p className="font-sans text-lg font-light text-[#1a1a1a]/70">You don't have a traffic problem. You have a system problem.</p>
+            </div>
+            <div className="text-right hidden md:block">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a]/40">SYSTEM STATUS: <span className="text-[#E21E3F] animate-pulse">SCANNING</span></span>
+            </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-16">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest mb-6 block">Navigation</span>
-              <ul className="space-y-4 text-sm font-medium">
-                <li><a href="#" className="hover:text-[#E21E3F] transition-colors">Architecture</a></li>
-                <li><a href="#" className="hover:text-[#E21E3F] transition-colors">Methodology</a></li>
-                <li><a href="#" className="hover:text-[#E21E3F] transition-colors">Protocols</a></li>
-                <li><a href="#" className="hover:text-[#E21E3F] transition-colors">Intel</a></li>
-              </ul>
-            </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest mb-6 block">Legal</span>
-              <ul className="space-y-4 text-sm font-medium">
-                <li><a href="#" className="hover:text-[#E21E3F] transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-[#E21E3F] transition-colors">Terms</a></li>
-              </ul>
-            </div>
-            <div className="col-span-2 lg:col-span-1">
-              <span className="text-xs font-bold uppercase tracking-widest mb-6 block">Contact</span>
-              <p className="text-sm font-medium mb-2">hq@revenuearchitect.com.au</p>
-              <p className="text-sm font-medium text-[#1a1a1a]/40">+61 (0)3 9000 0000</p>
-            </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-t border-l border-black/10">
+            {[
+              { id: '01 // LEAKAGE', icon: AlertTriangle, title: 'Revenue Leakage', text: 'Demand is expiring in the inbox. Your current website is a brochure, not a capture mechanism. You are burning capital on leads you fail to capture.' },
+              { id: '02 // SILOS', icon: Layers, title: 'Data Silos', text: 'Sales uses one tool. Ops uses another. Finance lives in Excel. Nothing talks to each other. You have zero source of truth.' },
+              { id: '03 // DRAG', icon: Clock, title: 'The Busywork Trap', text: 'You are wasting 40% of your week on manual data entry. You are playing "Chief Operations Officer" instead of CEO.' },
+              { id: '04 // BLIND', icon: EyeOff, title: 'Flying Blind', text: 'You manage by gut feeling because you can\'t see the numbers. You don\'t know your exact Profit or LTV in real-time.' }
+            ].map((item, idx) => (
+              <div key={idx} className="group relative border-b border-r border-black/10 p-12 hover:bg-white transition-colors duration-300 overflow-hidden">
+                <div className="absolute bottom-0 left-0 h-1 bg-[#1a1a1a] w-0 group-hover:w-full transition-all duration-700 ease-out"></div>
+                <div className="flex justify-between items-start mb-8">
+                  <item.icon className="w-8 h-8 text-[#1a1a1a]/80 group-hover:text-[#E21E3F] transition-colors duration-300" />
+                  <span className="font-mono text-xs text-[#1a1a1a]/30 group-hover:text-[#E21E3F] group-hover:translate-x-1 transition-all duration-300">{item.id}</span>
+                </div>
+                <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:translate-x-1 transition-transform duration-500">{item.title}</h3>
+                <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed max-w-sm">{item.text}</p>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="mt-24 pt-8 border-t border-black/5 flex justify-between items-center text-[10px] font-mono opacity-40">
-          <div>© 2024 REVENUE ENGINE ARCHITECT. ALL RIGHTS RESERVED.</div>
-          <div>DEVELOPED BY _ARCHITECT_01</div>
+      </section>
+
+      {/* Revenue Engine Section (Existing BentoGrid) */}
+      <BentoGrid onServiceClick={handleServiceClick} />
+
+      {/* Philosophy Section */}
+      <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
+        <div className="max-w-[1600px] mx-auto relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block">/ The Operator's Lens</span>
+              <h2 className="font-serif text-5xl md:text-6xl leading-[0.9] tracking-tight">
+                One Mind.<br />
+                Ten Men's <span className="italic text-white/40">Output.</span>
+              </h2>
+            </div>
+            <div className="max-w-xl lg:pt-4">
+              <p className="font-sans text-lg text-white/60 leading-relaxed mb-6">
+                How do I deliver agency-level results as a solo architect? I leverage advanced AI infrastructure. You get the output of a full team, for the cost of one expert.
+              </p>
+            </div>
+          </div>
+
+          <div className="group/grid grid grid-cols-1 md:grid-cols-3 border-t border-white/10">
+            {[
+              { icon: Microscope, title: "The Specialist's Lens", label: "DIRECT ACCESS", text: "No account managers. No games of telephone. You work directly with the Architect. I diagnose the problem, and I build the solution." },
+              { icon: Palette, title: "The Artist's Lens", label: "RHYTHM & FLOW", text: "Technology without soul is friction. I design systems that feel human, intuitive, and flow with the natural rhythm of your business." },
+              { icon: Briefcase, title: "The Executive's Lens", label: "PHYSICS OF MONEY", text: "Architecture without ROI is just art. Every line of code I write is engineered to increase the Velocity of Capital through your business." }
+            ].map((item, idx) => (
+              <div key={idx} className="group p-10 md:p-12 transition-all duration-500 hover:bg-white/5 hover:!opacity-100 group-hover/grid:opacity-40 border-b border-white/10 md:border-b-0 md:border-r last:border-r-0">
+                <div className="mb-8 text-[#E21E3F] transition-transform duration-500 group-hover:rotate-12 origin-bottom-left"><item.icon className="w-8 h-8" /></div>
+                <h3 className="font-serif text-3xl mb-3 text-white group-hover:translate-x-1 transition-transform">{item.title}</h3>
+                <p className="font-mono text-[10px] text-white/50 mb-6 uppercase tracking-widest group-hover:text-[#E21E3F] transition-colors">{item.label}</p>
+                <p className="font-sans text-white/70 text-sm leading-relaxed">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Protocol Section */}
+      <section id="protocol" className="w-full border-t border-black/10 relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-black/10 pb-8">
+            <div className="max-w-2xl">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block">/ Execution Velocity</span>
+              <h2 className="font-serif text-5xl md:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tight">
+                I don't do "6-Month Strategies."<br />
+                I work in <span className="italic text-[#1a1a1a]/40">Sprints.</span>
+              </h2>
+            </div>
+            <div className="hidden md:block pb-2 text-right">
+              <p className="font-mono text-[10px] text-[#1a1a1a]/40 tracking-widest mb-1">AVG_DEPLOYMENT_TIME</p>
+              <p className="font-sans text-4xl font-light text-[#1a1a1a]">
+                <span className={`tabular-nums transition-colors duration-300 ${deploymentCounter === 14 ? 'text-[#E21E3F]' : ''}`}>{deploymentCounter.toFixed(2)}</span> DAYS
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 relative">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-black/10 hidden md:block"></div>
+            {[
+              { phase: "01 // Diagnostic", title: "The Audit", text: "I deploy the \"Control Tower\" to map your data reality. I identify exactly where revenue is leaking before I build.", est: "3 Days" },
+              { phase: "02 // Build", title: "The Engine", text: "\"Wireframe First.\" I configure the CRM, code the automations, and build the \"Digital Employees\" (AI Agents).", est: "14 Days" },
+              { phase: "03 // Adoption", title: "The Training", text: "I use \"Behavioral Engineering\" to train your staff so the new system actually sticks.", est: "5 Days" },
+              { phase: "04 // Scale", title: "The Watchtower", text: "I transition to active monitoring. Monthly optimization and feature updates to keep the revenue engine running.", est: "Ongoing" }
+            ].map((step, idx) => (
+              <div key={idx} className="group relative p-8 md:pt-12 md:pr-8 border-l-2 border-dashed border-black/20 md:border-l-0 transition-all duration-500 hover:bg-white hover:shadow-2xl z-10">
+                <div className="hidden md:block absolute top-0 left-0 w-full h-[2px] bg-[#E21E3F] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                <div className="absolute top-[-5px] left-[-5px] md:left-0 w-2.5 h-2.5 bg-[#1a1a1a] rounded-full group-hover:bg-[#E21E3F] transition-colors duration-300 z-20"></div>
+                <div className="flex flex-col h-full justify-between gap-6">
+                  <div>
+                    <span className="font-mono text-xs text-[#1a1a1a]/40 mb-3 block group-hover:text-[#E21E3F] transition-colors tracking-widest uppercase">{step.phase}</span>
+                    <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:translate-x-1 transition-transform duration-300">{step.title}</h3>
+                    <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{step.text}</p>
+                  </div>
+                  <div className="pt-4 border-t border-black/5 opacity-50 group-hover:opacity-100 transition-opacity">
+                    <span className="text-[10px] font-mono uppercase text-[#1a1a1a]/60">Est. Duration: {step.est}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <a href="#" className="block mt-32 w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group hover-trigger transition-transform hover:-translate-y-1 duration-500">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none"></div>
+            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+              <div className="text-center md:text-left">
+                <h3 className="font-serif text-4xl md:text-5xl mb-3">Ready to remove yourself from the machine?</h3>
+                <p className="font-sans text-white/60 text-lg">Current Capacity: 1 Slot Remaining for Q1.</p>
+              </div>
+              <div className="relative group/btn px-10 py-5 border border-[#FFF2EC] overflow-hidden transition-all duration-300">
+                <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-out"></div>
+                <span className="relative z-10 font-mono text-sm uppercase tracking-[0.2em] group-hover/btn:text-[#1a1a1a] transition-colors duration-300 flex items-center gap-3">
+                  Apply For Access <ArrowUpRight className="w-3 h-3" />
+                </span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="w-full bg-[#1a1a1a] text-[#FFF2EC] border-t border-white/10 relative z-30 content-layer pt-32 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-20 mb-20">
+            <div className="max-w-2xl">
+              <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block">/ TRANSMISSION_END</span>
+              <h2 className="font-serif text-5xl md:text-8xl leading-[0.85] mb-8">Are we a<br /><span className="italic text-white/40">match?</span></h2>
+              <div className="flex items-center gap-4 mt-8">
+                <div className="relative w-2 h-2">
+                  <div className="absolute inset-0 bg-[#E21E3F] rounded-full animate-ping opacity-75"></div>
+                  <div className="relative w-2 h-2 bg-[#E21E3F] rounded-full"></div>
+                </div>
+                <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.2em] uppercase">STATUS: 1 SLOT AVAILABLE</span>
+              </div>
+            </div>
+            <div className="mt-16 md:mt-0">
+              <a href="#" className="group flex flex-col items-start gap-1">
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-xs text-white/40 group-hover:text-[#E21E3F] transition-colors duration-300">01</span>
+                  <span className="text-2xl md:text-3xl font-sans font-light border-b border-white/20 pb-1 group-hover:border-[#E21E3F] group-hover:text-white transition-all duration-300">Initiate Growth Protocol</span>
+                  <ArrowRight className="w-6 h-6 text-white/40 group-hover:text-[#E21E3F] group-hover:translate-x-2 transition-all duration-300" />
+                </div>
+                <span className="text-[10px] font-mono text-white/30 tracking-widest pl-8 group-hover:text-white/60 transition-colors">[ Direct Strategy Call with Felipe ]</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-24">
+            <div>
+              <span className="font-mono text-[10px] text-white/30 mb-8 block tracking-widest">/ INDEX</span>
+              <ul className="space-y-4">
+                <li><a href="#services" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Architecture</a></li>
+                <li><a href="#protocol" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Protocol</a></li>
+                <li><a href="#philosophy" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#E21E3F]">&gt;</span> Philosophy</a></li>
+              </ul>
+            </div>
+            <div>
+              <span className="font-mono text-[10px] text-white/30 mb-8 block tracking-widest">/ LEGAL</span>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-sm text-white/60 hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-sm text-white/60 hover:text-white transition-colors">Terms of Service</a></li>
+              </ul>
+            </div>
+            <div className="md:col-span-1 flex flex-col justify-between h-full">
+              <div className="mb-6">
+                <span className="font-mono text-[10px] text-white/30 mb-2 block tracking-widest">/ SERVER_LOCATION</span>
+                <p className="text-sm text-white/80">Sydney, Australia</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row justify-between items-end pt-10 border-t border-white/10 text-[10px] font-mono text-white/30 uppercase tracking-widest">
+            <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
+            <div className="flex gap-6 mt-4 md:mt-0">
+              <span>LATENCY: 12ms</span>
+              <span>BUILD: v2.5.0</span>
+            </div>
+          </div>
         </div>
       </footer>
 
@@ -143,7 +332,7 @@ const App: React.FC = () => {
       <Modal 
         service={selectedService} 
         isOpen={isModalOpen} 
-        onClose={closeModal} 
+        onClose={() => setIsModalOpen(false)} 
       />
     </div>
   );
