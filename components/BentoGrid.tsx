@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
 import { SERVICES } from '../constants';
@@ -13,9 +13,23 @@ interface BentoGridProps {
 const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   const [activeId, setActiveId] = useState<string>(SERVICES[0].id);
 
+  useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+    if (!isMobile) return;
+
+    const interval = setInterval(() => {
+      setActiveId(prev => {
+        const currentIndex = SERVICES.findIndex(s => s.id === prev);
+        const nextIndex = (currentIndex + 1) % SERVICES.length;
+        return SERVICES[nextIndex].id;
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const activeService = SERVICES.find(s => s.id === activeId) || SERVICES[0];
 
-  // Specific order for bottom row as requested: 07, 06, 05, 04
   const bottomRowServices = [
     SERVICES[6], // 07 // Control Tower
     SERVICES[5], // 06 // Team Protocols
@@ -24,9 +38,8 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   ];
 
   return (
-    <section id="services" className="relative h-screen max-h-[900px] min-h-[850px] py-12 px-6 lg:px-12 bg-[#FFF2EC] overflow-hidden flex flex-col content-layer">
+    <section id="architecture" className="relative h-screen max-h-[900px] min-h-[850px] py-12 px-6 lg:px-12 bg-[#FFF2EC] overflow-hidden flex flex-col content-layer">
       <div className="max-w-screen-2xl mx-auto w-full h-full flex flex-col">
-        {/* Header Area */}
         <div className="flex justify-between items-end mb-8 shrink-0">
           <div>
             <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.5em] font-bold mb-2 block uppercase">Architecture_Protocol_v5.4</span>
@@ -40,12 +53,8 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
           </div>
         </div>
 
-        {/* Bento Layout: 12 Columns x 6 Rows */}
         <div className="flex-1 grid grid-cols-12 grid-rows-6 gap-4 overflow-hidden">
-          
-          {/* THE DISPLAY TERMINAL (SUMMARY WINDOW ONLY) */}
           <div className="col-span-12 lg:col-span-8 row-span-4 relative border border-black/10 overflow-hidden bg-[#1a1a1a] shadow-2xl">
-            {/* Gold Animation */}
             <ViewportViz type={activeService.visualPrompt} />
             
             <div className="absolute top-6 left-6 flex items-center gap-3 z-20">
@@ -73,7 +82,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
             </div>
           </div>
 
-          {/* SIDEBAR CARDS (01, 02, 03) */}
           <div className="col-span-12 lg:col-span-4 row-span-4 grid grid-rows-3 gap-4">
             {SERVICES.slice(0, 3).map((service, idx) => {
               const isActive = activeId === service.id;
@@ -104,7 +112,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
             })}
           </div>
 
-          {/* BOTTOM ROW CARDS (07, 06, 05, 04) */}
           <div className="col-span-12 row-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {bottomRowServices.map((service) => {
               const isActive = activeId === service.id;
@@ -145,7 +152,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
               );
             })}
           </div>
-
         </div>
       </div>
     </section>

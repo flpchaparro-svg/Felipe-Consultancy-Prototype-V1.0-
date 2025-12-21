@@ -9,6 +9,7 @@ const CASE_STUDIES = [
     client: 'SaaS Enterprise',
     result: '+42% Conv',
     tag: 'Capture_Core',
+    stack: ['OpenAI', 'Make.com', 'React'],
     videoUrl: '#', 
     description: 'Replaced a manual lead triage team with autonomous AI agents. Zero leakage across 14,000 monthly inquiries.',
     metrics: ['Latency: <200ms', 'Accuracy: 99.4%', 'ROI: 12x']
@@ -18,6 +19,7 @@ const CASE_STUDIES = [
     client: 'Fintech Series A',
     result: '-30hr/wk',
     tag: 'Digital_Labor',
+    stack: ['Anthropic', 'Node.js', 'AWS'],
     videoUrl: '#',
     description: 'Automated the end-to-end data reconciliation engine, removing human friction from the finance stack.',
     metrics: ['Error Rate: 0%', 'Uptime: 100%', 'Saved: 120hrs/mo']
@@ -55,7 +57,17 @@ const EvidenceVault: React.FC = () => {
                 </div>
               </div>
               <h3 className="font-serif text-4xl text-[#FFF2EC] mb-4">{study.client}</h3>
-              <div className="text-6xl font-sans font-light text-[#C5A059] mb-8">{study.result}</div>
+              <div className="text-6xl font-sans font-light text-[#C5A059] mb-4">{study.result}</div>
+              
+              {/* Silicon Proof Stack */}
+              <div className="flex flex-wrap gap-2 mb-8">
+                {study.stack.map(tech => (
+                  <span key={tech} className="px-2 py-0.5 border border-white/20 text-[8px] font-mono text-[#C5A059] uppercase tracking-widest">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
               <div className="flex items-center gap-3 text-[10px] font-mono text-white/40 uppercase tracking-widest group-hover:text-white transition-colors">
                 View System Specs <ArrowUpRight className="w-3 h-3" />
               </div>
@@ -64,7 +76,6 @@ const EvidenceVault: React.FC = () => {
         </div>
       </div>
 
-      {/* CASE STUDY MODAL */}
       <AnimatePresence>
         {activeStudy && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
