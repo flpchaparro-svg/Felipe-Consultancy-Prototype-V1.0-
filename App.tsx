@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BentoGrid from './components/BentoGrid';
@@ -112,7 +111,7 @@ const App: React.FC = () => {
                   transition={{ duration: 0.2 }}
                   className={`ml-2 transition-colors duration-300 ${isLogoHovered ? 'text-[#C5A059]' : ''}`}
                 >
-                  {isLogoHovered ? 'Go Home' : 'Chaparro'}
+                  {isLogoHovered ? 'Home' : 'Chaparro'}
                 </motion.span>
               </AnimatePresence>
             </motion.div>
@@ -334,36 +333,35 @@ const App: React.FC = () => {
         </a>
       </section>
 
-      {/* Philosophy Section (The Logic) */}
-      <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
+      {/* Philosophy Section - Now Light Theme for Visual Rhythm */}
+      <section id="philosophy" className="w-full relative z-30 bg-[#FFF2EC] text-[#1a1a1a] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-black/5">
         <div className="max-w-[1600px] mx-auto relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
             <div>
               <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] mb-4 block">/ The Operator's Lens</span>
-              <h2 className="font-serif text-5xl md:text-6xl leading-[0.9] tracking-tight">
+              <h2 className="font-serif text-5xl md:text-6xl leading-[0.9] tracking-tight text-[#1a1a1a]">
                 One Mind.<br />
-                Ten Men's <span className="italic text-white/40">Output.</span>
+                Ten Men's <span className="italic text-black/20">Output.</span>
               </h2>
             </div>
             <div className="max-w-xl lg:pt-4">
-              <p className="font-sans text-lg text-white/60 leading-relaxed mb-6">
-                How do I deliver agency-level results as a solo architect? I leverage advanced infrastructure. You get the output of a full team, for the cost of one expert.
+              <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed mb-6">
+                I leverage advanced infrastructure to deliver agency-level results as a solo architect. No juniors. No games of telephone. I diagnose the problem, and I build the solution.
               </p>
             </div>
           </div>
 
-          <div className="group/grid grid grid-cols-1 md:grid-cols-3 border-t border-white/10">
+          <div className="group/grid grid grid-cols-1 md:grid-cols-3 border-t border-black/10">
             {[
-              { icon: Microscope, title: "The Specialist's Lens", label: "DIRECT ACCESS", text: "No account managers. No games of telephone. You work directly with the Architect. I diagnose the problem, and I build the solution." },
+              { icon: Microscope, title: "The Specialist's Lens", label: "DIRECT ACCESS", text: "I diagnose the problem, and I build the solution. No account managers. No games of telephone. Direct collaboration with the architect." },
               { icon: Palette, title: "The Artist's Lens", label: "RHYTHM & FLOW", text: "Technology without soul is friction. I design systems that feel human, intuitive, and flow with the natural rhythm of your business." },
               { icon: Briefcase, title: "The Executive's Lens", label: "PHYSICS OF MONEY", text: "Architecture without ROI is just art. Every line of code I write is engineered to increase the Velocity of Capital through your business." }
             ].map((item, idx) => (
-              <div key={idx} className="group p-10 md:p-12 transition-all duration-500 hover:bg-white/5 hover:!opacity-100 group-hover/grid:opacity-40 border-b border-white/10 md:border-b-0 md:border-r last:border-r-0">
+              <div key={idx} className="group p-10 md:p-12 border-b border-black/10 md:border-b-0 md:border-r last:border-r-0 hover:bg-white transition-colors duration-500">
                 <div className="mb-8 text-[#C5A059] transition-transform duration-500 group-hover:rotate-6 origin-bottom-left"><item.icon className="w-8 h-8" /></div>
-                <h3 className="font-serif text-3xl mb-3 text-white group-hover:translate-x-1 transition-transform">{item.title}</h3>
-                <p className="font-mono text-[10px] text-white/50 mb-6 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">{item.label}</p>
-                <p className="font-sans text-white/70 text-sm leading-relaxed">{item.text}</p>
+                <h3 className="font-serif text-3xl mb-3 text-[#1a1a1a] group-hover:translate-x-1 transition-transform">{item.title}</h3>
+                <p className="font-mono text-[10px] text-black/50 mb-6 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">{item.label}</p>
+                <p className="font-sans text-[#1a1a1a]/70 text-sm leading-relaxed">{item.text}</p>
               </div>
             ))}
           </div>
@@ -427,7 +425,7 @@ const App: React.FC = () => {
             <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
             <div className="flex gap-6 mt-4 md:mt-0">
               <span>LATENCY: 8ms</span>
-              <span>BUILD: v2.9.6</span>
+              <span>BUILD: v2.9.7</span>
             </div>
           </div>
         </div>
