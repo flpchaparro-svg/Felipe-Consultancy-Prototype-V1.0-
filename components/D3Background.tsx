@@ -1,153 +1,92 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
 const D3Background: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [scrollOpacity, setScrollOpacity] = useState(1);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const container = containerRef.current;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    
-    d3.select(container).selectAll('*').remove();
-    const svg = d3.select(container).append("svg").attr("width", "100%").attr("height", "100%");
-
+    // Fade logic for scroll depth
     const handleScroll = () => {
-      const op = 1 - (window.scrollY / 800);
-      if (container) container.style.opacity = Math.max(0, op).toString();
+      const scrollPos = window.scrollY;
+      const newOpacity = Math.max(0.1, 1 - scrollPos / 1000); 
+      setScrollOpacity(newOpacity);
     };
     window.addEventListener('scroll', handleScroll);
 
-    // Initial mouse state for explosion phase
-    const mouse = { x: width / 2, y: height / 2 };
-    const onMouseMove = (e: MouseEvent) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
-    window.addEventListener('mousemove', onMouseMove);
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-    let nodes = d3.range(120).map((i) => {
-      const angle = Math.random() * 2 * Math.PI;
-      return { 
-        id: i, angle: angle, dist: Math.random() * 10,
-        baseR: Math.random() * 12 + 4, speed: Math.random() * 0.5 + 0.2, 
-        isSurvivor: i < 15, vx: 0, vy: 0, x: width / 2, y: height / 2 
-      } as any;
-    });
+    // Clear any existing content
+    svg.selectAll('*').remove();
 
-    const links: any[] = [];
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        if (Math.random() > 0.96) links.push({ source: i, target: j });
-      }
-    }
+    // Create nodes starting at the center for the explosion
+    const nodeCount = 35;
+    const nodes = d3.range(nodeCount).map(() => ({
+      x: width / 2,
+      y: height / 2,
+      // Initial velocity for the "burst"
+      vx: (Math.random() - 0.5) * 40,
+      vy: (Math.random() - 0.5) * 40,
+      r: Math.random() * 35 + 10
+    }));
 
-    const linkSelection = svg.append("g")
-      .selectAll("line")
-      .data(links)
-      .enter().append("line")
-      .attr("stroke", "#1a1a1a")
-      .attr("stroke-width", 0.5)
-      .attr("opacity", 0.2);
+    const simulation = d3.forceSimulation(nodes as any)
+      .alphaDecay(0.02) // Slower decay to let the explosion travel
+      .velocityDecay(0.1) // Drag factor
+      .force('charge', d3.forceManyBody().strength(15))
+      .force('center', d3.forceCenter(width / 2, height / 2).strength(0.01)) // Weak centering
+      .force('collision', d3.forceCollide().radius((d: any) => d.r + 4));
 
-    const nodeSelection = svg.append("g")
-      .selectAll("circle")
+    const circles = svg.append('g')
+      .selectAll('circle')
       .data(nodes)
-      .enter().append("circle")
-      .attr("fill", "#1a1a1a")
-      .attr("opacity", 0.3);
+      .enter().append('circle')
+      .attr('r', (d: any) => d.r)
+      .attr('fill', 'none')
+      .attr('stroke', '#C5A059')
+      .attr('stroke-width', 0.5)
+      .attr('opacity', 0);
 
-    const startFloatingPhase = (survivors: any[]) => {
-      // Remove mouse interaction after settling to avoid drag on UI
-      window.removeEventListener('mousemove', onMouseMove);
+    // Fade in circles quickly after mount
+    circles.transition().duration(800).attr('opacity', 0.18);
+
+    simulation.on('tick', () => {
+      circles
+        .attr('cx', (d: any) => d.x)
+        .attr('cy', (d: any) => d.y);
       
-      linkSelection.remove();
-      nodeSelection.filter((d: any) => !d.isSurvivor).remove();
-      
-      survivors.forEach(d => {
-        d.x = width / 2 + Math.cos(d.angle) * d.dist;
-        d.y = height / 2 + Math.sin(d.angle) * d.dist;
+      // Boundary checks to keep them in view but not stuck
+      nodes.forEach((d: any) => {
+        if (d.x < 0) d.x = 0;
+        if (d.x > width) d.x = width;
+        if (d.y < 0) d.y = 0;
+        if (d.y > height) d.y = height;
       });
-
-      const sim = d3.forceSimulation(survivors)
-        .force("charge", d3.forceManyBody().strength(-30))
-        .velocityDecay(0.4)
-        .on("tick", () => {
-          const elapsed = performance.now();
-          survivors.forEach(d => {
-            // High-end sinusoidal drift for a living background
-            d.x += Math.sin(elapsed * 0.001 + d.id) * 0.15;
-            d.y += Math.cos(elapsed * 0.0012 + d.id) * 0.15;
-          });
-          svg.selectAll("circle")
-            .attr("cx", (d: any) => d.x)
-            .attr("cy", (d: any) => d.y)
-            .attr("opacity", 0.15); // Increased presence for architectural clarity
-        });
-    };
-
-    const explosionTimer = d3.timer((elapsed) => {
-      nodes.forEach(d => {
-        const dx = mouse.x - (width / 2 + Math.cos(d.angle) * d.dist);
-        const dy = mouse.y - (height / 2 + Math.sin(d.angle) * d.dist);
-        const distToMouse = Math.sqrt(dx * dx + dy * dy);
-        const pull = Math.max(0, 1 - distToMouse / 500) * 0.05;
-
-        if (d.isSurvivor) {
-          if (d.dist < 200) { d.dist += d.speed * 2; }
-          else { d.dist += 0.1; }
-        } else {
-          d.dist += d.speed * (elapsed * 0.05);
-        }
-        
-        d.angle += pull;
-      });
-
-      linkSelection
-        .attr("x1", (d: any) => width / 2 + Math.cos(nodes[d.source].angle) * nodes[d.source].dist)
-        .attr("y1", (d: any) => height / 2 + Math.sin(nodes[d.source].angle) * nodes[d.source].dist)
-        .attr("x2", (d: any) => width / 2 + Math.cos(nodes[d.target].angle) * nodes[d.target].dist)
-        .attr("y2", (d: any) => height / 2 + Math.sin(nodes[d.target].angle) * nodes[d.target].dist)
-        .attr("opacity", (d: any) => Math.max(0, 0.2 - (nodes[d.source].dist / 1200)));
-
-      nodeSelection
-        .attr("cx", (d: any) => width / 2 + Math.cos(d.angle) * d.dist)
-        .attr("cy", (d: any) => height / 2 + Math.sin(d.angle) * d.dist)
-        .attr("r", (d: any) => {
-          const expansion = 1 + Math.pow(d.dist * 0.002, 2); 
-          if (d.isSurvivor && d.dist > 200) return d.baseR; 
-          return d.baseR * expansion;
-        })
-        .attr("opacity", (d: any) => {
-          if (d.isSurvivor) return 0.2; 
-          return Math.max(0, 0.3 - (d.dist / 1000)); 
-        });
-
-      if (elapsed > 4900) {
-        explosionTimer.stop();
-        const survivors = nodes.filter(d => d.isSurvivor);
-        startFloatingPhase(survivors);
-      }
     });
 
-    const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-    };
-    window.addEventListener('resize', handleResize);
+    // After the initial explosion (alpha drops), add a tiny bit of continuous drift
+    setTimeout(() => {
+      simulation.alphaTarget(0.1).restart();
+    }, 2000);
 
     return () => {
-      explosionTimer.stop();
+      simulation.stop();
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', onMouseMove);
     };
   }, []);
 
-  return <div id="geometric-container" ref={containerRef} />;
+  return (
+    <div 
+      className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-500"
+      style={{ opacity: scrollOpacity }}
+    >
+      <svg ref={svgRef} width="100%" height="100%" />
+    </div>
+  );
 };
 
 export default D3Background;

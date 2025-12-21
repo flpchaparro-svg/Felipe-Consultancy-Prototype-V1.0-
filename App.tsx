@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BentoGrid from './components/BentoGrid';
@@ -214,10 +213,10 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* --- SECTION 2: TECHNICAL TRUST BAR --- */}
+        {/* SECTION 2: TECHNICAL TRUST BAR (Silicon Proof) - RESTORED STATIC VERSION */}
         <div className="w-full bg-[#1a1a1a]/5 py-8 border-y border-black/5 overflow-hidden relative z-30">
           <div className="max-w-[1400px] mx-auto px-6 flex flex-wrap justify-center md:justify-between items-center gap-12 grayscale opacity-40">
-            {['OpenAI', 'Anthropic', 'Make.com', 'Stripe', 'AWS', 'Google_Cloud'].map(tech => (
+            {['OpenAI', 'Anthropic', 'Make.com', 'Stripe', 'AWS', 'Google_Cloud', 'HubSpot', 'Next.js'].map(tech => (
               <span key={tech} className="font-mono text-[10px] font-bold tracking-[0.4em] uppercase">{tech}</span>
             ))}
           </div>
@@ -258,7 +257,7 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* SECTION 4: REVENUE AUDIT QUIZ (The Hook) */}
+        {/* SECTION 4: REVENUE AUDIT QUIZ (The Interactive Bridge) */}
         <RevenueAudit />
 
         {/* SECTION 5: ARCHITECTURE (The Solution) */}
@@ -269,7 +268,7 @@ const App: React.FC = () => {
         {/* SECTION 6: EVIDENCE VAULT (The Proof) */}
         <EvidenceVault />
 
-        {/* SECTION 7: THE ARCHITECT (The Authority) */}
+        {/* SECTION 7: THE ARCHITECT (Authority moved back down) */}
         <TheArchitect />
 
         {/* SECTION 8: PROTOCOL (Execution Logic) */}
@@ -433,7 +432,7 @@ const App: React.FC = () => {
               <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
               <div className="flex gap-6 mt-4 md:mt-0">
                 <span>LATENCY: 8ms</span>
-                <span>BUILD: v3.0.0</span>
+                <span>BUILD: v3.3.0</span>
               </div>
             </div>
           </div>
