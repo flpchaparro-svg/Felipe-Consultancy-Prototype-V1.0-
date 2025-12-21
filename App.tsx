@@ -1,14 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import BentoGrid from './components/BentoGrid';
 import Modal from './components/Modal';
 import D3Background from './components/D3Background';
 import { ServiceDetail } from './types';
-import { Menu, ArrowRight, ArrowUpRight, AlertTriangle, Layers, Clock, EyeOff, Microscope, Palette, Briefcase, Database, Zap, Cpu, Users } from 'lucide-react';
+import { Menu, X, ArrowRight, ArrowUpRight, AlertTriangle, Layers, Clock, EyeOff, Microscope, Palette, Briefcase } from 'lucide-react';
 
 const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrambleText, setScrambleText] = useState("STRATEGIST");
   const [deploymentCounter, setDeploymentCounter] = useState(13.51);
@@ -38,7 +41,6 @@ const App: React.FC = () => {
       }, 45);
     }, 4000);
 
-    // SMARTER COUNTER
     const targetValue = 14.00;
     const counterInterval = setInterval(() => {
       setDeploymentCounter(prev => {
@@ -67,24 +69,108 @@ const App: React.FC = () => {
     <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC]">
       <D3Background />
 
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 border-b ${scrolled ? 'bg-[#FFF2EC]/90 backdrop-blur-md border-black/5 shadow-sm py-3' : 'border-transparent'}`}>
-        <div className="text-xs font-bold tracking-[0.3em] uppercase text-[#1a1a1a]">Felipe Chaparro</div>
+      {/* --- REFINED NAVIGATION & LOGO --- */}
+      <nav className={`fixed top-0 w-full z-[100] px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 border-b ${scrolled ? 'bg-[#FFF2EC]/90 backdrop-blur-md border-black/5 shadow-sm py-3' : 'border-transparent'}`}>
+        
+        {/* INTERACTIVE LOGO UNIT */}
+        <a 
+          href="#origins" 
+          className="flex items-center gap-3 group cursor-pointer"
+          onMouseEnter={() => setIsLogoHovered(true)}
+          onMouseLeave={() => setIsLogoHovered(false)}
+        >
+          {/* FC LOGO: Bigger, Black, No Background */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="font-mono text-2xl font-black text-[#1a1a1a] tracking-tighter"
+          >
+            [FC]
+          </motion.div>
+
+          <div className="overflow-hidden flex items-center h-6">
+            <motion.div
+              initial={{ x: -150, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              // 5s Delay to wait for the D3 explosion to settle
+              transition={{ delay: 5.0, duration: 1.5, ease: "circOut" }}
+              className="flex font-bold text-[11px] uppercase tracking-[0.25em] text-[#1a1a1a]"
+            >
+              <span>Felipe</span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={isLogoHovered ? 'home' : 'name'}
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -10, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className={`ml-2 transition-colors duration-300 ${isLogoHovered ? 'text-[#C5A059]' : ''}`}
+                >
+                  {isLogoHovered ? 'Home' : 'Chaparro'}
+                </motion.span>
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </a>
+
+        {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-12">
-          <a href="#hero" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Origins</a>
-          <a href="#services" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Architecture</a>
-          <a href="#protocol" className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors">Protocol</a>
+          {['Origins', 'Architecture', 'Protocol'].map((item) => (
+            <a 
+              key={item} 
+              href={`#${item.toLowerCase()}`} 
+              className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors"
+            >
+              {item}
+            </a>
+          ))}
           <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors">
             Audit My System
           </a>
         </div>
-        <button className="md:hidden p-2 text-[#1a1a1a]">
-          <Menu className="w-6 h-6" />
+
+        {/* MOBILE TRIGGER */}
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 text-[#1a1a1a] z-[110] relative"
+        >
+          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </nav>
 
+      {/* MOBILE OVERLAY MENU */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 bg-[#FFF2EC]/95 backdrop-blur-xl z-[90] flex flex-col items-center justify-center gap-8 md:hidden"
+          >
+            {['Origins', 'Architecture', 'Protocol'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`} 
+                onClick={() => setIsMenuOpen(false)}
+                className="text-4xl font-serif text-[#1a1a1a] hover:text-[#C5A059] transition-colors"
+              >
+                {item}
+              </a>
+            ))}
+            <a 
+              href="https://meetings-ap1.hubspot.com/felipe" 
+              target="_blank"
+              className="mt-4 px-8 py-4 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-widest"
+            >
+              Audit My System
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section */}
-      <section id="hero" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
+      <section id="origins" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
           <div className="lg:col-span-10 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-10 overflow-hidden">
@@ -97,7 +183,7 @@ const App: React.FC = () => {
               </span>
             </div>
 
-            <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tight text-[#1a1a1a] mb-10">
+            <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10">
               <div className="overflow-hidden">
                 <span className="block reveal-text">Not an Agency.</span>
               </div>
@@ -118,7 +204,7 @@ const App: React.FC = () => {
                 <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
               </a>
 
-              <a href="#services" className="relative group px-8 py-5 flex items-center gap-3">
+              <a href="#architecture" className="relative group px-8 py-5 flex items-center gap-3">
                 <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] group-hover:text-[#C5A059] transition-colors duration-300">See The Engine</span>
                 <ArrowRight className="w-4 h-4 text-[#1a1a1a] group-hover:translate-y-1 group-hover:text-[#C5A059] transition-all duration-300 rotate-90" />
                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-black/20 group-hover:bg-[#C5A059] transition-colors duration-300"></span>
@@ -163,8 +249,10 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Bento Grid Section */}
-      <BentoGrid onServiceClick={handleServiceClick} />
+      {/* Architecture (Bento) Section */}
+      <section id="architecture">
+        <BentoGrid onServiceClick={handleServiceClick} />
+      </section>
 
       {/* Philosophy Section */}
       <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-white/5">
@@ -234,7 +322,6 @@ const App: React.FC = () => {
                 <div className="absolute top-[-5px] left-[-5px] md:left-0 w-2.5 h-2.5 bg-[#1a1a1a] rounded-full group-hover:bg-[#C5A059] transition-colors duration-300 z-20"></div>
                 <div className="flex flex-col h-full justify-between gap-6">
                   <div>
-                    {/* UPDATED: Phase label changed to Gold for architectural prominence */}
                     <span className="font-mono text-xs text-[#C5A059]/80 mb-3 block group-hover:text-[#C5A059] transition-colors tracking-widest uppercase">{step.phase}</span>
                     <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:translate-x-1 transition-transform duration-300">{step.title}</h3>
                     <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{step.text}</p>
@@ -266,7 +353,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="w-full bg-[#1a1a1a] text-[#FFF2EC] border-t border-white/10 relative z-30 content-layer pt-32 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden">
+      <footer id="footer" className="w-full bg-[#1a1a1a] text-[#FFF2EC] border-t border-white/10 relative z-30 content-layer pt-32 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
         <div className="max-w-[1600px] mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-20 mb-20">
@@ -297,8 +384,8 @@ const App: React.FC = () => {
             <div>
               <span className="font-mono text-[10px] text-white/30 mb-8 block tracking-widest">/ INDEX</span>
               <ul className="space-y-4">
-                <li><a href="#hero" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Origins</a></li>
-                <li><a href="#services" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Architecture</a></li>
+                <li><a href="#origins" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Origins</a></li>
+                <li><a href="#architecture" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Architecture</a></li>
                 <li><a href="#protocol" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Protocol</a></li>
               </ul>
             </div>
@@ -321,7 +408,7 @@ const App: React.FC = () => {
             <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
             <div className="flex gap-6 mt-4 md:mt-0">
               <span>LATENCY: 8ms</span>
-              <span>BUILD: v2.8.2</span>
+              <span>BUILD: v2.9.1</span>
             </div>
           </div>
         </div>

@@ -24,7 +24,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   ];
 
   return (
-    <section id="services" className="relative h-screen max-h-[1000px] min-h-[850px] py-12 px-6 lg:px-12 bg-[#FFF2EC] overflow-hidden flex flex-col content-layer">
+    <section id="services" className="relative h-screen max-h-[900px] min-h-[850px] py-12 px-6 lg:px-12 bg-[#FFF2EC] overflow-hidden flex flex-col content-layer">
       <div className="max-w-screen-2xl mx-auto w-full h-full flex flex-col">
         {/* Header Area */}
         <div className="flex justify-between items-end mb-8 shrink-0">
@@ -86,7 +86,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                 >
                   <div className="flex justify-between items-start z-10">
                     <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#C5A059]' : 'opacity-30'}`}>0{idx + 1}</span>
-                    {/* Gold Down Arrow as requested */}
                     <motion.div 
                       animate={isActive ? { y: [0, 6, 0] } : {}}
                       transition={{ repeat: Infinity, duration: 2 }}
@@ -116,7 +115,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                 'augmented-workforce': '04'
               };
               const displayLabel = labelMap[service.id];
-              const isNoArrow = service.id === 'control-tower'; // 07 no arrow
+              const isNoArrow = service.id === 'control-tower';
 
               return (
                 <motion.div 
@@ -127,7 +126,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                 >
                   <div className="flex justify-between items-start z-10">
                     <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#C5A059]' : 'opacity-30'}`}>{displayLabel}</span>
-                    {/* Gold Left Arrow for 04, 05, 06 */}
                     {!isNoArrow && (
                       <motion.div 
                         animate={isActive ? { x: [0, -6, 0] } : {}}

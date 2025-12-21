@@ -14,6 +14,7 @@
         --bg: #FFF2EC;
         --ink: #1a1a1a;
         --signal-red: #E21E3F;
+        --gold: #C5A059;
       }
       body {
         font-family: 'Inter', sans-serif;
@@ -24,6 +25,7 @@
       }
       h1, h2, h3, h4, .font-serif {
         font-family: 'Cormorant Garamond', serif;
+        letter-spacing: -0.04em;
       }
       
       ::selection { background-color: var(--ink); color: var(--bg); }
@@ -32,7 +34,7 @@
       .reveal-text {
         transform: translateY(120%);
         opacity: 0;
-        animation: slideUp 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        animation: slideUp 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
       }
 
       @keyframes slideUp {
@@ -43,7 +45,8 @@
       .animate-fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.8s ease forwards; }
       @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
 
-      .animate-extend-line { width: 0; animation: extendLine 1s ease forwards; }
+      /* Mechanical line growth - slower and more deliberate */
+      .animate-extend-line { width: 0; animation: extendLine 3.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
       @keyframes extendLine { to { width: 4rem; } }
 
       #geometric-container {
@@ -54,7 +57,11 @@
 
       .content-layer { position: relative; z-index: 10; }
 
-      .nav-link { position: relative; display: inline-block; }
+      .nav-link { 
+        position: relative; 
+        display: inline-block; 
+        transition: color 0.5s ease;
+      }
       .nav-link::before {
         content: ''; position: absolute;
         width: 100%; height: 1px;

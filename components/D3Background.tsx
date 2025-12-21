@@ -21,7 +21,7 @@ const D3Background: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
 
-    // Initial mouse state
+    // Initial mouse state for explosion phase
     const mouse = { x: width / 2, y: height / 2 };
     const onMouseMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
@@ -61,7 +61,7 @@ const D3Background: React.FC = () => {
       .attr("opacity", 0.3);
 
     const startFloatingPhase = (survivors: any[]) => {
-      // PERFORMANCE: Remove mouse interaction after settling to avoid background drag on main UI
+      // Remove mouse interaction after settling to avoid drag on UI
       window.removeEventListener('mousemove', onMouseMove);
       
       linkSelection.remove();
@@ -73,20 +73,24 @@ const D3Background: React.FC = () => {
       });
 
       const sim = d3.forceSimulation(survivors)
-        // POLISH: Increased charge force for better spacing
         .force("charge", d3.forceManyBody().strength(-30))
         .velocityDecay(0.4)
         .on("tick", () => {
+          const elapsed = performance.now();
+          survivors.forEach(d => {
+            // High-end sinusoidal drift for a living background
+            d.x += Math.sin(elapsed * 0.001 + d.id) * 0.15;
+            d.y += Math.cos(elapsed * 0.0012 + d.id) * 0.15;
+          });
           svg.selectAll("circle")
             .attr("cx", (d: any) => d.x)
             .attr("cy", (d: any) => d.y)
-            .attr("opacity", 0.08); // Reduced to 0.08 for maximum hero text contrast
+            .attr("opacity", 0.15); // Increased presence for architectural clarity
         });
     };
 
     const explosionTimer = d3.timer((elapsed) => {
       nodes.forEach(d => {
-        // Slight mouse attraction during explosion phase
         const dx = mouse.x - (width / 2 + Math.cos(d.angle) * d.dist);
         const dy = mouse.y - (height / 2 + Math.sin(d.angle) * d.dist);
         const distToMouse = Math.sqrt(dx * dx + dy * dy);
