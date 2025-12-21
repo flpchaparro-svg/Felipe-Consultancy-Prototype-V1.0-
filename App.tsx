@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BentoGrid from './components/BentoGrid';
 import Modal from './components/Modal';
 import D3Background from './components/D3Background';
+import TheArchitect from './components/TheArchitect';
+import EvidenceVault from './components/EvidenceVault';
 import { ServiceDetail } from './types';
 import { Menu, X, ArrowRight, ArrowUpRight, AlertTriangle, Layers, Clock, EyeOff, Microscope, Palette, Briefcase } from 'lucide-react';
 
@@ -14,6 +16,7 @@ const App: React.FC = () => {
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrambleText, setScrambleText] = useState("STRATEGIST");
+  const [isArchitectTarget, setIsArchitectTarget] = useState(false);
   const [deploymentCounter, setDeploymentCounter] = useState(13.51);
 
   useEffect(() => {
@@ -28,6 +31,9 @@ const App: React.FC = () => {
     const scrambleInterval = setInterval(() => {
       roleIndex = (roleIndex + 1) % roles.length;
       const target = roles[roleIndex];
+      
+      setIsArchitectTarget(target === "ARCHITECT");
+
       let iterations = 0;
       const interval = setInterval(() => {
         setScrambleText(prev => 
@@ -74,40 +80,39 @@ const App: React.FC = () => {
         
         {/* INTERACTIVE LOGO UNIT */}
         <a 
-          href="#origins" 
+          href="#hero" 
           className="flex items-center gap-3 group cursor-pointer"
           onMouseEnter={() => setIsLogoHovered(true)}
           onMouseLeave={() => setIsLogoHovered(false)}
         >
-          {/* FC LOGO: Bigger, Black, No Background */}
+          {/* FC LOGO: [FC) Badge style */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="font-mono text-2xl font-black text-[#1a1a1a] tracking-tighter"
+            transition={{ duration: 1.2, delay: 0.5 }}
+            className="font-mono text-xs font-bold border border-black px-2 py-0.5 bg-black text-[#FFF2EC]"
           >
-            [FC]
+            [FC)
           </motion.div>
 
           <div className="overflow-hidden flex items-center h-6">
             <motion.div
-              initial={{ x: -150, opacity: 0 }}
+              initial={{ x: -200, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              // 5s Delay to wait for the D3 explosion to settle
-              transition={{ delay: 5.0, duration: 1.5, ease: "circOut" }}
-              className="flex font-bold text-[11px] uppercase tracking-[0.25em] text-[#1a1a1a]"
+              transition={{ delay: 5.0, duration: 1.8, ease: "circOut" }}
+              className="flex font-bold text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]"
             >
               <span>Felipe</span>
               <AnimatePresence mode="wait">
                 <motion.span
                   key={isLogoHovered ? 'home' : 'name'}
-                  initial={{ y: 10, opacity: 0 }}
+                  initial={{ y: 12, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -10, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
+                  exit={{ y: -12, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                   className={`ml-2 transition-colors duration-300 ${isLogoHovered ? 'text-[#C5A059]' : ''}`}
                 >
-                  {isLogoHovered ? 'Home' : 'Chaparro'}
+                  {isLogoHovered ? 'Go Home' : 'Chaparro'}
                 </motion.span>
               </AnimatePresence>
             </motion.div>
@@ -116,7 +121,7 @@ const App: React.FC = () => {
 
         {/* DESKTOP MENU */}
         <div className="hidden md:flex items-center gap-12">
-          {['Origins', 'Architecture', 'Protocol'].map((item) => (
+          {['Origins', 'Architecture', 'Protocol', 'Evidence'].map((item) => (
             <a 
               key={item} 
               href={`#${item.toLowerCase()}`} 
@@ -148,7 +153,7 @@ const App: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="fixed inset-0 bg-[#FFF2EC]/95 backdrop-blur-xl z-[90] flex flex-col items-center justify-center gap-8 md:hidden"
           >
-            {['Origins', 'Architecture', 'Protocol'].map((item) => (
+            {['Origins', 'Architecture', 'Protocol', 'Evidence'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`} 
@@ -170,14 +175,14 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section id="origins" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
+      <section id="hero" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
           <div className="lg:col-span-10 flex flex-col justify-center">
             <div className="flex items-center gap-6 mb-10 overflow-hidden">
               <span className="h-[1px] w-16 bg-[#1a1a1a] animate-extend-line"></span>
               <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">
                 Business Growth 
-                <span className={`font-mono font-bold tracking-widest ml-2 transition-colors duration-500 ${scrambleText === "ARCHITECT" ? 'text-[#C5A059]' : 'text-[#E21E3F]'}`}>
+                <span className={`font-mono font-bold tracking-widest ml-2 ${isArchitectTarget ? 'text-[#C5A059]' : 'text-[#E21E3F]'}`}>
                   {scrambleText}
                 </span>
               </span>
@@ -204,7 +209,7 @@ const App: React.FC = () => {
                 <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
               </a>
 
-              <a href="#architecture" className="relative group px-8 py-5 flex items-center gap-3">
+              <a href="#origins" className="relative group px-8 py-5 flex items-center gap-3">
                 <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] group-hover:text-[#C5A059] transition-colors duration-300">See The Engine</span>
                 <ArrowRight className="w-4 h-4 text-[#1a1a1a] group-hover:translate-y-1 group-hover:text-[#C5A059] transition-all duration-300 rotate-90" />
                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-black/20 group-hover:bg-[#C5A059] transition-colors duration-300"></span>
@@ -213,6 +218,9 @@ const App: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Origins Section / The Architect */}
+      <TheArchitect />
 
       {/* Friction Audit Section */}
       <section id="process" className="w-full border-t border-black/10 relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
@@ -252,42 +260,6 @@ const App: React.FC = () => {
       {/* Architecture (Bento) Section */}
       <section id="architecture">
         <BentoGrid onServiceClick={handleServiceClick} />
-      </section>
-
-      {/* Philosophy Section */}
-      <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
-        <div className="max-w-[1600px] mx-auto relative">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
-            <div>
-              <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] mb-4 block">/ The Operator's Lens</span>
-              <h2 className="font-serif text-5xl md:text-6xl leading-[0.9] tracking-tight">
-                One Mind.<br />
-                Ten Men's <span className="italic text-white/40">Output.</span>
-              </h2>
-            </div>
-            <div className="max-w-xl lg:pt-4">
-              <p className="font-sans text-lg text-white/60 leading-relaxed mb-6">
-                How do I deliver agency-level results as a solo architect? I leverage advanced infrastructure. You get the output of a full team, for the cost of one expert.
-              </p>
-            </div>
-          </div>
-
-          <div className="group/grid grid grid-cols-1 md:grid-cols-3 border-t border-white/10">
-            {[
-              { icon: Microscope, title: "The Specialist's Lens", label: "DIRECT ACCESS", text: "No account managers. No games of telephone. You work directly with the Architect. I diagnose the problem, and I build the solution." },
-              { icon: Palette, title: "The Artist's Lens", label: "RHYTHM & FLOW", text: "Technology without soul is friction. I design systems that feel human, intuitive, and flow with the natural rhythm of your business." },
-              { icon: Briefcase, title: "The Executive's Lens", label: "PHYSICS OF MONEY", text: "Architecture without ROI is just art. Every line of code I write is engineered to increase the Velocity of Capital through your business." }
-            ].map((item, idx) => (
-              <div key={idx} className="group p-10 md:p-12 transition-all duration-500 hover:bg-white/5 hover:!opacity-100 group-hover/grid:opacity-40 border-b border-white/10 md:border-b-0 md:border-r last:border-r-0">
-                <div className="mb-8 text-[#C5A059] transition-transform duration-500 group-hover:rotate-6 origin-bottom-left"><item.icon className="w-8 h-8" /></div>
-                <h3 className="font-serif text-3xl mb-3 text-white group-hover:translate-x-1 transition-transform">{item.title}</h3>
-                <p className="font-mono text-[10px] text-white/50 mb-6 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">{item.label}</p>
-                <p className="font-sans text-white/70 text-sm leading-relaxed">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* Protocol Section */}
@@ -333,22 +305,68 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="block mt-32 w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group transition-transform hover:-translate-y-1 duration-500">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none"></div>
-            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
-              <div className="text-center md:text-left">
-                <h3 className="font-serif text-4xl md:text-5xl mb-3">Ready to remove yourself from the machine?</h3>
-                <p className="font-sans text-white/60 text-lg">Current Capacity: 1 Slot Remaining for Q1.</p>
-              </div>
-              <div className="relative group/btn px-10 py-5 border border-[#FFF2EC] overflow-hidden transition-all duration-300">
-                <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-out"></div>
-                <span className="relative z-10 font-mono text-sm uppercase tracking-[0.2em] group-hover/btn:text-[#1a1a1a] transition-colors duration-300 flex items-center gap-3">
-                  Apply For Access <ArrowUpRight className="w-3 h-3" />
-                </span>
-              </div>
+      {/* Evidence Vault Section (The Proof) */}
+      <EvidenceVault />
+
+      {/* CTA Buffer Box (The Invitation) */}
+      <section className="bg-[#FFF2EC] py-20 px-6 md:px-12 lg:px-20 relative z-30">
+        <a 
+          href="https://meetings-ap1.hubspot.com/felipe" 
+          target="_blank" 
+          className="block w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group transition-transform hover:-translate-y-1 duration-500"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,_#C5A05920,_transparent)] pointer-events-none"></div>
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div className="text-center md:text-left">
+              <h3 className="font-serif text-4xl md:text-5xl mb-3">Ready to remove yourself from the machine?</h3>
+              <p className="font-sans text-white/60 text-lg">Current Capacity: 1 Slot Remaining for Q1.</p>
             </div>
-          </a>
+            <div className="relative group/btn px-10 py-5 border border-[#FFF2EC] overflow-hidden transition-all duration-300">
+              <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-out"></div>
+              <span className="relative z-10 font-mono text-sm uppercase tracking-[0.2em] group-hover/btn:text-[#1a1a1a] transition-colors duration-300 flex items-center gap-3">
+                Apply For Access <ArrowUpRight className="w-3 h-3" />
+              </span>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      {/* Philosophy Section (The Logic) */}
+      <section id="philosophy" className="w-full relative z-30 bg-[#1a1a1a] text-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
+        <div className="max-w-[1600px] mx-auto relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] mb-4 block">/ The Operator's Lens</span>
+              <h2 className="font-serif text-5xl md:text-6xl leading-[0.9] tracking-tight">
+                One Mind.<br />
+                Ten Men's <span className="italic text-white/40">Output.</span>
+              </h2>
+            </div>
+            <div className="max-w-xl lg:pt-4">
+              <p className="font-sans text-lg text-white/60 leading-relaxed mb-6">
+                How do I deliver agency-level results as a solo architect? I leverage advanced infrastructure. You get the output of a full team, for the cost of one expert.
+              </p>
+            </div>
+          </div>
+
+          <div className="group/grid grid grid-cols-1 md:grid-cols-3 border-t border-white/10">
+            {[
+              { icon: Microscope, title: "The Specialist's Lens", label: "DIRECT ACCESS", text: "No account managers. No games of telephone. You work directly with the Architect. I diagnose the problem, and I build the solution." },
+              { icon: Palette, title: "The Artist's Lens", label: "RHYTHM & FLOW", text: "Technology without soul is friction. I design systems that feel human, intuitive, and flow with the natural rhythm of your business." },
+              { icon: Briefcase, title: "The Executive's Lens", label: "PHYSICS OF MONEY", text: "Architecture without ROI is just art. Every line of code I write is engineered to increase the Velocity of Capital through your business." }
+            ].map((item, idx) => (
+              <div key={idx} className="group p-10 md:p-12 transition-all duration-500 hover:bg-white/5 hover:!opacity-100 group-hover/grid:opacity-40 border-b border-white/10 md:border-b-0 md:border-r last:border-r-0">
+                <div className="mb-8 text-[#C5A059] transition-transform duration-500 group-hover:rotate-6 origin-bottom-left"><item.icon className="w-8 h-8" /></div>
+                <h3 className="font-serif text-3xl mb-3 text-white group-hover:translate-x-1 transition-transform">{item.title}</h3>
+                <p className="font-mono text-[10px] text-white/50 mb-6 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">{item.label}</p>
+                <p className="font-sans text-white/70 text-sm leading-relaxed">{item.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -384,6 +402,7 @@ const App: React.FC = () => {
             <div>
               <span className="font-mono text-[10px] text-white/30 mb-8 block tracking-widest">/ INDEX</span>
               <ul className="space-y-4">
+                <li><a href="#hero" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Home</a></li>
                 <li><a href="#origins" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Origins</a></li>
                 <li><a href="#architecture" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Architecture</a></li>
                 <li><a href="#protocol" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Protocol</a></li>
@@ -408,7 +427,7 @@ const App: React.FC = () => {
             <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
             <div className="flex gap-6 mt-4 md:mt-0">
               <span>LATENCY: 8ms</span>
-              <span>BUILD: v2.9.1</span>
+              <span>BUILD: v2.9.6</span>
             </div>
           </div>
         </div>
