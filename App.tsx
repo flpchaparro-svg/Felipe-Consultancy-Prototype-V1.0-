@@ -184,7 +184,8 @@ const App: React.FC = () => {
 
           <button onClick={() => navigateTo('protocol')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'protocol' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Protocol</button>
           <button onClick={() => navigateTo('evidence')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'evidence' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Evidence</button>
-          <button onClick={() => navigateTo('contact')} className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors">Audit My System</button>
+          <button onClick={() => navigateTo('contact')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'contact' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Contact</button>
+          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors">Audit My System</a>
         </div>
 
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-[#1a1a1a] z-[310] relative">
@@ -224,7 +225,8 @@ const App: React.FC = () => {
 
               <button onClick={() => navigateTo('protocol')} className="block text-4xl font-serif text-[#1a1a1a]">Protocol</button>
               <button onClick={() => navigateTo('evidence')} className="block text-4xl font-serif text-[#1a1a1a]">Evidence</button>
-              <button onClick={() => navigateTo('contact')} className="block text-4xl font-serif text-[#E21E3F]">Audit My System</button>
+              <button onClick={() => navigateTo('contact')} className="block text-4xl font-serif text-[#1a1a1a]">Contact</button>
+              <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="block text-4xl font-serif text-[#E21E3F]">Audit My System</a>
             </div>
           </motion.div>
         )}
@@ -247,10 +249,10 @@ const App: React.FC = () => {
                     </h1>
                     <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-2xl border-l border-black/20 pl-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
                     <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '0.8s' }}>
-                      <button onClick={() => navigateTo('contact')} className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#C5A059]">
+                      <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#C5A059]">
                         <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
                         <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
-                      </button>
+                      </a>
                       <a href="#process" className="relative group px-8 py-5 flex items-center gap-3">
                         <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] group-hover:text-[#C5A059] transition-colors duration-300">Audit The Friction</span>
                         <ArrowRight className="w-4 h-4 text-[#1a1a1a] group-hover:translate-y-1 group-hover:text-[#C5A059] transition-all duration-300 rotate-90" />
@@ -306,7 +308,7 @@ const App: React.FC = () => {
                       <h2 className="font-serif text-5xl md:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tight">I don't do "6-Month Strategies."<br /><span className="italic text-[#1a1a1a]/40">Sprints.</span></h2>
                     </div>
                     <div className="hidden md:block pb-2 text-right">
-                      <p className="font-mono text-[10px] text-[#1a1a1a]/40 tracking-widest mb-1">AVG_DEPLOYMENT_TIME</p>
+                      <p className="font-mono text-[10px] text-[#1a1a1a]/40 trackingest mb-1">AVG_DEPLOYMENT_TIME</p>
                       <p className="font-sans text-4xl font-light text-[#1a1a1a]"><span className="tabular-nums transition-colors duration-300">{deploymentCounter.toFixed(2)}</span> DAYS</p>
                     </div>
                   </div>

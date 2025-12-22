@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
 interface GlobalFooterProps {
-  onNavigate: (view: 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'contact' | 'digital-revenue', sectionId?: string) => void;
+  onNavigate: (view: 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'digital-revenue', sectionId?: string) => void;
 }
 
 const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
@@ -23,8 +23,9 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="mt-16 md:mt-0">
-            <button 
-              onClick={() => onNavigate('contact')}
+            <a 
+              href="https://meetings-ap1.hubspot.com/felipe"
+              target="_blank"
               className="group flex flex-col items-start gap-1"
             >
               <div className="flex items-center gap-4 text-left">
@@ -33,7 +34,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
                 <ArrowRight className="w-6 h-6 text-white/40 group-hover:text-[#C5A059] group-hover:translate-x-2 transition-all duration-300" />
               </div>
               <span className="text-[10px] font-mono text-white/30 tracking-widest pl-8 group-hover:text-white/60 transition-colors">[ Direct Strategy Call with Felipe ]</span>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -84,15 +85,6 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
                 >
                   <span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> 
                   Evidence
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('contact')}
-                  className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"
-                >
-                  <span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> 
-                  Contact
                 </button>
               </li>
             </ul>
