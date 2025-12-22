@@ -6,7 +6,8 @@ import D3Background from './components/D3Background';
 import TheArchitect from './components/TheArchitect';
 import EvidenceVault from './components/EvidenceVault';
 import RevenueAudit from './components/RevenueAudit';
-import AboutPage from './components/AboutPage'; // Import the new page
+import AboutPage from './components/AboutPage'; 
+import ArchitecturePage from './components/ArchitecturePage'; // Integrated Architecture
 import { ServiceDetail } from './types';
 import { Menu, X, ArrowRight, ArrowUpRight, AlertTriangle, Layers, Clock, EyeOff, Microscope, Palette, Briefcase } from 'lucide-react';
 
@@ -20,8 +21,8 @@ const App: React.FC = () => {
   const [isArchitectTarget, setIsArchitectTarget] = useState(false);
   const [deploymentCounter, setDeploymentCounter] = useState(13.51);
 
-  // Added state to switch between Landing and About views
-  const [currentView, setCurrentView] = useState<'landing' | 'about'>('landing');
+  // Added state to switch between Landing, About, and Architecture views
+  const [currentView, setCurrentView] = useState<'landing' | 'about' | 'architecture'>('landing');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -121,7 +122,6 @@ const App: React.FC = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-12">
-          {/* Origins now triggers the About page view */}
           <a 
             href="#" 
             onClick={(e) => { e.preventDefault(); setCurrentView('about'); window.scrollTo(0, 0); }}
@@ -129,10 +129,18 @@ const App: React.FC = () => {
           >
             Origins
           </a>
-          {['Architecture', 'Protocol', 'Evidence'].map((item) => (
+          <a 
+            href="#" 
+            onClick={(e) => { e.preventDefault(); setCurrentView('architecture'); window.scrollTo(0, 0); }}
+            className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors"
+          >
+            Architecture
+          </a>
+          {['Protocol', 'Evidence'].map((item) => (
             <a 
               key={item} 
               href={`#${item.toLowerCase()}`} 
+              onClick={() => setCurrentView('landing')}
               className="nav-link text-[10px] uppercase tracking-widest text-[#1a1a1a]/70 hover:text-[#1a1a1a] transition-colors"
             >
               {item}
@@ -166,11 +174,18 @@ const App: React.FC = () => {
             >
               Origins
             </a>
-            {['Architecture', 'Protocol', 'Evidence'].map((item) => (
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); setCurrentView('architecture'); setIsMenuOpen(false); window.scrollTo(0, 0); }}
+              className="text-4xl font-serif text-[#1a1a1a] hover:text-[#C5A059] transition-colors"
+            >
+              Architecture
+            </a>
+            {['Protocol', 'Evidence'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`} 
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => { setIsMenuOpen(false); setCurrentView('landing'); }}
                 className="text-4xl font-serif text-[#1a1a1a] hover:text-[#C5A059] transition-colors"
               >
                 {item}
@@ -288,7 +303,7 @@ const App: React.FC = () => {
             {/* SECTION 4: REVENUE AUDIT QUIZ */}
             <RevenueAudit />
 
-            {/* SECTION 5: ARCHITECTURE */}
+            {/* SECTION 5: ARCHITECTURE (BENTO GRID) */}
             <section id="architecture">
               <BentoGrid onServiceClick={handleServiceClick} />
             </section>
@@ -296,7 +311,7 @@ const App: React.FC = () => {
             {/* SECTION 6: EVIDENCE VAULT */}
             <EvidenceVault />
 
-            {/* SECTION 7: THE ARCHITECT */}
+            {/* SECTION 7: THE ARCHITECT (Origins Summary) */}
             <TheArchitect />
 
             {/* SECTION 8: PROTOCOL */}
@@ -345,7 +360,7 @@ const App: React.FC = () => {
               </div>
             </section>
 
-            {/* SECTION 9: CTA BUFFER */}
+            {/* SECTION 9: CTA BUFFER (RESTORED) */}
             <section className="bg-[#FFF2EC] py-20 px-6 md:px-12 lg:px-20 relative z-30">
               <a 
                 href="https://meetings-ap1.hubspot.com/felipe" 
@@ -368,7 +383,7 @@ const App: React.FC = () => {
               </a>
             </section>
 
-            {/* SECTION 10: PHILOSOPHY */}
+            {/* SECTION 10: PHILOSOPHY (RESTORED) */}
             <section id="philosophy" className="w-full relative z-30 bg-[#FFF2EC] text-[#1a1a1a] content-layer py-32 px-6 md:px-12 lg:px-20 overflow-hidden border-t border-black/5">
               <div className="max-w-[1600px] mx-auto relative">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
@@ -403,13 +418,13 @@ const App: React.FC = () => {
               </div>
             </section>
 
-            {/* FOOTER */}
+            {/* SECTION 11: FOOTER (RESTORED) */}
             <footer id="footer" className="w-full bg-[#1a1a1a] text-[#FFF2EC] border-t border-white/10 relative z-30 content-layer pt-32 pb-12 px-6 md:px-12 lg:px-20 overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent pointer-events-none"></div>
               <div className="max-w-[1600px] mx-auto relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-20 mb-20">
                   <div className="max-w-2xl">
-                    <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block">/ TRANSMISSION_END</span>
+                    <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase">/ TRANSMISSION_END</span>
                     <h2 className="font-serif text-5xl md:text-8xl leading-[0.85] mb-8">Are we a<br /><span className="italic text-white/40">match?</span></h2>
                     <div className="flex items-center gap-4 mt-8">
                       <div className="relative w-2 h-2">
@@ -437,8 +452,8 @@ const App: React.FC = () => {
                     <ul className="space-y-4">
                       <li><a href="#hero" onClick={(e) => { e.preventDefault(); setCurrentView('landing'); window.scrollTo(0, 0); }} className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Home</a></li>
                       <li><a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('about'); window.scrollTo(0, 0); }} className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Origins</a></li>
-                      <li><a href="#architecture" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Architecture</a></li>
-                      <li><a href="#protocol" className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Protocol</a></li>
+                      <li><a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('architecture'); window.scrollTo(0, 0); }} className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Architecture</a></li>
+                      <li><a href="#protocol" onClick={() => { setCurrentView('landing'); }} className="group flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#C5A059]">&gt;</span> Protocol</a></li>
                     </ul>
                   </div>
                   <div>
@@ -460,14 +475,16 @@ const App: React.FC = () => {
                   <span>© 2025 Felipe Chaparro. All Systems Nominal.</span>
                   <div className="flex gap-6 mt-4 md:mt-0">
                     <span>LATENCY: 8ms</span>
-                    <span>BUILD: v3.3.0</span>
+                    <span>BUILD: v4.0.1</span>
                   </div>
                 </div>
               </div>
             </footer>
           </motion.div>
-        ) : (
+        ) : currentView === 'about' ? (
           <AboutPage key="about" onBack={() => setCurrentView('landing')} />
+        ) : (
+          <ArchitecturePage key="architecture" onBack={() => setCurrentView('landing')} />
         )}
       </AnimatePresence>
 
