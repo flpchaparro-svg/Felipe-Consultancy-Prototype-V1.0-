@@ -281,7 +281,12 @@ const App: React.FC = () => {
                     </div>
                   ))}
                   <div className="col-span-3 pt-6 border-t border-black/5 mt-2">
-                    <button onClick={() => navigateTo('architecture')} className="group flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-black/40 hover:text-black transition-colors">View Full Infrastructure Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" /></button>
+                    <button 
+                      onClick={() => navigateTo('architecture')} 
+                      className="group flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.3em] text-[#E21E3F] hover:opacity-70 transition-all"
+                    >
+                      View Full Infrastructure Map <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </button>
                   </div>
                 </motion.div>
               )}
@@ -318,7 +323,7 @@ const App: React.FC = () => {
                     </div>
                     <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10">
                       <div className="overflow-hidden"><span className="block reveal-text">Not an Agency.</span></div>
-                      <div className="overflow-hidden"><span className="block reveal-text" style={{ animationDelay: '0.1s' }}>A <span className="liquid-gold-text italic">Revenue Engine.</span></span></div>
+                      <div className="overflow-hidden"><span className="block reveal-text" style={{ animationDelay: '0.1s' }}>A <span className="text-[#1a1a1a] italic">Revenue Engine.</span></span></div>
                     </h1>
                     <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-2xl border-l border-black/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
                     <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '1s' }}>
