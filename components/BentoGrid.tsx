@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
@@ -9,6 +8,17 @@ import ViewportViz from './ViewportViz';
 interface BentoGridProps {
   onServiceClick: (service: ServiceDetail) => void;
 }
+
+const TechnicalLabel: React.FC<{ active: boolean }> = ({ active }) => {
+  // Prestige: coordinates that jitter on hover
+  const coords = `LAT: ${Math.floor(Math.random() * 90)}.02 // LON: ${Math.floor(Math.random() * 180)}.24`;
+  
+  return (
+    <div className={`font-mono text-[8px] uppercase tracking-[0.2em] transition-all duration-500 ${active ? 'text-[#C5A059] animate-jitter' : 'text-black/50 group-hover:text-black/70 group-hover:animate-jitter'}`}>
+      {coords}
+    </div>
+  );
+};
 
 const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   const [activeId, setActiveId] = useState<string>(SERVICES[0].id);
@@ -54,12 +64,16 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         </div>
 
         <div className="flex-1 grid grid-cols-12 grid-rows-6 gap-4 overflow-hidden">
+          {/* Main Visualizer - Added Vignette */}
           <div className="col-span-12 lg:col-span-8 row-span-4 relative border border-black/10 overflow-hidden bg-[#1a1a1a] shadow-2xl">
             <ViewportViz type={activeService.visualPrompt} />
             
+            {/* VIGNETTE OVERLAY */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,transparent_30%,rgba(0,0,0,0.8)_110%)] z-10" />
+            
             <div className="absolute top-6 left-6 flex items-center gap-3 z-20">
-              <div className="w-2 h-2 rounded-full bg-[#E21E3F] animate-pulse" />
-              <span className="text-[10px] font-mono text-white/40 tracking-[0.3em] uppercase">Architecture_Output_Buffer</span>
+              <div className="w-2 h-2 rounded-full bg-[#E21E3F] animate-pulse shadow-[0_0_8px_#E21E3F]" />
+              <span className="text-[10px] font-mono text-white/60 tracking-[0.3em] uppercase">Visual_Buffer_Live</span>
             </div>
             
             <div className="absolute bottom-10 left-10 right-10 z-20 pointer-events-none">
@@ -72,8 +86,8 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   transition={{ duration: 0.4, ease: "easeOut" }}
                   className="max-w-xl"
                 >
-                  <p className="text-[#E21E3F] text-[11px] font-mono tracking-[0.4em] uppercase font-bold mb-2">Protocol_{activeService.id.toUpperCase()}</p>
-                  <h3 className="text-white text-4xl lg:text-6xl font-serif mb-4 leading-none">{activeService.title}</h3>
+                  <p className="text-[#C5A059] text-[11px] font-mono tracking-[0.4em] uppercase font-bold mb-2">Protocol_{activeService.id.toUpperCase()}</p>
+                  <h3 className="text-white text-4xl lg:text-6xl font-serif mb-4 leading-none tracking-tight">{activeService.title}</h3>
                   <p className="text-white/60 text-lg lg:text-xl font-serif italic font-light leading-relaxed">
                     {activeService.description.split('.')[0]}.
                   </p>
@@ -90,22 +104,17 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   key={service.id}
                   onMouseEnter={() => setActiveId(service.id)}
                   onClick={() => onServiceClick(service)}
-                  className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 interactive-bento flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
+                  className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
                 >
                   <div className="flex justify-between items-start z-10">
-                    <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#C5A059]' : 'opacity-30'}`}>0{idx + 1}</span>
-                    <motion.div 
-                      animate={isActive ? { y: [0, 6, 0] } : {}}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    >
-                      <LucideIcons.ChevronDown className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-black opacity-10 group-hover:opacity-60'}`} />
-                    </motion.div>
+                    <div className="space-y-1">
+                       <span className={`text-[11px] font-mono font-bold tracking-widest block transition-opacity duration-500 ${isActive ? 'text-[#C5A059]' : 'opacity-50'}`}>0{idx + 1}</span>
+                       <TechnicalLabel active={isActive} />
+                    </div>
+                    <LucideIcons.ChevronDown className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-black opacity-20 group-hover:opacity-60'}`} />
                   </div>
                   <div className="z-10">
-                    <h4 className="text-2xl font-serif uppercase tracking-tight leading-tight mb-2">{service.title}</h4>
-                    <div className={`text-[9px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center gap-2 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-[#C5A059] opacity-0 group-hover:opacity-100'}`}>
-                      [ OPEN PROTOCOL ] <LucideIcons.ArrowRight className="w-3 h-3" />
-                    </div>
+                    <h4 className="text-2xl font-serif uppercase tracking-tight leading-tight mb-2 group-hover:text-[#C5A059] transition-colors">{service.title}</h4>
                   </div>
                 </motion.div>
               );
@@ -122,31 +131,22 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                 'augmented-workforce': '04'
               };
               const displayLabel = labelMap[service.id];
-              const isNoArrow = service.id === 'control-tower';
 
               return (
                 <motion.div 
                   key={service.id}
                   onMouseEnter={() => setActiveId(service.id)}
                   onClick={() => onServiceClick(service)}
-                  className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 interactive-bento flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
+                  className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
                 >
                   <div className="flex justify-between items-start z-10">
-                    <span className={`text-[11px] font-mono font-bold tracking-widest ${isActive ? 'text-[#C5A059]' : 'opacity-30'}`}>{displayLabel}</span>
-                    {!isNoArrow && (
-                      <motion.div 
-                        animate={isActive ? { x: [0, -6, 0] } : {}}
-                        transition={{ repeat: Infinity, duration: 2 }}
-                      >
-                        <LucideIcons.ChevronLeft className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-black opacity-10 group-hover:opacity-60'}`} />
-                      </motion.div>
-                    )}
+                    <div className="space-y-1">
+                      <span className={`text-[11px] font-mono font-bold tracking-widest block transition-opacity duration-500 ${isActive ? 'text-[#C5A059]' : 'opacity-50'}`}>{displayLabel}</span>
+                      <TechnicalLabel active={isActive} />
+                    </div>
                   </div>
                   <div className="z-10">
-                    <h4 className="text-xl font-serif uppercase tracking-tight leading-tight mb-2">{service.title}</h4>
-                    <div className={`text-[9px] font-mono font-bold uppercase tracking-[0.2em] transition-all duration-300 ${isActive ? 'text-[#C5A059] opacity-100 translate-x-1' : 'text-[#C5A059] opacity-0 group-hover:opacity-100'}`}>
-                      [ SPECS ]
-                    </div>
+                    <h4 className="text-xl font-serif uppercase tracking-tight leading-tight mb-2 group-hover:text-[#C5A059] transition-colors">{service.title}</h4>
                   </div>
                 </motion.div>
               );

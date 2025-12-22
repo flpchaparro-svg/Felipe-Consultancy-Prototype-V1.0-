@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import BentoGrid from './components/BentoGrid';
 import Modal from './components/Modal';
 import D3Background from './components/D3Background';
@@ -28,6 +28,50 @@ const TECH_STACK = [
   'Bland AI', 'Voiceflow', 'BigQuery', 'Python', 'Looker Studio', 'Klaviyo'
 ];
 
+const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function onMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  // Refined Lens Flare
+  const background = useTransform(
+    [mouseX, mouseY],
+    ([x, y]) => `radial-gradient(400px circle at ${x}px ${y}px, rgba(197, 160, 89, 0.1), transparent 80%)`
+  );
+
+  return (
+    <motion.div 
+      onMouseMove={onMouseMove}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: idx * 0.1, duration: 0.8 }}
+      className="group relative glass-card p-12 overflow-hidden cursor-default transition-all duration-700"
+    >
+      {/* Glow Border on Hover */}
+      <div className="absolute inset-0 border border-black/5 group-hover:border-[#C5A059]/30 transition-colors duration-700 pointer-events-none" />
+      
+      {/* Lens Flare Follow Effect */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10"
+        style={{ background }}
+      />
+
+      {/* Laser Cut Gold Line */}
+      <div className="absolute bottom-0 left-0 h-[1px] bg-[#C5A059] w-0 group-hover:w-full transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] z-20 shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+      
+      <span className="font-mono text-[9px] text-black/30 mb-8 block tracking-widest uppercase">NODE_ERR_0{item.id}</span>
+      <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:text-[#C5A059] transition-colors duration-500 relative z-20">{item.title}</h3>
+      <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed relative z-20">{item.text}</p>
+    </motion.div>
+  );
+};
+
 const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,14 +82,53 @@ const App: React.FC = () => {
   const [scrambleText, setScrambleText] = useState("STRATEGIST");
   const [isArchitectTarget, setIsArchitectTarget] = useState(false);
   const [deploymentCounter, setDeploymentCounter] = useState(13.51);
+  const [navVisible, setNavVisible] = useState(true);
 
   type ViewState = 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'pillar1' | 'pillar2' | 'pillar3' | 'pillar4' | 'pillar5' | 'pillar6' | 'pillar7' | 'contact';
   const [currentView, setCurrentView] = useState<ViewState>('landing');
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+  const { scrollY } = useScroll();
+  const scrollVelocity = useMotionValue(0);
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [1, 5], { clamp: false });
+
+  const carouselX = useMotionValue(0);
+  const isCarouselHovered = useRef(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() || 0;
+    const diff = latest - previous;
+    scrollVelocity.set(Math.abs(diff));
+
+    if (latest > previous && latest > 150) {
+      setNavVisible(false);
+    } else {
+      setNavVisible(true);
+    }
+    setScrolled(latest > 50);
+  });
+
+  useAnimationFrame((t, delta) => {
+    if (currentView !== 'landing') return;
     
+    // Variable Speed: Base speed + Scroll multiplier
+    let moveBy = 0.04 * delta;
+    moveBy *= Math.max(1, velocityFactor.get());
+    
+    // Slow down on hover for "Prestige" look
+    if (isCarouselHovered.current) {
+      moveBy *= 0.15;
+    }
+
+    const currentX = carouselX.get();
+    let nextX = currentX - moveBy;
+    
+    // Wrap at 50% (assuming tech stack is doubled)
+    if (nextX <= -50) nextX = 0;
+    carouselX.set(nextX);
+  });
+
+  useEffect(() => {
     const roles = ["STRATEGIST", "ARCHITECT", "ENGINEER"];
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let roleIndex = 0;
@@ -80,7 +163,6 @@ const App: React.FC = () => {
     }, 150);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       clearInterval(scrambleInterval);
       clearInterval(counterInterval);
     };
@@ -132,23 +214,34 @@ const App: React.FC = () => {
     ]}
   ];
 
+  const xPercent = useTransform(carouselX, (value) => `${value}%`);
+
   return (
     <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC] min-h-screen flex flex-col">
       <D3Background />
 
-      <nav className={`fixed top-0 w-full z-[300] px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 border-b ${scrolled || isArchHovered ? 'bg-[#FFF2EC]/95 backdrop-blur-md border-black/5 shadow-sm py-3' : 'border-transparent'}`} onMouseLeave={() => setIsArchHovered(false)}>
+      {/* SMART NAVIGATION BAR */}
+      <motion.nav 
+        initial={{ y: 0 }}
+        animate={{ y: navVisible ? 0 : -100 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed top-0 w-full z-[300] px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 ${scrolled || isArchHovered ? 'bg-[#FFF2EC]/95 backdrop-blur-md border-b border-black/5 shadow-sm py-3' : 'border-b border-transparent'}`} 
+        onMouseLeave={() => setIsArchHovered(false)}
+      >
         <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('landing'); }} className="flex items-center gap-3 group cursor-pointer" onMouseEnter={() => setIsLogoHovered(true)} onMouseLeave={() => setIsLogoHovered(false)}>
           <div className="font-mono text-xs font-bold border border-black px-2 py-0.5 bg-black text-[#FFF2EC]">[FC)</div>
           <div className="overflow-hidden flex items-center h-6">
-            <span className="flex font-bold text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]">Felipe<span className={`ml-2 transition-colors duration-300 ${isLogoHovered ? 'text-[#C5A059]' : ''}`}>{isLogoHovered ? 'Home' : 'Chaparro'}</span></span>
+            <span className={`flex font-bold text-[10px] uppercase tracking-[0.25em] transition-all duration-300 ${isLogoHovered ? 'logo-bloom' : 'text-[#1a1a1a]'}`}>
+              Felipe<span className="ml-2">{isLogoHovered ? 'Home' : 'Chaparro'}</span>
+            </span>
           </div>
         </a>
 
         <div className="hidden md:flex items-center gap-12">
-          <button onClick={() => navigateTo('about')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'about' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Origins</button>
+          <button onClick={() => navigateTo('about')} className={`nav-link text-[10px] uppercase tracking-[0.25em] transition-colors ${currentView === 'about' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Origins</button>
           
           <div className="relative" onMouseEnter={() => setIsArchHovered(true)}>
-            <button onClick={() => navigateTo('architecture')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors flex items-center gap-2 ${currentView === 'architecture' || currentView.startsWith('pillar') ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Architecture <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isArchHovered ? 'rotate-180' : ''}`} /></button>
+            <button onClick={() => navigateTo('architecture')} className={`nav-link text-[10px] uppercase tracking-[0.25em] transition-colors flex items-center gap-2 ${currentView === 'architecture' || currentView.startsWith('pillar') ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Architecture <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isArchHovered ? 'rotate-180' : ''}`} /></button>
 
             <AnimatePresence>
               {isArchHovered && (
@@ -161,7 +254,7 @@ const App: React.FC = () => {
                       </div>
                       <div className="space-y-3">
                         {system.items.map((item) => (
-                          <button key={item.id} onClick={() => navigateTo(item.id as ViewState)} className="block text-left font-serif text-lg leading-tight hover:text-[#C5A059] transition-colors">{item.name}</button>
+                          <button key={item.id} onClick={() => navigateTo(item.id as ViewState)} className="block text-left font-serif text-lg leading-tight hover:text-[#C5A059] transition-colors tracking-wide">{item.name}</button>
                         ))}
                       </div>
                     </div>
@@ -174,55 +267,16 @@ const App: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          <button onClick={() => navigateTo('protocol')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'protocol' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Protocol</button>
-          <button onClick={() => navigateTo('evidence')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'evidence' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Evidence</button>
-          <button onClick={() => navigateTo('contact')} className={`nav-link text-[10px] uppercase tracking-widest transition-colors ${currentView === 'contact' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Contact</button>
-          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="text-xs font-bold uppercase tracking-widest border-b border-[#E21E3F] pb-0.5 text-[#E21E3F] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors">Audit My System</a>
+          <button onClick={() => navigateTo('protocol')} className={`nav-link text-[10px] uppercase tracking-[0.25em] transition-colors ${currentView === 'protocol' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Protocol</button>
+          <button onClick={() => navigateTo('evidence')} className={`nav-link text-[10px] uppercase tracking-[0.25em] transition-colors ${currentView === 'evidence' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Evidence</button>
+          <button onClick={() => navigateTo('contact')} className={`nav-link text-[10px] uppercase tracking-[0.25em] transition-colors ${currentView === 'contact' ? 'text-[#C5A059]' : 'text-[#1a1a1a]/70 hover:text-[#1a1a1a]'}`}>Contact</button>
+          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="text-xs font-bold uppercase tracking-[0.25em] border-b border-[#A31D33] pb-0.5 text-[#A31D33] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors">Audit My System</a>
         </div>
 
         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-[#1a1a1a] z-[310] relative">
           {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-      </nav>
-
-      {/* MOBILE MENU */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 bg-[#FFF2EC] z-[290] flex flex-col pt-32 px-12 md:hidden overflow-y-auto"
-          >
-            <div className="space-y-8 mb-12">
-              <button onClick={() => navigateTo('about')} className="block text-4xl font-serif text-[#1a1a1a]">Origins</button>
-              
-              <div>
-                <button onClick={() => navigateTo('architecture')} className="text-4xl font-serif text-[#1a1a1a] mb-6 flex items-center gap-4">
-                  Architecture <ChevronDown className="w-6 h-6" />
-                </button>
-                <div className="pl-6 space-y-6 border-l border-black/10">
-                  {archPillars.flatMap(s => s.items).map(item => (
-                    <button 
-                      key={item.id} 
-                      onClick={() => navigateTo(item.id as ViewState)}
-                      className="block text-xl font-serif text-black/60"
-                    >
-                      {item.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button onClick={() => navigateTo('protocol')} className="block text-4xl font-serif text-[#1a1a1a]">Protocol</button>
-              <button onClick={() => navigateTo('evidence')} className="block text-4xl font-serif text-[#1a1a1a]">Evidence</button>
-              <button onClick={() => navigateTo('contact')} className="block text-4xl font-serif text-[#1a1a1a]">Contact</button>
-              <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="block text-4xl font-serif text-[#E21E3F]">Audit My System</a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </motion.nav>
 
       <main className="flex-grow">
         <AnimatePresence mode="wait">
@@ -233,11 +287,11 @@ const App: React.FC = () => {
                   <div className="lg:col-span-10 flex flex-col justify-center">
                     <div className="flex items-center gap-6 mb-10 overflow-hidden">
                       <span className="h-[1px] w-16 bg-[#1a1a1a] animate-extend-line"></span>
-                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">Business Growth <span className={`font-mono font-bold tracking-widest ml-2 ${isArchitectTarget ? 'text-[#C5A059]' : 'text-[#E21E3F]'}`}>{scrambleText}</span></span>
+                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">Business Growth <span className={`font-mono font-bold tracking-widest ml-2 transition-colors duration-700 ${isArchitectTarget ? 'text-[#C5A059]' : 'text-[#A31D33]'}`}>{scrambleText}</span></span>
                     </div>
                     <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10">
                       <div className="overflow-hidden"><span className="block reveal-text">Not an Agency.</span></div>
-                      <div className="overflow-hidden"><span className="block reveal-text" style={{ animationDelay: '0.1s' }}>A Revenue <span className="text-[#C5A059] italic">Engine.</span></span></div>
+                      <div className="overflow-hidden"><span className="block reveal-text" style={{ animationDelay: '0.1s' }}>A <span className="liquid-gold-text italic">Revenue Engine.</span></span></div>
                     </h1>
                     <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-2xl border-l border-black/20 pl-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
                     <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '0.8s' }}>
@@ -255,20 +309,19 @@ const App: React.FC = () => {
                 </div>
               </section>
 
-              {/* TECHNOLOGY CAROUSEL */}
-              <div className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30">
+              {/* TECHNOLOGY CAROUSEL - Prestige Edges & Variable Speed */}
+              <div 
+                className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30 carousel-mask"
+                onMouseEnter={() => isCarouselHovered.current = true}
+                onMouseLeave={() => isCarouselHovered.current = false}
+              >
                 <div className="flex whitespace-nowrap">
                   <motion.div 
                     className="flex gap-20 items-center pr-20"
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ 
-                      ease: "linear", 
-                      duration: 35, 
-                      repeat: Infinity 
-                    }}
+                    style={{ x: xPercent }}
                   >
                     {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
-                      <span key={i} className="font-mono text-[10px] font-bold tracking-[0.4em] uppercase grayscale opacity-40">
+                      <span key={i} className="font-mono text-[10px] font-bold tracking-[0.4em] uppercase grayscale opacity-40 hover:opacity-100 transition-opacity duration-300">
                         {tech}
                       </span>
                     ))}
@@ -276,27 +329,24 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <section id="process" className="w-full border-t border-black/10 relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
+              {/* FRICTION AUDIT - Prestige Glassmorphism */}
+              <section id="process" className="w-full relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
                 <div className="max-w-[1600px] mx-auto">
                   <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-12">
                     <div className="max-w-xl">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block">/ The Friction Audit</span>
+                      <span className="font-mono text-xs uppercase tracking-widest text-[#A31D33] mb-4 block">/ The Friction Audit</span>
                       <h2 className="font-serif text-5xl font-light mb-6">Is Your Business Suffering from <span className="italic">Operational Drag?</span></h2>
                       <p className="font-sans text-lg font-light text-[#1a1a1a]/70">Growth doesn't need more traffic. It needs less friction.</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-t border-l border-black/10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {[
-                      { id: '01', title: 'Revenue Leakage', text: 'Demand is expiring in the inbox. Your current website is a brochure, not a capture mechanism.' },
-                      { id: '02', title: 'Data Silos', text: 'Sales uses one tool. Ops uses another. Finance lives in Excel. Nothing talks to each other.' },
-                      { id: '03', title: 'The Busywork Trap', text: 'You are wasting 40% of your week on manual data entry. You are playing COO instead of CEO.' },
-                      { id: '04', title: 'Flying Blind', text: 'You manage by gut feeling because you can\'t see the numbers. You don\'t know your LTV in real-time.' }
+                      { id: '101', title: 'Revenue Leakage', text: 'Demand is expiring in the inbox. Your current website is a brochure, not a capture mechanism.' },
+                      { id: '102', title: 'Data Silos', text: 'Sales uses one tool. Ops uses another. Finance lives in Excel. Nothing talks to each other.' },
+                      { id: '103', title: 'The Busywork Trap', text: 'You are wasting 40% of your week on manual data entry. You are playing COO instead of CEO.' },
+                      { id: '104', title: 'Flying Blind', text: 'You manage by gut feeling because you can\'t see the numbers. You don\'t know your LTV in real-time.' }
                     ].map((item, idx) => (
-                      <div key={idx} className="group relative border-b border-r border-black/10 p-12 hover:bg-white transition-colors duration-300">
-                        <div className="absolute bottom-0 left-0 h-1 bg-[#1a1a1a] w-0 group-hover:w-full transition-all duration-700 ease-out"></div>
-                        <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a]">{item.title}</h3>
-                        <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">{item.text}</p>
-                      </div>
+                      <FrictionCard key={idx} item={item} idx={idx} />
                     ))}
                   </div>
                 </div>
@@ -311,7 +361,7 @@ const App: React.FC = () => {
                 <div className="max-w-[1600px] mx-auto relative z-10">
                   <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-black/10 pb-8">
                     <div className="max-w-2xl">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block">/ Execution Velocity</span>
+                      <span className="font-mono text-xs uppercase tracking-widest text-[#A31D33] mb-4 block">/ Execution Velocity</span>
                       <h2 className="font-serif text-5xl md:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tight">I don't do "6-Month Strategies."<br /><span className="italic text-[#1a1a1a]/40">Sprints.</span></h2>
                     </div>
                     <div className="hidden md:block pb-2 text-right">
@@ -369,7 +419,7 @@ const App: React.FC = () => {
                     ].map((item, idx) => (
                       <div key={idx} className="group p-10 md:p-12 border-b border-black/10 md:border-b-0 md:border-r last:border-r-0 hover:bg-white transition-colors duration-500">
                         <div className="mb-8 text-[#C5A059] transition-transform duration-500 group-hover:rotate-6 origin-bottom-left"><item.icon className="w-8 h-8" /></div>
-                        <h3 className="font-serif text-3xl mb-3 text-[#1a1a1a] group-hover:translate-x-1 transition-transform">{item.title}</h3>
+                        <h3 className="font-serif text-3xl mb-3 text-[#1a1a1a] group-hover:translate-x-1 transition-transform tracking-tight">{item.title}</h3>
                         <p className="font-mono text-[10px] text-black/50 mb-6 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">{item.label}</p>
                         <p className="font-sans text-[#1a1a1a]/70 text-sm leading-relaxed">{item.text}</p>
                       </div>

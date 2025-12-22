@@ -1,29 +1,132 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Play, ArrowUpRight, X, Activity } from 'lucide-react';
 
 const CASE_STUDIES = [
   {
     id: 'alpha',
     client: 'SaaS Enterprise',
-    result: '+42% Conv',
+    result: 42,
+    suffix: '% Conv',
     tag: 'Capture_Core',
     stack: ['OpenAI', 'Make.com', 'React'],
-    videoUrl: '#', 
     description: 'Replaced a manual lead triage team with autonomous AI agents. Zero leakage across 14,000 monthly inquiries.',
-    metrics: ['Latency: <200ms', 'Accuracy: 99.4%', 'ROI: 12x']
+    metrics: ['Latency: <200ms', 'Accuracy: 99.4%', 'ROI: 12x'],
+    bg: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1200'
   },
   {
     id: 'beta',
     client: 'Fintech Series A',
-    result: '-30hr/wk',
+    result: 30,
+    suffix: 'hr/wk',
     tag: 'Digital_Labor',
     stack: ['Anthropic', 'Node.js', 'AWS'],
-    videoUrl: '#',
     description: 'Automated the end-to-end data reconciliation engine, removing human friction from the finance stack.',
-    metrics: ['Error Rate: 0%', 'Uptime: 100%', 'Saved: 120hrs/mo']
+    metrics: ['Error Rate: 0%', 'Uptime: 100%', 'Saved: 120hrs/mo'],
+    bg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200'
   }
 ];
+
+const CountingMetric: React.FC<{ value: number, suffix: string }> = ({ value, suffix }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        let start = 0;
+        const end = value;
+        const duration = 1500;
+        const stepTime = Math.abs(Math.floor(duration / end));
+        const timer = setInterval(() => {
+          start += 1;
+          setDisplayValue(start);
+          if (start >= end) clearInterval(timer);
+        }, stepTime);
+      }
+    }, { threshold: 0.5 });
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return (
+    <div ref={ref} className="text-6xl font-sans font-light text-[#C5A059] mb-6 relative z-10 tabular-nums">
+      +{displayValue}{suffix}
+    </div>
+  );
+};
+
+const EvidenceCard: React.FC<{ study: typeof CASE_STUDIES[0], onOpen: (s: any) => void }> = ({ study, onOpen }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), { damping: 20, stiffness: 300 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), { damping: 20, stiffness: 300 });
+
+  // Parallax background movement (opposite direction)
+  const bgX = useTransform(x, [-0.5, 0.5], [20, -20]);
+  const bgY = useTransform(y, [-0.5, 0.5], [20, -20]);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = (mouseX / width) - 0.5;
+    const yPct = (mouseY / height) - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  }
+
+  function handleMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  return (
+    <motion.div 
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+      whileHover={{ y: -8 }}
+      onClick={() => onOpen(study)}
+      className="group cursor-pointer bg-[#1a1a1a] border border-white/5 p-12 relative overflow-hidden transition-all duration-500 shadow-2xl"
+    >
+      {/* 3D Parallax Background */}
+      <motion.div 
+        style={{ x: bgX, y: bgY, scale: 1.2 }}
+        className="absolute inset-0 z-0 pointer-events-none opacity-20 grayscale group-hover:grayscale-0 transition-all duration-700"
+      >
+        <img src={study.bg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-[#1a1a1a]/80 group-hover:bg-[#1a1a1a]/40 transition-colors" />
+      </motion.div>
+
+      <div className="flex justify-between items-start mb-12 relative z-10" style={{ transform: 'translateZ(40px)' }}>
+        <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.4em] uppercase font-bold">{study.tag}</span>
+        <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#C5A059] group-hover:text-[#C5A059] transition-all duration-300">
+          <Play className="w-4 h-4 fill-current" />
+        </div>
+      </div>
+
+      <h3 className="font-serif text-4xl text-[#FFF2EC] mb-4 relative z-10" style={{ transform: 'translateZ(60px)' }}>{study.client}</h3>
+      <CountingMetric value={study.result} suffix={study.suffix} />
+      
+      <div className="flex flex-wrap gap-2 mb-8 relative z-10" style={{ transform: 'translateZ(30px)' }}>
+        {study.stack.map(tech => (
+          <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/50 uppercase tracking-widest group-hover:border-[#C5A059]/30 group-hover:text-[#FFF2EC] transition-colors">
+            {tech}
+          </span>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors relative z-10">
+        View System Specs <ArrowUpRight className="w-3 h-3" />
+      </div>
+    </motion.div>
+  );
+};
 
 const EvidenceVault: React.FC = () => {
   const [activeStudy, setActiveStudy] = useState<typeof CASE_STUDIES[0] | null>(null);
@@ -33,61 +136,18 @@ const EvidenceVault: React.FC = () => {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div>
-            <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">/ THE EVIDENCE VAULT</span>
+            <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">/ The Evidence Vault</span>
             <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-none">System <span className="italic text-black/20">Deployments.</span></h2>
           </div>
           <div className="flex items-center gap-3 font-mono text-black/30 text-[10px] uppercase tracking-widest text-right">
             <Activity className="w-3 h-3 text-[#C5A059]" />
-            LIVE_LOGS // VERIFIED_RESULTS
+            LIVE_LOGS // SYNC_ACTIVE
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 perspective-[2000px]">
           {CASE_STUDIES.map((study) => (
-            <motion.div 
-              key={study.id}
-              whileHover={{ 
-                y: -8, 
-                boxShadow: "0 30px 60px -12px rgba(197, 160, 89, 0.15)",
-                transition: { duration: 0.4 }
-              }}
-              onClick={() => setActiveStudy(study)}
-              className="group cursor-pointer bg-[#1a1a1a] border border-white/5 p-12 relative overflow-hidden transition-all duration-500"
-            >
-              {/* Gold Scanline for the card - Yellow per guidelines */}
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              
-              <div className="flex justify-between items-start mb-12 relative z-10">
-                {/* Specific tags stay Red as requested */}
-                <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.4em] uppercase font-bold">{study.tag}</span>
-                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#C5A059] group-hover:text-[#C5A059] transition-all duration-300">
-                  <Play className="w-4 h-4 fill-current" />
-                </div>
-              </div>
-
-              <h3 className="font-serif text-4xl text-[#FFF2EC] mb-4 relative z-10">{study.client}</h3>
-              {/* Numbers are Yellow/Gold now */}
-              <div className="text-6xl font-sans font-light text-[#C5A059] mb-6 relative z-10 tabular-nums">
-                {study.result}
-              </div>
-              
-              {/* Silicon Proof Stack */}
-              <div className="flex flex-wrap gap-2 mb-8 relative z-10">
-                {study.stack.map(tech => (
-                  <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/50 uppercase tracking-widest group-hover:border-[#C5A059]/30 group-hover:text-[#FFF2EC] transition-colors">
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              {/* View System Specs is Yellow now */}
-              <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">
-                View System Specs <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </div>
-
-              {/* Decorative Corner gold bracket */}
-              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-[#C5A059]/0 group-hover:border-[#C5A059]/40 transition-all duration-500"></div>
-            </motion.div>
+            <EvidenceCard key={study.id} study={study} onOpen={setActiveStudy} />
           ))}
         </div>
       </div>
@@ -116,8 +176,8 @@ const EvidenceVault: React.FC = () => {
                     "{activeStudy.description}"
                   </p>
                   <div className="aspect-video bg-[#1a1a1a] flex items-center justify-center group relative cursor-pointer border border-black/10 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-[#C5A059]/10 to-transparent"></div>
-                    <span className="font-mono text-[10px] text-[#C5A059] animate-pulse tracking-[0.2em] relative z-10">[ INITIATE_SYSTEM_WALKTHROUGH ]</span>
+                    <img src={activeStudy.bg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                    <span className="font-mono text-[10px] text-[#C5A059] animate-pulse tracking-[0.2em] relative z-10">[ INITIATE_WALKTHROUGH ]</span>
                   </div>
                 </div>
                 

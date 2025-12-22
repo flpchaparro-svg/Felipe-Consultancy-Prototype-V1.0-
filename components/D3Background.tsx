@@ -3,6 +3,8 @@ import * as d3 from 'd3';
 
 const D3Background: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollVelocityRef = useRef(0);
+  const lastScrollPosRef = useRef(0);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -11,18 +13,21 @@ const D3Background: React.FC = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
     
-    // Clean up to prevent duplicates
     d3.select(container).selectAll('*').remove();
     const svg = d3.select(container).append("svg").attr("width", "100%").attr("height", "100%");
 
-    // FAST FADE: Ring vanishes by 350px scroll and stays hidden
     const handleScroll = () => {
-      const op = 1 - (window.scrollY / 350); 
-      if (container) container.style.opacity = Math.max(0, op).toString();
-    };
-    window.addEventListener('scroll', handleScroll);
+      const currentScroll = window.scrollY;
+      const diff = currentScroll - lastScrollPosRef.current;
+      // Aggressive scroll velocity capture for the "dragging" effect
+      scrollVelocityRef.current = diff * 0.4; 
+      lastScrollPosRef.current = currentScroll;
 
-    // Track mouse for the initial explosion pull
+      const op = 1 - (currentScroll / 350); 
+      if (container) container.style.opacity = Math.max(0.1, op).toString();
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     const mouse = { x: width / 2, y: height / 2 };
     const onMouseMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
@@ -30,20 +35,18 @@ const D3Background: React.FC = () => {
     };
     window.addEventListener('mousemove', onMouseMove);
 
-    // Initial Node Setup (120 nodes)
     const nodes = d3.range(120).map((i) => {
       const angle = Math.random() * 2 * Math.PI;
       return { 
         id: i, angle: angle, dist: Math.random() * 10,
         baseR: Math.random() * 12 + 4, speed: Math.random() * 0.5 + 0.2, 
-        isSurvivor: i < 22, // 22 particles form the permanent ring
+        isSurvivor: i < 22, 
         x: width / 2, y: height / 2,
-        ringRadius: 150 + Math.random() * 70, // Orbiting distance
+        ringRadius: 150 + Math.random() * 70, 
         rotSpeed: (Math.random() * 0.004 + 0.001) * (Math.random() > 0.5 ? 1 : -1) 
       } as any;
     });
 
-    // Create the geometric links
     const links: any[] = [];
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
@@ -66,11 +69,13 @@ const D3Background: React.FC = () => {
       .attr("fill", "#1a1a1a")
       .attr("opacity", 0);
 
-    // Fade in initially
     nodeSelection.transition().duration(1000).attr("opacity", (d: any) => d.isSurvivor ? 0.2 : 0.3);
 
-    // SINGLE UNIFIED TIMER: Prevents the "black flash"
     const mainTimer = d3.timer((elapsed) => {
+      // Decay scroll velocity smoothly
+      const velocity = scrollVelocityRef.current;
+      scrollVelocityRef.current *= 0.92;
+
       if (elapsed < 5000) {
         // --- PHASE 1: EXPLOSION ---
         nodes.forEach(d => {
@@ -79,13 +84,18 @@ const D3Background: React.FC = () => {
           const distToMouse = Math.sqrt(dx * dx + dy * dy);
           const pull = Math.max(0, 1 - distToMouse / 500) * 0.05;
 
+          // Dragging effect: scroll speed influences distance and angle
+          // Positive velocity (scrolling down) drags particles inward or pulls them along
+          const dragDist = velocity * 0.05;
+          const dragAngle = velocity * 0.0005;
+
           if (d.isSurvivor) {
-            if (d.dist < 200) d.dist += d.speed * 2.5;
-            else d.dist += 0.1;
+            if (d.dist < 200) d.dist += (d.speed) * 2.5 + Math.abs(dragDist);
+            else d.dist += 0.1 + dragDist;
           } else {
-            d.dist += d.speed * (elapsed * 0.06);
+            d.dist += (d.speed) * (elapsed * 0.06) + dragDist;
           }
-          d.angle += pull;
+          d.angle += pull + dragAngle;
           
           d.x = width / 2 + Math.cos(d.angle) * d.dist;
           d.y = height / 2 + Math.sin(d.angle) * d.dist;
@@ -112,16 +122,20 @@ const D3Background: React.FC = () => {
         // --- PHASE 2: SPINNING RING ---
         if (elapsed < 5050) {
           window.removeEventListener('mousemove', onMouseMove);
-          linkSelection.attr("opacity", 0); // Hide links
-          nodeSelection.filter((d: any) => !d.isSurvivor).attr("opacity", 0); // Hide non-survivors
+          linkSelection.attr("opacity", 0); 
+          nodeSelection.filter((d: any) => !d.isSurvivor).attr("opacity", 0); 
         }
 
         nodes.filter(d => d.isSurvivor).forEach(d => {
-          d.angle += d.rotSpeed; // Continuous Orbit
-          const targetX = (width / 2) + Math.cos(d.angle) * d.ringRadius;
-          const targetY = (height / 2) + Math.sin(d.angle) * d.ringRadius;
+          // Scroll velocity adds "rotational torque" to the ring
+          const torque = velocity * 0.0005;
+          d.angle += d.rotSpeed + torque; 
           
-          // Smoothly lock into orbit
+          // Shrink/Expand ring radius slightly with scroll velocity
+          const targetRadius = d.ringRadius + (velocity * 0.1);
+          const targetX = (width / 2) + Math.cos(d.angle) * targetRadius;
+          const targetY = (height / 2) + Math.sin(d.angle) * targetRadius;
+          
           d.x += (targetX - d.x) * 0.04;
           d.y += (targetY - d.y) * 0.04;
         });
@@ -129,7 +143,7 @@ const D3Background: React.FC = () => {
         nodeSelection.filter((d: any) => d.isSurvivor)
           .attr("cx", (d: any) => d.x)
           .attr("cy", (d: any) => d.y)
-          .attr("opacity", 0.15); // Stable Ring Presence
+          .attr("opacity", 0.15); 
       }
     });
 
