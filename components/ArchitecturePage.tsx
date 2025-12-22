@@ -16,7 +16,7 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigateP
       pillars: [
         { id: 'pillar1', name: 'Digital Revenue Architecture', desc: 'Engineering web engines for high-velocity demand capture.' },
         { id: 'pillar2', name: 'CRM Capture Core', desc: 'The central nervous system for unified data integrity.' },
-        { id: 'pillar5', name: 'Media Logistics', desc: 'Automated assembly lines for global content distribution.' }
+        { id: 'pillar3', name: 'Media Logistics', desc: 'Automated assembly lines for global content distribution.' }
       ]
     },
     {
@@ -24,8 +24,8 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigateP
       icon: Zap,
       color: '#C5A059',
       pillars: [
-        { id: 'pillar3', name: 'Automation Architecture', desc: 'Mechanical efficiency through autonomous admin protocols.' },
-        { id: 'pillar4', name: 'Cognitive Infrastructure', desc: 'Deploying agentic AI units for triage and context management.' },
+        { id: 'pillar4', name: 'Automation Architecture', desc: 'Mechanical efficiency through autonomous admin protocols.' },
+        { id: 'pillar5', name: 'Cognitive Infrastructure', desc: 'Deploying agentic AI units for triage and context management.' },
         { id: 'pillar6', name: 'Adoption Architecture', desc: 'Behavioral engineering to maximize team protocol adherence.' }
       ]
     },
@@ -48,7 +48,6 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigateP
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-20">
         
-        {/* NAVIGATION */}
         <div className="flex items-center gap-6 mb-16 overflow-hidden">
           <button 
             onClick={onBack}
@@ -61,7 +60,6 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigateP
           <span className="font-mono text-[10px] text-black/40 uppercase tracking-widest">Architecture_Overview_v5.2</span>
         </div>
 
-        {/* HERO */}
         <div className="mb-32">
           <span className="font-mono text-xs text-[#E21E3F] tracking-[0.4em] mb-8 block uppercase">/ SYSTEMS_ENGINEERING</span>
           <h1 className="font-serif text-5xl md:text-8xl lg:text-[7.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10 max-w-5xl">
@@ -73,7 +71,6 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigateP
           </p>
         </div>
 
-        {/* SYSTEMS GRID */}
         <div className="space-y-32 mb-40">
           {systems.map((system, idx) => (
             <section key={idx} className="border-t border-black/10 pt-20">

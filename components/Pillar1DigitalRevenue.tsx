@@ -42,6 +42,14 @@ const Pillar1DigitalRevenue: React.FC<Pillar1Props> = ({ onBack }) => {
     }
   ];
 
+  const roadmap = [
+    { day: '01', title: 'Architecture', task: 'Mapping logic gates and data flow between Web and CRM.' },
+    { day: '02', title: 'Blueprint', task: 'Wireframing high-intent capture zones based on user psychology.' },
+    { day: '03-05', title: 'Deployment', task: 'Mechanical build of the UI and technical stack integration.' },
+    { day: '06', title: 'Stress Test', task: 'Protocol verification: Load testing, SEO check, and Lead-Sync tests.' },
+    { day: '07', title: 'Launch', task: 'System live. Transition to Active Monitoring status.' }
+  ];
+
   return (
     <motion.div 
       initial={{ opacity: 0 }} 
@@ -110,6 +118,27 @@ const Pillar1DigitalRevenue: React.FC<Pillar1Props> = ({ onBack }) => {
             ))}
           </div>
         </div>
+
+        {/* ROADMAP SPRINT */}
+        <section className="py-24 border-t border-black/10 mb-32">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div className="max-w-xl">
+              <span className="font-mono text-[10px] text-[#E21E3F] tracking-widest uppercase block mb-2">/ DEPLOYMENT_LOGISTICS</span>
+              <h2 className="font-serif text-5xl">The 7-Day <span className="italic">Sprint Protocol.</span></h2>
+              <p className="font-sans text-sm text-black/60 mt-4 leading-relaxed">Velocity is my competitive advantage. We don't sit in meetings. We deploy code.</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-0 border border-black/10">
+            {roadmap.map((step) => (
+              <div key={step.day} className="p-8 border-b md:border-b-0 md:border-r border-black/10 last:border-0 hover:bg-white transition-colors group">
+                <span className="font-mono text-[9px] text-black/30 group-hover:text-[#C5A059] transition-colors">DAY {step.day}</span>
+                <h4 className="font-serif text-2xl mt-4 mb-3">{step.title}</h4>
+                <p className="font-sans text-xs text-black/50 leading-relaxed">{step.task}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* RETAINER PROTOCOLS */}
         <section className="py-24 border-t border-black/10 mb-20">
