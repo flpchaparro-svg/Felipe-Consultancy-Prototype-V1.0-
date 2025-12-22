@@ -20,7 +20,13 @@ import Pillar6 from './components/Pillar6';
 import Pillar7 from './components/Pillar7';
 import GlobalFooter from './components/GlobalFooter';
 import { ServiceDetail } from './types';
-import { Menu, X, ArrowRight, ChevronDown, Target, Zap, BarChart3 } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, Target, Zap, BarChart3, ArrowUpRight, Microscope, Palette, Briefcase } from 'lucide-react';
+
+const TECH_STACK = [
+  'OpenAI', 'Anthropic', 'Claude', 'Make.com', 'HubSpot', 'Stripe', 'Shopify', 
+  'Next.js', 'Vercel', 'Sanity', 'Zapier', 'n8n', 'ElevenLabs', 'Vapi.ai', 
+  'Bland AI', 'Voiceflow', 'BigQuery', 'Python', 'Looker Studio', 'Klaviyo'
+];
 
 const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
@@ -81,22 +87,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleServiceClick = (service: ServiceDetail) => {
-    const mapping: Record<string, ViewState> = {
-      'capture-core': 'pillar1',
-      'nervous-system': 'pillar2',
-      'media-logistics': 'pillar3',
-      'digital-labor': 'pillar4',
-      'augmented-workforce': 'pillar5',
-      'team-protocols': 'pillar6',
-      'control-tower': 'pillar7'
-    };
-    
-    if (mapping[service.id]) {
-      navigateTo(mapping[service.id]);
-    } else {
-      setSelectedService(service);
-      setIsModalOpen(true);
-    }
+    setSelectedService(service);
+    setIsModalOpen(true);
   };
 
   const navigateTo = (view: ViewState, sectionId?: string) => {
@@ -263,9 +255,24 @@ const App: React.FC = () => {
                 </div>
               </section>
 
-              <div className="w-full bg-[#1a1a1a]/5 py-8 border-y border-black/5 overflow-hidden relative z-30">
-                <div className="max-w-[1400px] mx-auto px-6 flex flex-wrap justify-center md:justify-between items-center gap-12 grayscale opacity-40 font-mono text-[10px] font-bold tracking-[0.4em] uppercase">
-                  {['OpenAI', 'Anthropic', 'Make.com', 'Stripe', 'AWS', 'Google_Cloud', 'HubSpot', 'Next.js'].map(tech => <span key={tech}>{tech}</span>)}
+              {/* TECHNOLOGY CAROUSEL */}
+              <div className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30">
+                <div className="flex whitespace-nowrap">
+                  <motion.div 
+                    className="flex gap-20 items-center pr-20"
+                    animate={{ x: ["0%", "-50%"] }}
+                    transition={{ 
+                      ease: "linear", 
+                      duration: 35, 
+                      repeat: Infinity 
+                    }}
+                  >
+                    {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
+                      <span key={i} className="font-mono text-[10px] font-bold tracking-[0.4em] uppercase grayscale opacity-40">
+                        {tech}
+                      </span>
+                    ))}
+                  </motion.div>
                 </div>
               </div>
 
@@ -329,6 +336,47 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </section>
+
+              {/* SECTION 9: CTA BUFFER (THE MACHINE BOX) */}
+              <section className="bg-[#FFF2EC] py-20 px-6 md:px-12 lg:px-20 relative z-30">
+                <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="block w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group transition-transform hover:-translate-y-1 duration-500">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,_#C5A05920,_transparent)] pointer-events-none"></div>
+                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+                    <div className="text-center md:text-left">
+                      <h3 className="font-serif text-4xl md:text-5xl mb-3 italic">Ready to remove yourself from the machine?</h3>
+                      <p className="font-sans text-white/60 text-lg">Current Capacity: 1 Slot Remaining for Q1.</p>
+                    </div>
+                    <div className="relative group/btn px-10 py-5 border border-[#FFF2EC] overflow-hidden transition-all duration-300">
+                      <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-out"></div>
+                      <span className="relative z-10 font-mono text-sm uppercase tracking-[0.2em] group-hover/btn:text-[#1a1a1a] transition-colors duration-300 flex items-center gap-3">Apply For Access <ArrowUpRight className="w-3 h-3" /></span>
+                    </div>
+                  </div>
+                </a>
+              </section>
+
+              {/* SECTION 10: PHILOSOPHY */}
+              <section id="philosophy" className="w-full relative z-30 bg-[#FFF2EC] text-[#1a1a1a] py-32 px-6 md:px-12 lg:px-20 border-t border-black/5">
+                <div className="max-w-[1600px] mx-auto relative">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start mb-24">
+                    <div><span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] mb-4 block">/ The Operator's Lens</span><h2 className="font-serif text-5xl md:text-6xl leading-[0.9] tracking-tight text-[#1a1a1a]">One Mind.<br />Ten Men's <span className="italic text-black/20">Output.</span></h2></div>
+                    <div className="max-w-xl lg:pt-4"><p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed mb-6">I leverage advanced infrastructure to deliver agency-level results as a solo architect. No juniors. No games of telephone. I diagnose the problem, and I build the solution.</p></div>
+                  </div>
+                  <div className="group/grid grid grid-cols-1 md:grid-cols-3 border-t border-black/10">
+                    {[
+                      { icon: Microscope, title: "The Specialist's Lens", label: "DIRECT ACCESS", text: "I diagnose the problem, and I build the solution. No account managers. No games of telephone. Direct collaboration with the architect." },
+                      { icon: Palette, title: "The Artist's Lens", label: "RHYTHM & FLOW", text: "Technology without soul is friction. I design systems that feel human, intuitive, and flow with the natural rhythm of your business." },
+                      { icon: Briefcase, title: "The Executive's Lens", label: "PHYSICS OF MONEY", text: "Architecture without ROI is just art. Every line of code I write is engineered to increase the Velocity of Capital through your business." }
+                    ].map((item, idx) => (
+                      <div key={idx} className="group p-10 md:p-12 border-b border-black/10 md:border-b-0 md:border-r last:border-r-0 hover:bg-white transition-colors duration-500">
+                        <div className="mb-8 text-[#C5A059] transition-transform duration-500 group-hover:rotate-6 origin-bottom-left"><item.icon className="w-8 h-8" /></div>
+                        <h3 className="font-serif text-3xl mb-3 text-[#1a1a1a] group-hover:translate-x-1 transition-transform">{item.title}</h3>
+                        <p className="font-mono text-[10px] text-black/50 mb-6 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors">{item.label}</p>
+                        <p className="font-sans text-[#1a1a1a]/70 text-sm leading-relaxed">{item.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
             </motion.div>
           ) : currentView === 'about' ? (
             <AboutPage key="about" onBack={() => navigateTo('landing')} onNavigate={handleGlobalNavigate} />
@@ -356,7 +404,12 @@ const App: React.FC = () => {
 
       <GlobalFooter onNavigate={handleGlobalNavigate} />
 
-      <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal 
+        service={selectedService} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        onViewPillar={(pillarId) => navigateTo(pillarId as ViewState)} 
+      />
     </div>
   );
 };

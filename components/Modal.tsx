@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
@@ -10,9 +9,10 @@ interface ModalProps {
   service: ServiceDetail | null;
   isOpen: boolean;
   onClose: () => void;
+  onViewPillar: (pillarId: string) => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -22,6 +22,24 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
   }, [isOpen]);
 
   if (!service) return null;
+
+  const handlePillarNavigation = () => {
+    const mapping: Record<string, string> = {
+      'capture-core': 'pillar1',
+      'nervous-system': 'pillar2',
+      'media-logistics': 'pillar3',
+      'digital-labor': 'pillar4',
+      'augmented-workforce': 'pillar5',
+      'team-protocols': 'pillar6',
+      'control-tower': 'pillar7'
+    };
+
+    const pillarId = mapping[service.id];
+    if (pillarId) {
+      onViewPillar(pillarId);
+      onClose();
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -46,7 +64,6 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
             <div className="flex flex-col">
               {/* Header Visual */}
               <div className="h-48 bg-[#1a1a1a] relative border-b border-black/10 overflow-hidden">
-                 {/* D3 visualization inside modal still uses Gold strokes as requested */}
                  <ViewportViz type={service.visualPrompt} />
                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent opacity-60" />
                  <button 
@@ -94,13 +111,12 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose }) => {
                   <div className="text-[10px] font-mono opacity-30 tracking-tighter">
                     UID: {service.id.toUpperCase()}_REV_ENG_v5.0.0
                   </div>
-                  <a 
-                    href="https://meetings-ap1.hubspot.com/felipe"
-                    target="_blank"
+                  <button 
+                    onClick={handlePillarNavigation}
                     className="group flex items-center gap-4 px-10 py-5 bg-[#1a1a1a] text-white hover:bg-[#E21E3F] transition-all duration-500 text-xs font-bold tracking-widest uppercase"
                   >
-                    Initiate Deployment <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                    Explore System Architecture <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
                 </div>
               </div>
             </div>
