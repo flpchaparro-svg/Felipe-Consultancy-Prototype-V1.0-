@@ -9,7 +9,7 @@ const TheArchitect: React.FC = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 relative">
           
-          {/* LEFT: CINEMATIC VIDEO CONTAINER (Takes up more space) */}
+          {/* LEFT: CINEMATIC VIDEO CONTAINER */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -18,11 +18,10 @@ const TheArchitect: React.FC = () => {
             className="lg:col-span-8 relative group"
           >
             {/* Flickering Gold Scan Frame */}
-            <div className="absolute -inset-6 border border-[#C5A059]/20 pointer-events-none animate-flicker"></div>
+            <div className="absolute -inset-8 border border-[#C5A059]/40 pointer-events-none animate-flicker z-10"></div>
             <div className="absolute top-0 left-0 w-full h-[1px] bg-[#C5A059] animate-scan-line z-20"></div>
             
             <div className="aspect-[16/10] lg:aspect-[16/9] bg-[#1a1a1a] relative overflow-hidden grayscale group-hover:grayscale-[0.5] transition-all duration-1000 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)]">
-              {/* CINEMATIC VIDEO */}
               <video 
                 autoPlay 
                 loop 
@@ -35,7 +34,6 @@ const TheArchitect: React.FC = () => {
                 Your browser does not support the video tag.
               </video>
               
-              {/* Technical Labels */}
               <div className="absolute bottom-10 left-10 z-20 font-mono text-[8px] text-[#FFF2EC]/40 uppercase tracking-[0.4em]">
                 ARCH_ID: 0xFC_2025 // STATUS: ACTIVE_NODE
               </div>
@@ -45,19 +43,19 @@ const TheArchitect: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* OVERLAPPING MISSION TEXT: Editorial Mix-Blend Aesthetic */}
-          <div className="lg:col-span-6 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 z-30 pointer-events-none">
+          {/* OVERLAPPING MISSION TEXT - Deep Editorial Overlap */}
+          <div className="lg:col-span-7 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 z-30 pointer-events-none">
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-12 lg:mt-0 p-8 lg:p-16 bg-transparent mix-blend-difference text-white"
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-12 lg:mt-0 p-8 lg:p-20 bg-transparent mix-blend-difference text-white"
             >
               <span className="font-mono text-[10px] text-[#C5A059] tracking-[0.5em] mb-8 block uppercase font-bold">/ THE_ARCHITECT_LOG</span>
-              <h2 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.85] mb-12 tracking-tighter">
+              <h2 className="font-serif text-5xl md:text-7xl lg:text-9xl leading-[0.8] mb-12 tracking-tighter">
                 I don't hire juniors. <br />
-                <span className="italic text-white/40">I hire silicon.</span>
+                <span className="italic text-white/30">I hire silicon.</span>
               </h2>
               <div className="space-y-8 max-w-xl pointer-events-auto">
                 <p className="font-sans text-lg lg:text-xl font-light text-white/60 border-l border-[#C5A059]/40 pl-8 leading-relaxed">
@@ -83,7 +81,6 @@ const TheArchitect: React.FC = () => {
 
         </div>
 
-        {/* BOTTOM METRIC STRIP (Subtle) */}
         <div className="mt-32 pt-10 border-t border-black/5 flex flex-wrap justify-between items-center gap-8 opacity-40">
           <div className="flex gap-12 font-mono text-[9px] uppercase tracking-[0.4em]">
             <span>[ LATENCY: 2ms ]</span>

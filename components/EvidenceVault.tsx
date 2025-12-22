@@ -94,7 +94,6 @@ const EvidenceCard: React.FC<{ study: typeof CASE_STUDIES[0], onOpen: (s: any) =
       onClick={() => onOpen(study)}
       className="group cursor-pointer bg-[#1a1a1a] border border-white/5 p-12 relative overflow-hidden transition-all duration-500 shadow-2xl"
     >
-      {/* 3D Parallax Background */}
       <motion.div 
         style={{ x: bgX, y: bgY, scale: 1.2 }}
         className="absolute inset-0 z-0 pointer-events-none opacity-20 grayscale group-hover:grayscale-0 transition-all duration-700"

@@ -10,8 +10,11 @@ interface BentoGridProps {
 }
 
 const TechnicalLabel: React.FC<{ active: boolean }> = ({ active }) => {
-  // Prestige: coordinates that jitter on hover
-  const coords = `LAT: ${Math.floor(Math.random() * 90)}.02 // LON: ${Math.floor(Math.random() * 180)}.24`;
+  const [coords, setCoords] = useState(`LAT: 00.00 // LON: 00.00`);
+  
+  useEffect(() => {
+    setCoords(`LAT: ${Math.floor(Math.random() * 90)}.${Math.floor(Math.random() * 99)} // LON: ${Math.floor(Math.random() * 180)}.${Math.floor(Math.random() * 99)}`);
+  }, []);
   
   return (
     <div className={`font-mono text-[8px] uppercase tracking-[0.2em] transition-all duration-500 ${active ? 'text-[#C5A059] animate-jitter' : 'text-black/50 group-hover:text-black/70 group-hover:animate-jitter'}`}>
@@ -64,7 +67,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         </div>
 
         <div className="flex-1 grid grid-cols-12 grid-rows-6 gap-4 overflow-hidden">
-          {/* Main Visualizer - Added Vignette */}
           <div className="col-span-12 lg:col-span-8 row-span-4 relative border border-black/10 overflow-hidden bg-[#1a1a1a] shadow-2xl">
             <ViewportViz type={activeService.visualPrompt} />
             

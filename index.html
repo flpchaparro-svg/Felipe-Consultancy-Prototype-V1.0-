@@ -12,7 +12,7 @@
       :root {
         --bg: #FFF2EC;
         --ink: #1a1a1a;
-        --signal-red: #A31D33;
+        --signal-red: #E21E3F;
         --gold: #C5A059;
       }
       body {
@@ -33,7 +33,7 @@
       .reveal-text {
         transform: translateY(120%);
         opacity: 0;
-        animation: slideUp 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        animation: slideUp 1.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
       }
 
       @keyframes slideUp {
@@ -44,16 +44,28 @@
       .animate-fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.8s ease forwards; }
       @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
 
-      .animate-extend-line { width: 0; animation: extendLine 3.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+      .animate-extend-line { width: 0; animation: extendLine 4s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
       @keyframes extendLine { to { width: 4rem; } }
 
       /* PRESTIGE FLICKER */
       @keyframes flicker {
-        0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% { opacity: 1; }
-        20%, 21.999%, 63%, 63.999%, 65%, 69.999% { opacity: 0.3; }
+        0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+        20%, 24%, 55% { opacity: 0.3; }
       }
       .animate-flicker {
         animation: flicker 4s linear infinite;
+      }
+
+      /* COORDINATE JITTER */
+      @keyframes jitter {
+        0% { transform: translate(0,0); }
+        25% { transform: translate(0.5px, -0.5px); }
+        50% { transform: translate(-0.5px, 0.5px); }
+        75% { transform: translate(0.5px, 0.5px); }
+        100% { transform: translate(0,0); }
+      }
+      .animate-jitter {
+        animation: jitter 0.1s infinite;
       }
 
       #geometric-container {
@@ -64,28 +76,28 @@
 
       .content-layer { position: relative; z-index: 10; }
 
+      /* Surgical Navigation Underline */
       .nav-link { 
         position: relative; 
         display: inline-block; 
-        transition: color 0.5s ease;
-        letter-spacing: 0.25em;
+        transition: color 0.4s ease, opacity 0.4s ease;
+        letter-spacing: 0.3em;
       }
       
       .nav-link::before {
-        content: ''; position: absolute;
-        width: 100%; height: 1px;
-        bottom: -2px; left: 0;
+        content: ''; 
+        position: absolute;
+        width: 100%; 
+        height: 1px;
+        bottom: -4px; 
+        left: 0;
         background-color: var(--ink);
-        transform: scaleX(0); transform-origin: bottom right;
-        transition: transform 0.3s ease-out;
+        transform: scaleX(0); 
+        transform-origin: center;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      .nav-link:hover::before { transform: scaleX(1); transform-origin: bottom left; }
-
-      .logo-bloom {
-        color: var(--gold) !important;
-        text-shadow: 0 0 15px rgba(197, 160, 89, 0.8), 0 0 30px rgba(197, 160, 89, 0.4);
-        filter: brightness(1.2);
-        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      .nav-link:hover::before { 
+        transform: scaleX(1); 
       }
 
       /* LIQUID GOLD TEXT MASK - Enhanced Prestige */
@@ -105,7 +117,6 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: shine 4s ease-in-out infinite;
-        filter: drop-shadow(0 0 1px rgba(197, 160, 89, 0.3));
       }
 
       @keyframes shine {
@@ -113,19 +124,7 @@
         100% { background-position: 200% center; }
       }
 
-      /* COORDINATE JITTER */
-      @keyframes jitter {
-        0% { transform: translate(0, 0); }
-        25% { transform: translate(1px, -0.5px); }
-        50% { transform: translate(-0.5px, 1px); }
-        75% { transform: translate(0.5px, 0.5px); }
-        100% { transform: translate(0, 0); }
-      }
-      .animate-jitter {
-        animation: jitter 0.15s infinite;
-      }
-
-      /* CAROUSEL MASK - Materialize/Evaporate edges */
+      /* CAROUSEL MASK */
       .carousel-mask {
         mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
