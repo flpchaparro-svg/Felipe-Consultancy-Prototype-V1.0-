@@ -38,7 +38,7 @@ const RevenueAudit: React.FC = () => {
   };
 
   return (
-    <section id="audit-quiz" className="w-full bg-[#FFF2EC] py-24 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/5">
+    <section id="audit-quiz" className="w-full bg-white py-24 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/5">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#E21E3F05,_transparent)] pointer-events-none"></div>
       <div className="max-w-[1000px] mx-auto bg-white p-8 md:p-16 border border-black/10 relative overflow-hidden shadow-2xl">
         <div className="absolute top-0 left-0 w-full h-1 bg-[#C5A059]"></div>
@@ -72,7 +72,7 @@ const RevenueAudit: React.FC = () => {
                     onClick={() => handleAnswer(QUESTIONS[step].weights[idx])}
                     className="relative group p-6 border border-black/10 text-left overflow-hidden transition-all duration-300 bg-white"
                   >
-                    {/* Fill effect: White to Black on hover as requested */}
+                    {/* Mechanical Fill: White to Black */}
                     <div className="absolute inset-0 bg-[#1a1a1a] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
                     
                     <div className="relative z-10 flex justify-between items-center w-full font-mono text-[11px] uppercase tracking-widest text-[#1a1a1a] group-hover:text-white transition-colors duration-300">
@@ -115,7 +115,6 @@ const RevenueAudit: React.FC = () => {
                   target="_blank"
                   className="group relative inline-flex items-center gap-3 px-12 py-6 bg-white text-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] overflow-hidden transition-all duration-500 shadow-xl border border-black/10 hover:text-white"
                 >
-                  {/* Fill effect: White base to Black on hover to match hero primary effect */}
                   <div className="absolute inset-0 bg-[#1a1a1a] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
                   <span className="relative z-10 flex items-center gap-3">
                     Initiate Repair Protocol <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
