@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Activity } from 'lucide-react';
@@ -34,33 +35,37 @@ const DiagnosticButton: React.FC<{
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative group/opt p-6 border border-white/10 text-left overflow-hidden transition-all duration-500 bg-transparent"
+      className="relative group/opt p-6 border border-white/10 text-left overflow-hidden transition-all duration-500 bg-transparent rounded-none"
     >
-      {/* 1px Gold Perimeter Drawing Effect */}
+      {/* 1px Gold Perimeter Drawing Effect - Accelerated to 200ms */}
       <AnimatePresence>
         {isHovered && (
           <>
             <motion.div 
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               exit={{ opacity: 0 }}
               className="absolute top-0 left-0 w-full h-[1px] bg-[#C5A059] origin-left z-20"
             />
             <motion.div 
               initial={{ scaleY: 0 }}
               animate={{ scaleY: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               exit={{ opacity: 0 }}
               className="absolute top-0 right-0 w-[1px] h-full bg-[#C5A059] origin-top z-20"
             />
             <motion.div 
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               exit={{ opacity: 0 }}
               className="absolute bottom-0 right-0 w-full h-[1px] bg-[#C5A059] origin-right z-20"
             />
             <motion.div 
               initial={{ scaleY: 0 }}
               animate={{ scaleY: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               exit={{ opacity: 0 }}
               className="absolute bottom-0 left-0 w-[1px] h-full bg-[#C5A059] origin-bottom z-20"
             />
@@ -69,7 +74,7 @@ const DiagnosticButton: React.FC<{
       </AnimatePresence>
 
       <div className="relative z-10 flex justify-between items-center w-full">
-        <span className={`font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-300 relative ${isHovered ? 'text-white' : 'text-white/40'}`}>
+        <span className={`font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-300 relative ${isHovered ? 'text-[#C5A059]' : 'text-white/40'}`}>
           {/* Subtle Glow Behind Text */}
           {isHovered && (
             <motion.span 
@@ -114,7 +119,7 @@ const RevenueAudit: React.FC = () => {
     }
   };
 
-  const progress = isFinished ? 100 : ((step) / QUESTIONS.length) * 100;
+  const progress = isFinished ? 100 : Math.max(2, (step / QUESTIONS.length) * 100);
 
   return (
     <section 
@@ -128,7 +133,7 @@ const RevenueAudit: React.FC = () => {
       
       <motion.div 
         style={{ y: yMovement, opacity: boxOpacity }}
-        className="max-w-[1000px] mx-auto bg-[#1a1a1a]/95 backdrop-blur-sm p-8 md:p-16 border border-white/5 relative overflow-hidden group/audit rounded-sm shadow-2xl"
+        className="max-w-[1000px] mx-auto bg-[#1a1a1a]/95 backdrop-blur-sm p-8 md:p-16 border border-white/10 relative overflow-hidden group/audit rounded-none shadow-2xl"
       >
         {/* Architectural Red Corner Brackets */}
         <div className="absolute inset-0 pointer-events-none p-4">
@@ -147,11 +152,11 @@ const RevenueAudit: React.FC = () => {
           ))}
         </div>
 
-        {/* Machine Progress Bar */}
+        {/* Machine Progress Bar - Signal Red during diagnosis, Gold on completion */}
         <div className="absolute top-0 left-0 w-full h-[2px] bg-white/5 overflow-hidden">
           <motion.div 
-            className={`h-full relative shadow-[0_0_15px_rgba(197,160,89,0.3)] ${isFinished ? 'bg-[#C5A059]' : 'bg-[#4a4a4a]'}`}
-            initial={{ width: "0%" }}
+            className={`h-full relative shadow-[0_0_15px_rgba(197,160,89,0.3)] ${isFinished ? 'bg-[#C5A059]' : 'bg-[#E21E3F]'}`}
+            initial={{ width: "2%" }}
             animate={{ width: `${progress}%` }}
             transition={{ type: "spring", stiffness: 45, damping: 15 }}
           />
@@ -175,7 +180,7 @@ const RevenueAudit: React.FC = () => {
                 <span className="font-mono text-[10px] text-white tracking-[0.3em] uppercase">NODE_0{step + 1} // 0{QUESTIONS.length}</span>
               </div>
               
-              <h3 className="font-serif text-3xl md:text-5xl text-[#FFF2EC] mb-16 leading-tight tracking-tight">
+              <h3 className="font-serif text-3xl md:text-5xl text-[#FFF2EC] mb-16 leading-tight tracking-[-0.03em]">
                 {QUESTIONS[step].text}
               </h3>
               
@@ -209,7 +214,7 @@ const RevenueAudit: React.FC = () => {
 
               <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.5em] uppercase font-bold mb-6 block">Diagnostic_Complete // Results_Calculated</span>
               
-              <h3 className="font-serif text-4xl md:text-6xl text-[#FFF2EC] mb-6 leading-tight">
+              <h3 className="font-serif text-4xl md:text-6xl text-[#FFF2EC] mb-6 leading-tight tracking-[-0.03em]">
                 Revenue Leakage <br />
                 <span className="italic">Analysis:</span>
               </h3>
@@ -226,11 +231,11 @@ const RevenueAudit: React.FC = () => {
                 <a 
                   href="https://meetings-ap1.hubspot.com/felipe"
                   target="_blank"
-                  className="group relative inline-flex items-center gap-6 px-12 py-6 bg-[#C5A059] text-[#1a1a1a] overflow-hidden transition-all duration-500"
+                  className="group relative inline-flex items-center gap-6 px-12 py-6 border border-[#C5A059] bg-transparent text-[#C5A059] overflow-hidden transition-all duration-500 rounded-none"
                 >
-                  <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                  <span className="relative z-10 font-mono text-xs uppercase tracking-[0.4em] font-bold">Apply Repair Protocol</span>
-                  <ArrowRight className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <span className="relative z-10 font-mono text-xs uppercase tracking-[0.4em] font-bold transition-colors duration-500 group-hover:text-black">Apply Repair Protocol</span>
+                  <ArrowRight className="relative z-10 w-4 h-4 transition-colors duration-500 group-hover:text-black group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
             </motion.div>

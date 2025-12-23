@@ -28,13 +28,13 @@ const TECH_STACK = [
   'Bland AI', 'Voiceflow', 'BigQuery', 'Python', 'Looker Studio', 'Klaviyo'
 ];
 
-const ScrambleText: React.FC<{ text: string, isHovered: boolean }> = ({ text, isHovered }) => {
+const ScrambleText: React.FC<{ text: string, trigger: boolean }> = ({ text, trigger }) => {
   const [displayText, setDisplayText] = useState(text);
   const chars = "01";
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (isHovered) {
+    if (trigger) {
       let iteration = 0;
       intervalRef.current = window.setInterval(() => {
         setDisplayText(prev => 
@@ -47,35 +47,45 @@ const ScrambleText: React.FC<{ text: string, isHovered: boolean }> = ({ text, is
           if (intervalRef.current) clearInterval(intervalRef.current);
         }
         iteration += 0.5;
-      }, 25);
+      }, 30);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
       setDisplayText(text);
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [isHovered, text]);
+  }, [trigger, text]);
 
   return <span>{displayText}</span>;
 };
 
-const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
+const FrictionCard: React.FC<{ 
+  item: any; 
+  idx: number; 
+  onHover: (idx: number | null) => void;
+  isDimmed: boolean;
+}> = ({ item, idx, onHover, isDimmed }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [hasScrambledOnce, setHasScrambledOnce] = useState(false);
   const Icon = item.icon;
 
   return (
     <motion.div 
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => { setIsHovered(true); onHover(idx); }}
+      onMouseLeave={() => { setIsHovered(false); onHover(null); }}
+      onViewportEnter={() => setHasScrambledOnce(true)}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: idx * 0.1, duration: 0.8 }}
-      className="group relative bg-[#FFF2EC] p-12 overflow-hidden cursor-default transition-all duration-700 rounded-sm border border-black/5"
+      viewport={{ once: true, margin: "-100px" }}
+      animate={{ opacity: isDimmed ? 0.2 : 1 }}
+      transition={{ 
+        opacity: { duration: 0.5, ease: "easeInOut" },
+        y: { duration: 0.8 }
+      }}
+      className="group relative bg-[#FFF2EC]/70 backdrop-blur-lg p-12 overflow-hidden cursor-default rounded-none border border-black/15 transition-all duration-700"
       style={{
         boxShadow: isHovered ? '0 10px 30px -15px rgba(0, 0, 0, 0.12)' : '0 0 0 0 rgba(0,0,0,0)'
       }}
     >
-      {/* 3. Background Activation (Dot Grid) */}
       <div 
         className="absolute inset-0 pointer-events-none transition-opacity duration-700 z-0"
         style={{ 
@@ -85,7 +95,6 @@ const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
         }}
       />
 
-      {/* 4. Corner Brackets (Signal Red) */}
       <div className="absolute inset-0 p-3 pointer-events-none z-20">
         {[
           "top-0 left-0 border-t border-l",
@@ -107,19 +116,16 @@ const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
         ))}
       </div>
 
-      {/* 4. Bottom Filament (Left to Right) - Updated to Signal Red */}
       <div 
         className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#E21E3F] transition-transform duration-500 ease-out z-20" 
         style={{ transform: `scaleX(${isHovered ? 1 : 0})`, transformOrigin: 'left' }}
       />
       
       <div className="flex justify-between items-start mb-8 relative z-10">
-        {/* 1. Node Error Tag (Faint -> Red Scramble) */}
         <div className={`font-mono text-[9px] tracking-widest uppercase transition-colors duration-300 ${isHovered ? 'text-[#E21E3F]' : 'text-black/20'}`}>
-          <ScrambleText text={`NODE_ERR_0${item.id}`} isHovered={isHovered} />
+          <ScrambleText text={`NODE_ERR_0${item.id}`} trigger={isHovered || hasScrambledOnce} />
         </div>
         
-        {/* 2. Subconscious Icon (Gear Engagement) */}
         <motion.div 
           animate={{ 
             rotate: isHovered ? 90 : 0,
@@ -131,7 +137,7 @@ const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
             damping: 20,
             duration: 0.6 
           }}
-          className="text-[#1a1a1a]"
+          className="text-[#C5A059]"
         >
           <Icon className="w-6 h-6 stroke-[1.1]" />
         </motion.div>
@@ -153,9 +159,9 @@ const App: React.FC = () => {
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrambleText, setScrambleText] = useState("STRATEGIST");
-  const [isArchitectTarget, setIsArchitectTarget] = useState(false);
   const [deploymentCounter, setDeploymentCounter] = useState(13.51);
   const [navVisible, setNavVisible] = useState(true);
+  const [hoveredCardIdx, setHoveredCardIdx] = useState<number | null>(null);
 
   type ViewState = 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'pillar1' | 'pillar2' | 'pillar3' | 'pillar4' | 'pillar5' | 'pillar6' | 'pillar7' | 'contact';
   const [currentView, setCurrentView] = useState<ViewState>('landing');
@@ -163,7 +169,7 @@ const App: React.FC = () => {
   const { scrollY } = useScroll();
   const scrollVelocity = useMotionValue(0);
   const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [1, 5], { clamp: false });
+  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [1, 8], { clamp: false });
 
   const carouselX = useMotionValue(0);
   const isCarouselHovered = useRef(false);
@@ -183,9 +189,10 @@ const App: React.FC = () => {
 
   useAnimationFrame((t, delta) => {
     if (currentView !== 'landing') return;
-    let moveBy = 0.0012 * delta;
+    let moveBy = 0.0006 * delta;
+    // Over-clocking effect synchronized to scroll velocity
     moveBy *= Math.max(1, velocityFactor.get());
-    if (isCarouselHovered.current) moveBy *= 0.15;
+    if (isCarouselHovered.current) moveBy *= 0.05;
     const currentX = carouselX.get();
     let nextX = currentX - moveBy;
     if (nextX <= -50) nextX = 0;
@@ -200,7 +207,6 @@ const App: React.FC = () => {
     const scrambleInterval = setInterval(() => {
       roleIndex = (roleIndex + 1) % roles.length;
       const target = roles[roleIndex];
-      setIsArchitectTarget(target === "ARCHITECT");
       let iterations = 0;
       const interval = setInterval(() => {
         setScrambleText(prev => 
@@ -211,8 +217,8 @@ const App: React.FC = () => {
         );
         if (iterations >= target.length) clearInterval(interval);
         iterations += 1;
-      }, 25);
-    }, 4000);
+      }, 60); // Deliberate system calculation feel
+    }, 7000); // 7s interval as requested
 
     const targetValue = 14.00;
     const counterInterval = setInterval(() => {
@@ -393,26 +399,23 @@ const App: React.FC = () => {
             <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <section id="hero" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
                 <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
-                  <div className="lg:col-span-10 flex flex-col justify-center">
+                  <div className="lg:col-span-12 flex flex-col justify-center">
                     <div className="flex items-center gap-6 mb-10 overflow-hidden">
-                      <span className="h-[1px] w-16 bg-[#1a1a1a] animate-extend-line"></span>
+                      <span className="h-[1px] w-8 bg-[#1a1a1a] animate-extend-line"></span>
                       <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">/ Business Growth <span className={`font-mono font-bold tracking-widest ml-2 transition-colors duration-700 text-[#E21E3F]`}>{scrambleText}</span></span>
                     </div>
-                    <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10">
+                    <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.9] tracking-tighter text-[#1a1a1a] mb-10">
                       <div className="overflow-hidden"><span className="block reveal-text">Not an Agency.</span></div>
                       <div className="overflow-hidden">
                         <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
-                          A <span 
-                            className="soft-steel-shine italic"
-                            style={{ letterSpacing: '0.02em' }}
-                          >Revenue Engine.</span>
+                          A <span className="soft-steel-shine italic">Revenue Engine.</span>
                         </span>
                       </div>
                     </h1>
-                    <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-2xl border-l border-black/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
+                    <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-xl border-l border-[#C5A059]/30 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
                     <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '1s' }}>
-                      <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#1a1a1a]">
-                        <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
+                      <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-black overflow-hidden transition-all duration-300 bg-transparent text-black hover:text-white">
+                        <div className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
                         <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
                       </a>
                       <a href="#process" className="relative group py-5 flex items-center gap-3">
@@ -425,17 +428,17 @@ const App: React.FC = () => {
               </section>
 
               <div 
-                className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30 carousel-mask"
+                className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30 [mask-image:linear-gradient(to_right,transparent,black_20%,black_80%,transparent)]"
                 onMouseEnter={() => isCarouselHovered.current = true}
                 onMouseLeave={() => isCarouselHovered.current = false}
               >
                 <div className="flex whitespace-nowrap">
                   <motion.div 
-                    className="flex gap-20 items-center pr-20"
+                    className="flex gap-32 items-center pr-20"
                     style={{ x: xPercent }}
                   >
                     {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
-                      <span key={i} className="font-mono text-[10px] font-bold tracking-[0.4em] uppercase grayscale opacity-40 hover:opacity-100 transition-opacity duration-300">
+                      <span key={i} className="font-mono text-[10px] font-bold tracking-[0.5em] uppercase mix-blend-luminosity opacity-15 hover:opacity-60 hover:text-[#C5A059] transition-all duration-300 cursor-default">
                         {tech}
                       </span>
                     ))}
@@ -460,7 +463,13 @@ const App: React.FC = () => {
                       { id: '103', title: 'The Busywork Trap', text: 'You are wasting 40% of your week on manual data entry. You are playing COO instead of CEO.', icon: Repeat },
                       { id: '104', title: 'Flying Blind', text: 'You manage by gut feeling because you can\'t see the numbers. You don\'t know your LTV in real-time.', icon: EyeOff }
                     ].map((item, idx) => (
-                      <FrictionCard key={idx} item={item} idx={idx} />
+                      <FrictionCard 
+                        key={idx} 
+                        item={item} 
+                        idx={idx} 
+                        onHover={setHoveredCardIdx} 
+                        isDimmed={hoveredCardIdx !== null && hoveredCardIdx !== idx}
+                      />
                     ))}
                   </div>
                 </div>
@@ -475,7 +484,7 @@ const App: React.FC = () => {
                 <div className="max-w-[1600px] mx-auto relative z-10">
                   <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-black/10 pb-8">
                     <div className="max-w-2xl">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block">/ Execution Velocity</span>
+                      <span className="font-mono text-xs text-[#E21E3F] tracking-widest text-black mb-4 block uppercase font-bold">/ Execution Velocity</span>
                       <h2 className="font-serif text-5xl md:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tight">I don't do "6-Month Strategies."<br /><span className="italic text-[#1a1a1a]/40">Sprints.</span></h2>
                     </div>
                     <div className="hidden md:block pb-2 text-right">
@@ -494,27 +503,12 @@ const App: React.FC = () => {
                         <div className="hidden md:block absolute top-0 left-0 w-full h-[2px] bg-[#C5A059] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                         <span className="font-mono text-xs text-[#C5A059]/80 mb-3 block uppercase">PHASE {step.phase}</span>
                         <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a]">{step.title}</h3>
+                        {/* Changed step.task to step.text to match the provided data structure */}
                         <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{step.text}</p>
                       </div>
                     ))}
                   </div>
                 </div>
-              </section>
-
-              <section className="bg-[#FFF2EC] py-20 px-6 md:px-12 lg:px-20 relative z-30">
-                <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="block w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-20 relative overflow-hidden group transition-transform hover:-translate-y-1 duration-500">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,_#C5A05920,_transparent)] pointer-events-none"></div>
-                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
-                    <div className="text-center md:text-left">
-                      <h3 className="font-serif text-4xl md:text-5xl mb-3 italic">Ready to remove yourself from the machine?</h3>
-                      <p className="font-sans text-white/60 text-lg">Current Capacity: 1 Slot Remaining for Q1.</p>
-                    </div>
-                    <div className="relative group/btn px-10 py-5 border border-[#FFF2EC] overflow-hidden transition-all duration-300">
-                      <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 ease-out"></div>
-                      <span className="relative z-10 font-mono text-sm uppercase tracking-[0.2em] group-hover/btn:text-[#1a1a1a] transition-colors duration-300 flex items-center gap-3">Apply For Access <ArrowUpRight className="w-3 h-3" /></span>
-                    </div>
-                  </div>
-                </a>
               </section>
 
               <section id="philosophy" className="w-full relative z-30 bg-[#FFF2EC] text-[#1a1a1a] py-32 px-6 md:px-12 lg:px-20 border-t border-black/5">

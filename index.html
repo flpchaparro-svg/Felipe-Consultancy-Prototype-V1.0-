@@ -34,6 +34,7 @@
         transform: translateY(120%);
         opacity: 0;
         animation: slideUp 1.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        letter-spacing: 0.15em; /* Refined from 0.3em for clinical precision */
       }
 
       @keyframes slideUp {
@@ -47,32 +48,31 @@
       .animate-extend-line { width: 0; animation: extendLine 4s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
       @keyframes extendLine { to { width: 4rem; } }
 
-      /* SOFT STEEL SHINE ANIMATION - Refined for 8s Interval & Smoother Flow */
+      /* GOLD REVENUE SHINE - Refined for Growth Symbolism */
       @keyframes lensSweep {
         0% { background-position: 150% 0; }
-        35% { background-position: -50% 0; } /* Slower 2.8s sweep (35% of 8s) */
+        35% { background-position: -50% 0; }
         100% { background-position: -50% 0; }
       }
 
       .soft-steel-shine {
-        /* Muted Charcoal to Ink Base with a 'Super Soft' white shine line */
         background: linear-gradient(
           110deg,
-          #4a4a4a 0%,
-          #4a4a4a 40%,
-          rgba(255, 255, 255, 0.08) 48%, 
-          rgba(255, 255, 255, 0.15) 50%,
-          rgba(255, 255, 255, 0.08) 52%,
-          #1a1a1a 60%,
-          #1a1a1a 100%
+          #C5A059 0%,
+          #C5A059 40%,
+          rgba(255, 255, 255, 0.4) 48%, 
+          rgba(255, 255, 255, 0.6) 50%,
+          rgba(255, 255, 255, 0.4) 52%,
+          #9A7B3F 60%,
+          #C5A059 100%
         );
         background-size: 350% 100%;
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        /* Increased duration to 8s and adjusted timing to ensure a high-end 'hallway' feel */
         animation: lensSweep 8s cubic-bezier(0.3, 0, 0.2, 1) infinite;
         display: inline-block;
+        letter-spacing: 0.05em; /* Tight breathing space for italic text */
       }
 
       /* PRESTIGE FLICKER */
@@ -84,18 +84,6 @@
         animation: flicker 4s linear infinite;
       }
 
-      /* COORDINATE JITTER */
-      @keyframes jitter {
-        0% { transform: translate(0,0); }
-        25% { transform: translate(0.5px, -0.5px); }
-        50% { transform: translate(-0.5px, 0.5px); }
-        75% { transform: translate(0.5px, 0.5px); }
-        100% { transform: translate(0,0); }
-      }
-      .animate-jitter {
-        animation: jitter 0.1s infinite;
-      }
-
       #geometric-container {
         position: fixed; top: 0; left: 0;
         width: 100vw; height: 100vh;
@@ -104,7 +92,6 @@
 
       .content-layer { position: relative; z-index: 10; }
 
-      /* Surgical Navigation Underline */
       .nav-link { 
         position: relative; 
         display: inline-block; 
@@ -134,17 +121,14 @@
         -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
       }
 
+      /* BLEND MODE UTILITY */
+      .mix-blend-luminosity {
+        mix-blend-mode: luminosity;
+      }
+
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: var(--bg); }
       ::-webkit-scrollbar-thumb { background: var(--ink); }
-
-      /* Glassmorphism utility */
-      .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(26, 26, 26, 0.05);
-      }
     </style>
     <script type="importmap">
     {

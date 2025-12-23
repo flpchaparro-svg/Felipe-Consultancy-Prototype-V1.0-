@@ -17,7 +17,7 @@ const TechnicalLabel: React.FC<{ active: boolean }> = ({ active }) => {
   }, []);
   
   return (
-    <div className={`font-mono text-[8px] uppercase tracking-[0.2em] transition-all duration-500 ${active ? 'text-[#C5A059] animate-jitter' : 'text-black/50 group-hover:text-black/70 group-hover:animate-jitter'}`}>
+    <div className={`font-mono text-[8px] uppercase tracking-[0.2em] transition-all duration-500 ${active ? 'text-[#E21E3F] animate-jitter' : 'text-black/20 group-hover:text-black/70 group-hover:animate-jitter'}`}>
       {coords}
     </div>
   );
@@ -56,7 +56,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         <div className="flex justify-between items-end mb-8 shrink-0">
           <div>
             <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.5em] font-bold mb-2 block uppercase">Architecture_Protocol_v5.4</span>
-            <h2 className="text-4xl lg:text-7xl font-serif text-[#1a1a1a] leading-none">
+            <h2 className="text-4xl lg:text-7xl font-serif text-[#1a1a1a] leading-none tracking-tighter">
               The Revenue <span className="italic">Engine.</span>
             </h2>
           </div>
@@ -67,7 +67,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         </div>
 
         <div className="flex-1 grid grid-cols-12 grid-rows-6 gap-4 overflow-hidden">
-          <div className="col-span-12 lg:col-span-8 row-span-4 relative border border-black/10 overflow-hidden bg-[#1a1a1a] shadow-2xl">
+          <div className="col-span-12 lg:col-span-8 row-span-4 relative border border-black/20 rounded-none overflow-hidden bg-[#1a1a1a] shadow-2xl">
             <ViewportViz type={activeService.visualPrompt} />
             
             {/* VIGNETTE OVERLAY */}
@@ -75,7 +75,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
             
             <div className="absolute top-6 left-6 flex items-center gap-3 z-20">
               <div className="w-2 h-2 rounded-full bg-[#E21E3F] animate-pulse shadow-[0_0_8px_#E21E3F]" />
-              <span className="text-[10px] font-mono text-white/60 tracking-[0.3em] uppercase">Visual_Buffer_Live</span>
+              <span className="text-[10px] font-mono text-[#E21E3F] tracking-[0.3em] uppercase">Visual_Buffer_Live</span>
             </div>
             
             <div className="absolute bottom-10 left-10 right-10 z-20 pointer-events-none">
@@ -89,7 +89,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   className="max-w-xl"
                 >
                   <p className="text-[#C5A059] text-[11px] font-mono tracking-[0.4em] uppercase font-bold mb-2">Protocol_{activeService.id.toUpperCase()}</p>
-                  <h3 className="text-white text-4xl lg:text-6xl font-serif mb-4 leading-none tracking-tight">{activeService.title}</h3>
+                  <h3 className="text-white text-4xl lg:text-6xl font-serif mb-4 leading-none tracking-tighter">{activeService.title}</h3>
                   <p className="text-white/60 text-lg lg:text-xl font-serif italic font-light leading-relaxed">
                     {activeService.description.split('.')[0]}.
                   </p>
@@ -106,7 +106,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   key={service.id}
                   onMouseEnter={() => setActiveId(service.id)}
                   onClick={() => onServiceClick(service)}
-                  className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
+                  className={`group border border-black/20 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative rounded-none ${isActive ? 'bg-[#1a1a1a] shadow-xl' : 'bg-white/60 hover:bg-white'}`}
                 >
                   <div className="flex justify-between items-start z-10">
                     <div className="space-y-1">
@@ -116,7 +116,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                     <LucideIcons.ChevronDown className={`w-5 h-5 transition-opacity duration-300 ${isActive ? 'text-[#C5A059] opacity-100' : 'text-black opacity-20 group-hover:opacity-60'}`} />
                   </div>
                   <div className="z-10">
-                    <h4 className="text-2xl font-serif uppercase tracking-tight leading-tight mb-2 group-hover:text-[#C5A059] transition-colors">{service.title}</h4>
+                    <h4 className={`text-2xl font-serif uppercase tracking-tighter leading-tight mb-2 transition-colors ${isActive ? 'text-[#C5A059]' : 'group-hover:text-[#C5A059]'}`}>{service.title}</h4>
                   </div>
                 </motion.div>
               );
@@ -139,7 +139,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                   key={service.id}
                   onMouseEnter={() => setActiveId(service.id)}
                   onClick={() => onServiceClick(service)}
-                  className={`group border border-black/10 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative ${isActive ? 'bg-white shadow-xl' : 'bg-white/60 hover:bg-white'}`}
+                  className={`group border border-black/20 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative rounded-none ${isActive ? 'bg-[#1a1a1a] shadow-xl' : 'bg-white/60 hover:bg-white'}`}
                 >
                   <div className="flex justify-between items-start z-10">
                     <div className="space-y-1">
@@ -148,7 +148,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                     </div>
                   </div>
                   <div className="z-10">
-                    <h4 className="text-xl font-serif uppercase tracking-tight leading-tight mb-2 group-hover:text-[#C5A059] transition-colors">{service.title}</h4>
+                    <h4 className={`text-xl font-serif uppercase tracking-tighter leading-tight mb-2 transition-colors ${isActive ? 'text-[#C5A059]' : 'group-hover:text-[#C5A059]'}`}>{service.title}</h4>
                   </div>
                 </motion.div>
               );
