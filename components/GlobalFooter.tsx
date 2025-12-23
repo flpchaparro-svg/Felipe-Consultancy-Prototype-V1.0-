@@ -1,52 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { ArrowRight, Globe, Activity, Terminal } from 'lucide-react';
 
 interface GlobalFooterProps {
   onNavigate: (view: 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'digital-revenue', sectionId?: string) => void;
 }
-
-const MagneticCTA: React.FC<{ children: React.ReactNode; href: string }> = ({ children, href }) => {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const springConfig = { damping: 25, stiffness: 150, mass: 0.5 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current!.getBoundingClientRect();
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    
-    const pullX = (clientX - centerX) * 0.4;
-    const pullY = (clientY - centerY) * 0.4;
-    
-    x.set(pullX);
-    y.set(pullY);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.a
-      ref={ref}
-      href={href}
-      target="_blank"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
-      className="relative z-10 block"
-    >
-      {children}
-    </motion.a>
-  );
-};
 
 const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
   return (
@@ -55,6 +13,32 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
       <div className="absolute bottom-0 left-0 w-full h-[300px] bg-gradient-to-t from-black to-transparent opacity-50 pointer-events-none"></div>
 
       <div className="max-w-[1600px] mx-auto relative z-10">
+        {/* RESTORED SURGICAL TOP ROW */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-32 border-b border-white/10 pb-16 gap-10">
+          <div className="max-w-2xl">
+            <span className="font-mono text-xs text-[#E21E3F] tracking-[0.4em] mb-4 block uppercase font-bold">/ SYSTEM_IDLE</span>
+            <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] tracking-tighter">
+              Ready to automate <br />
+              <span className="italic text-white/20">your legacy?</span>
+            </h2>
+          </div>
+          
+          <div className="flex flex-col items-end gap-6">
+            <a 
+              href="https://meetings-ap1.hubspot.com/felipe" 
+              target="_blank" 
+              className="group relative flex items-center gap-6 px-12 py-6 border border-[#E21E3F] text-[#E21E3F] hover:border-[#C5A059] hover:text-[#C5A059] transition-all duration-500 font-mono text-xs uppercase tracking-[0.4em]"
+            >
+              Initiate Protocol 
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+            <div className="flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse"></span>
+              <span className="font-mono text-[9px] text-white/30 uppercase tracking-widest">Awaiting_Command</span>
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-20 gap-8">
           <div className="flex items-center gap-4">
             <div className="relative w-2 h-2">
@@ -67,29 +51,6 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
              <span className="flex items-center gap-2"><Globe className="w-3 h-3"/> Local_Time: Sydney_UTC+11</span>
              <span className="flex items-center gap-2"><Terminal className="w-3 h-3"/> Build: v5.4.0_Stable</span>
           </div>
-        </div>
-
-        <div className="mb-48 flex justify-center">
-          <MagneticCTA href="https://meetings-ap1.hubspot.com/felipe">
-            <div className="group cursor-pointer text-center relative">
-              <span className="font-mono text-[11px] text-[#C5A059] tracking-[0.6em] mb-12 block uppercase opacity-60 group-hover:opacity-100 transition-opacity duration-700">
-                [ Click_to_Initiate_Growth_Protocol ]
-              </span>
-              <h2 className="font-serif text-[10vw] md:text-[12vw] leading-[0.8] tracking-tighter transition-all duration-700 relative">
-                <span className="block group-hover:italic group-hover:text-white transition-all duration-700">Initiate</span>
-                <span className="block liquid-gold-text">Protocol.</span>
-              </h2>
-              
-              <div className="mt-16 overflow-hidden h-px bg-white/10 w-full relative">
-                <motion.div 
-                  className="absolute inset-0 bg-[#C5A059] origin-left"
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 1.5, ease: "circOut" }}
-                />
-              </div>
-            </div>
-          </MagneticCTA>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-16 mb-32">

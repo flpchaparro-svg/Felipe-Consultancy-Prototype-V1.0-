@@ -28,6 +28,36 @@ const TECH_STACK = [
   'Bland AI', 'Voiceflow', 'BigQuery', 'Python', 'Looker Studio', 'Klaviyo'
 ];
 
+const ScrambleText: React.FC<{ text: string, isHovered: boolean }> = ({ text, isHovered }) => {
+  const [displayText, setDisplayText] = useState(text);
+  const chars = "01";
+  const intervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isHovered) {
+      let iteration = 0;
+      intervalRef.current = window.setInterval(() => {
+        setDisplayText(prev => 
+          text.split("").map((_, idx) => {
+            if (idx < iteration) return text[idx];
+            return chars[Math.floor(Math.random() * chars.length)];
+          }).join("")
+        );
+        if (iteration >= text.length) {
+          if (intervalRef.current) clearInterval(intervalRef.current);
+        }
+        iteration += 0.5;
+      }, 25);
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      setDisplayText(text);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [isHovered, text]);
+
+  return <span>{displayText}</span>;
+};
+
 const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
   const [isHovered, setIsHovered] = useState(false);
   const Icon = item.icon;
@@ -42,44 +72,66 @@ const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
       transition={{ delay: idx * 0.1, duration: 0.8 }}
       className="group relative bg-[#FFF2EC] p-12 overflow-hidden cursor-default transition-all duration-700 rounded-sm border border-black/5"
       style={{
-        boxShadow: isHovered ? '0 15px 35px -12px rgba(0, 0, 0, 0.12)' : '0 0 0 0 rgba(0,0,0,0)'
+        boxShadow: isHovered ? '0 10px 30px -15px rgba(0, 0, 0, 0.12)' : '0 0 0 0 rgba(0,0,0,0)'
       }}
     >
-      {/* Hairline Mechanical Border Trace Animation - Diagnostic Reveal */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-30" style={{ overflow: 'visible' }}>
-        <motion.rect
-          x="0" y="0" width="100%" height="100%"
-          fill="none"
-          stroke="#E21E3F"
-          strokeWidth="0.75"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ 
-            pathLength: isHovered ? 1 : 0,
-            opacity: isHovered ? 1 : 0
-          }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-        />
-      </svg>
+      {/* 3. Background Activation (Dot Grid) */}
+      <div 
+        className="absolute inset-0 pointer-events-none transition-opacity duration-700 z-0"
+        style={{ 
+          opacity: isHovered ? 0.05 : 0,
+          backgroundImage: 'radial-gradient(#1a1a1a 0.5px, transparent 0.5px)',
+          backgroundSize: '12px 12px'
+        }}
+      />
 
-      {/* Subsurface Ink Depth - Refined for "Ink" look */}
-      <div className={`absolute inset-0 bg-black/[0.005] transition-opacity duration-700 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+      {/* 4. Corner Brackets (Signal Red) */}
+      <div className="absolute inset-0 p-3 pointer-events-none z-20">
+        {[
+          "top-0 left-0 border-t border-l",
+          "top-0 right-0 border-t border-r",
+          "bottom-0 left-0 border-b border-l",
+          "bottom-0 right-0 border-b border-r"
+        ].map((pos, i) => (
+          <motion.div 
+            key={i}
+            className={`absolute w-[10px] h-[10px] border-[#E21E3F] ${pos}`}
+            initial={{ opacity: 0, x: i % 2 === 0 ? -5 : 5, y: i < 2 ? -5 : 5 }}
+            animate={{ 
+              opacity: isHovered ? 1 : 0,
+              x: isHovered ? 0 : (i % 2 === 0 ? -5 : 5),
+              y: isHovered ? 0 : (i < 2 ? -5 : 5)
+            }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          />
+        ))}
+      </div>
 
-      {/* Snappy Bottom Filament Line */}
-      <div className="absolute bottom-0 left-0 h-[1px] bg-[#1a1a1a] w-0 group-hover:w-full transition-all duration-400 ease-out z-20" />
+      {/* 4. Bottom Filament (Left to Right) - Updated to Signal Red */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#E21E3F] transition-transform duration-500 ease-out z-20" 
+        style={{ transform: `scaleX(${isHovered ? 1 : 0})`, transformOrigin: 'left' }}
+      />
       
       <div className="flex justify-between items-start mb-8 relative z-10">
-        {/* Technical Node Identifier - Turns Red on Hover */}
-        <span className={`font-mono text-[9px] tracking-widest uppercase transition-colors duration-500 ${isHovered ? 'text-[#E21E3F]' : 'text-black/30'}`}>
-          NODE_ERR_0{item.id}
-        </span>
+        {/* 1. Node Error Tag (Faint -> Red Scramble) */}
+        <div className={`font-mono text-[9px] tracking-widest uppercase transition-colors duration-300 ${isHovered ? 'text-[#E21E3F]' : 'text-black/20'}`}>
+          <ScrambleText text={`NODE_ERR_0${item.id}`} isHovered={isHovered} />
+        </div>
         
-        {/* Top-Right Technical Icon - Turns Red on Hover and pulses */}
+        {/* 2. Subconscious Icon (Gear Engagement) */}
         <motion.div 
           animate={{ 
-            scale: isHovered ? [1, 1.1, 1] : 1
+            rotate: isHovered ? 90 : 0,
+            scale: isHovered ? 0.95 : 1
           }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className={`transition-colors duration-500 ${isHovered ? 'text-[#E21E3F]' : 'text-[#1a1a1a]'}`}
+          transition={{ 
+            type: "spring", 
+            stiffness: 300, 
+            damping: 20,
+            duration: 0.6 
+          }}
+          className="text-[#1a1a1a]"
         >
           <Icon className="w-6 h-6 stroke-[1.1]" />
         </motion.div>
@@ -246,7 +298,7 @@ const App: React.FC = () => {
           onMouseEnter={() => setIsLogoHovered(true)} 
           onMouseLeave={() => setIsLogoHovered(false)}
         >
-          <div className={`font-mono text-[10px] font-bold border px-2 py-0.5 shrink-0 select-none transition-colors duration-300 ${isLogoHovered ? 'border-[#E21E3F] bg-[#E21E3F] text-[#FFF2EC]' : 'border-[#1a1a1a] bg-[#1a1a1a] text-[#FFF2EC]'}`}>[FC)</div>
+          <div className="font-mono text-[10px] font-bold border border-[#1a1a1a] px-2 py-0.5 bg-[#1a1a1a] text-[#FFF2EC] shrink-0 select-none">[FC)</div>
           <div className="flex font-bold text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a] items-center h-4 overflow-hidden select-none">
             <span className="shrink-0">Felipe</span>
             <div className="relative ml-2 h-4 overflow-hidden">
@@ -255,8 +307,8 @@ const App: React.FC = () => {
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col"
               >
-                <span className="h-4 flex items-center whitespace-nowrap">Chaparro</span>
-                <span className="h-4 flex items-center text-[#E21E3F] whitespace-nowrap">Home</span>
+                <span className="h-4 flex items-center whitespace-nowrap text-[#1a1a1a]">Chaparro</span>
+                <span className="h-4 flex items-center text-[#C5A059] whitespace-nowrap">Home</span>
               </motion.div>
             </div>
           </div>
