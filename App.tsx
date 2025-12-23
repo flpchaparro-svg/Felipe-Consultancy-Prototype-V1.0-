@@ -20,7 +20,7 @@ import Pillar6 from './components/Pillar6';
 import Pillar7 from './components/Pillar7';
 import GlobalFooter from './components/GlobalFooter';
 import { ServiceDetail } from './types';
-import { Menu, X, ArrowRight, ChevronDown, Target, Zap, BarChart3, ArrowUpRight, Microscope, Palette, Briefcase } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, Target, Zap, BarChart3, ArrowUpRight, Microscope, Palette, Briefcase, Droplets, Database, Repeat, EyeOff } from 'lucide-react';
 
 const TECH_STACK = [
   'OpenAI', 'Anthropic', 'Claude', 'Make.com', 'HubSpot', 'Stripe', 'Shopify', 
@@ -29,40 +29,65 @@ const TECH_STACK = [
 ];
 
 const FrictionCard: React.FC<{ item: any, idx: number }> = ({ item, idx }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  function onMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
-
-  const background = useTransform(
-    [mouseX, mouseY],
-    ([x, y]) => `radial-gradient(400px circle at ${x}px ${y}px, rgba(197, 160, 89, 0.1), transparent 80%)`
-  );
+  const [isHovered, setIsHovered] = useState(false);
+  const Icon = item.icon;
 
   return (
     <motion.div 
-      onMouseMove={onMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: idx * 0.1, duration: 0.8 }}
-      className="group relative glass-card p-12 overflow-hidden cursor-default transition-all duration-700"
+      className="group relative bg-[#FFF2EC] p-12 overflow-hidden cursor-default transition-all duration-700 rounded-sm border border-black/5"
+      style={{
+        boxShadow: isHovered ? '0 15px 35px -12px rgba(0, 0, 0, 0.12)' : '0 0 0 0 rgba(0,0,0,0)'
+      }}
     >
-      <div className="absolute inset-0 border border-black/5 group-hover:border-[#C5A059]/30 transition-colors duration-700 pointer-events-none" />
-      
-      <motion.div
-        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10"
-        style={{ background }}
-      />
+      {/* Hairline Mechanical Border Trace Animation - Diagnostic Reveal */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-30" style={{ overflow: 'visible' }}>
+        <motion.rect
+          x="0" y="0" width="100%" height="100%"
+          fill="none"
+          stroke="#E21E3F"
+          strokeWidth="0.75"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ 
+            pathLength: isHovered ? 1 : 0,
+            opacity: isHovered ? 1 : 0
+          }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        />
+      </svg>
 
-      <div className="absolute bottom-0 left-0 h-[1px] bg-[#C5A059] w-0 group-hover:w-full transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] z-20 shadow-[0_0:10px_rgba(197,160,89,0.5)]" />
+      {/* Subsurface Ink Depth - Refined for "Ink" look */}
+      <div className={`absolute inset-0 bg-black/[0.005] transition-opacity duration-700 pointer-events-none ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+
+      {/* Snappy Bottom Filament Line */}
+      <div className="absolute bottom-0 left-0 h-[1px] bg-[#1a1a1a] w-0 group-hover:w-full transition-all duration-400 ease-out z-20" />
       
-      <span className="font-mono text-[9px] text-black/30 mb-8 block tracking-widest uppercase">NODE_ERR_0{item.id}</span>
-      <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a] group-hover:text-[#C5A059] transition-colors duration-500 relative z-20">{item.title}</h3>
+      <div className="flex justify-between items-start mb-8 relative z-10">
+        {/* Technical Node Identifier - Turns Red on Hover */}
+        <span className={`font-mono text-[9px] tracking-widest uppercase transition-colors duration-500 ${isHovered ? 'text-[#E21E3F]' : 'text-black/30'}`}>
+          NODE_ERR_0{item.id}
+        </span>
+        
+        {/* Top-Right Technical Icon - Turns Red on Hover and pulses */}
+        <motion.div 
+          animate={{ 
+            scale: isHovered ? [1, 1.1, 1] : 1
+          }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={`transition-colors duration-500 ${isHovered ? 'text-[#E21E3F]' : 'text-[#1a1a1a]'}`}
+        >
+          <Icon className="w-6 h-6 stroke-[1.1]" />
+        </motion.div>
+      </div>
+
+      <div className="mb-4 relative z-20">
+        <h3 className="font-serif text-3xl text-[#1a1a1a] tracking-tight">{item.title}</h3>
+      </div>
       <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed relative z-20">{item.text}</p>
     </motion.div>
   );
@@ -221,7 +246,7 @@ const App: React.FC = () => {
           onMouseEnter={() => setIsLogoHovered(true)} 
           onMouseLeave={() => setIsLogoHovered(false)}
         >
-          <div className="font-mono text-[10px] font-bold border border-[#1a1a1a] px-2 py-0.5 bg-[#1a1a1a] text-[#FFF2EC] shrink-0 select-none">[FC)</div>
+          <div className={`font-mono text-[10px] font-bold border px-2 py-0.5 shrink-0 select-none transition-colors duration-300 ${isLogoHovered ? 'border-[#E21E3F] bg-[#E21E3F] text-[#FFF2EC]' : 'border-[#1a1a1a] bg-[#1a1a1a] text-[#FFF2EC]'}`}>[FC)</div>
           <div className="flex font-bold text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a] items-center h-4 overflow-hidden select-none">
             <span className="shrink-0">Felipe</span>
             <div className="relative ml-2 h-4 overflow-hidden">
@@ -231,7 +256,7 @@ const App: React.FC = () => {
                 className="flex flex-col"
               >
                 <span className="h-4 flex items-center whitespace-nowrap">Chaparro</span>
-                <span className="h-4 flex items-center text-[#C5A059] whitespace-nowrap">Home</span>
+                <span className="h-4 flex items-center text-[#E21E3F] whitespace-nowrap">Home</span>
               </motion.div>
             </div>
           </div>
@@ -319,22 +344,28 @@ const App: React.FC = () => {
                   <div className="lg:col-span-10 flex flex-col justify-center">
                     <div className="flex items-center gap-6 mb-10 overflow-hidden">
                       <span className="h-[1px] w-16 bg-[#1a1a1a] animate-extend-line"></span>
-                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">Business Growth <span className={`font-mono font-bold tracking-widest ml-2 transition-colors duration-700 ${isArchitectTarget ? 'text-[#C5A059]' : 'text-[#E21E3F]'}`}>{scrambleText}</span></span>
+                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">/ Business Growth <span className={`font-mono font-bold tracking-widest ml-2 transition-colors duration-700 text-[#E21E3F]`}>{scrambleText}</span></span>
                     </div>
                     <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10">
                       <div className="overflow-hidden"><span className="block reveal-text">Not an Agency.</span></div>
-                      <div className="overflow-hidden"><span className="block reveal-text" style={{ animationDelay: '0.1s' }}>A <span className="text-[#1a1a1a] italic">Revenue Engine.</span></span></div>
+                      <div className="overflow-hidden">
+                        <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
+                          A <span 
+                            className="soft-steel-shine italic"
+                            style={{ letterSpacing: '0.02em' }}
+                          >Revenue Engine.</span>
+                        </span>
+                      </div>
                     </h1>
                     <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-2xl border-l border-black/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
                     <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '1s' }}>
-                      <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#C5A059]">
+                      <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-[#1a1a1a] overflow-hidden transition-all duration-300 bg-[#1a1a1a] text-[#FFF2EC] hover:text-[#1a1a1a] hover:border-[#1a1a1a]">
                         <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
                         <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
                       </a>
-                      <a href="#process" className="relative group px-8 py-5 flex items-center gap-3">
-                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] group-hover:text-[#C5A059] transition-colors duration-300">Audit The Friction</span>
-                        <ArrowRight className="w-4 h-4 text-[#1a1a1a] group-hover:translate-y-1 group-hover:text-[#C5A059] transition-all duration-300 rotate-90" />
-                        <span className="absolute bottom-0 left-0 w-full h-[1px] bg-black/20 group-hover:bg-[#C5A059] transition-colors duration-300"></span>
+                      <a href="#process" className="relative group py-5 flex items-center gap-3">
+                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300">Audit The Friction</span>
+                        <ArrowRight className="w-4 h-4 text-[#1a1a1a] rotate-90 transition-all duration-300 group-hover:translate-y-1.5 group-hover:stroke-[3px]" />
                       </a>
                     </div>
                   </div>
@@ -362,19 +393,20 @@ const App: React.FC = () => {
 
               <section id="process" className="w-full relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
                 <div className="max-w-[1600px] mx-auto">
-                  <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-12">
-                    <div className="max-w-xl">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-4 block font-bold">/ The Friction Audit</span>
-                      <h2 className="font-serif text-5xl font-light mb-6">Is Your Business Suffering from <span className="italic">Operational Drag?</span></h2>
-                      <p className="font-sans text-lg font-light text-[#1a1a1a]/70">Growth doesn't need more traffic. It needs less friction.</p>
-                    </div>
+                  <div className="flex flex-col mb-20 text-left">
+                    <span className="font-mono text-xs uppercase tracking-[0.4em] text-[#E21E3F] mb-4 font-bold">/ THE FRICTION AUDIT</span>
+                    <h2 className="font-serif text-5xl md:text-6xl font-light">
+                      Is Your Business Suffering from <br />
+                      <span className="italic text-[#1a1a1a]">Operational Drag?</span>
+                    </h2>
+                    <p className="font-sans text-lg font-light text-[#1a1a1a]/70 mt-4">Growth doesn't need more traffic. It needs less friction.</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {[
-                      { id: '101', title: 'Revenue Leakage', text: 'Demand is expiring in the inbox. Your current website is a brochure, not a capture mechanism.' },
-                      { id: '102', title: 'Data Silos', text: 'Sales uses one tool. Ops uses another. Finance lives in Excel. Nothing talks to each other.' },
-                      { id: '103', title: 'The Busywork Trap', text: 'You are wasting 40% of your week on manual data entry. You are playing COO instead of CEO.' },
-                      { id: '104', title: 'Flying Blind', text: 'You manage by gut feeling because you can\'t see the numbers. You don\'t know your LTV in real-time.' }
+                      { id: '101', title: 'Revenue Leakage', text: 'Demand is expiring in the inbox. Your current website is a brochure, not a capture mechanism.', icon: Droplets },
+                      { id: '102', title: 'Data Silos', text: 'Sales uses one tool. Ops uses another. Finance lives in Excel. Nothing talks to each other.', icon: Database },
+                      { id: '103', title: 'The Busywork Trap', text: 'You are wasting 40% of your week on manual data entry. You are playing COO instead of CEO.', icon: Repeat },
+                      { id: '104', title: 'Flying Blind', text: 'You manage by gut feeling because you can\'t see the numbers. You don\'t know your LTV in real-time.', icon: EyeOff }
                     ].map((item, idx) => (
                       <FrictionCard key={idx} item={item} idx={idx} />
                     ))}
