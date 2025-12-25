@@ -1,247 +1,157 @@
-
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Activity } from 'lucide-react';
-
-const QUESTIONS = [
-  { 
-    id: 1, 
-    text: "How much of your week is spent on manual data entry or admin?", 
-    options: ["< 5 hours", "5-15 hours", "15-30 hours", "30+ hours"], 
-    weights: [0, 10, 20, 30] 
-  },
-  { 
-    id: 2, 
-    text: "How long does it take to get a lead from 'Captured' to 'Contacted'?", 
-    options: ["< 5 mins", "1-4 hours", "Same day", "Next day+"], 
-    weights: [0, 10, 20, 30] 
-  },
-  { 
-    id: 3, 
-    text: "Do your Sales, Ops, and Finance tools talk to each other automatically?", 
-    options: ["Fully Sync'd", "Partially", "Manual Export", "None"], 
-    weights: [0, 10, 20, 30] 
-  }
-];
-
-const DiagnosticButton: React.FC<{ 
-  text: string, 
-  onClick: () => void 
-}> = ({ text, onClick }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="relative group/opt p-6 border border-white/10 text-left overflow-hidden transition-all duration-500 bg-transparent rounded-none"
-    >
-      {/* 1px Gold Perimeter Drawing Effect - Accelerated to 200ms */}
-      <AnimatePresence>
-        {isHovered && (
-          <>
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              exit={{ opacity: 0 }}
-              className="absolute top-0 left-0 w-full h-[1px] bg-[#C5A059] origin-left z-20"
-            />
-            <motion.div 
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              exit={{ opacity: 0 }}
-              className="absolute top-0 right-0 w-[1px] h-full bg-[#C5A059] origin-top z-20"
-            />
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              exit={{ opacity: 0 }}
-              className="absolute bottom-0 right-0 w-full h-[1px] bg-[#C5A059] origin-right z-20"
-            />
-            <motion.div 
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              exit={{ opacity: 0 }}
-              className="absolute bottom-0 left-0 w-[1px] h-full bg-[#C5A059] origin-bottom z-20"
-            />
-          </>
-        )}
-      </AnimatePresence>
-
-      <div className="relative z-10 flex justify-between items-center w-full">
-        <span className={`font-mono text-[11px] uppercase tracking-[0.2em] transition-all duration-300 relative ${isHovered ? 'text-[#C5A059]' : 'text-white/40'}`}>
-          {/* Subtle Glow Behind Text */}
-          {isHovered && (
-            <motion.span 
-              layoutId="text-glow"
-              className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#C5A059]/30 blur-sm -z-10"
-            />
-          )}
-          {text}
-        </span>
-        <motion.div
-          animate={isHovered ? { x: [0, 3, 0] } : {}}
-          transition={{ duration: 0.15, repeat: isHovered ? Infinity : 0, repeatDelay: 1 }}
-        >
-          <ArrowRight className={`w-4 h-4 transition-colors duration-300 ${isHovered ? 'text-[#C5A059]' : 'text-white/10'}`} />
-        </motion.div>
-      </div>
-    </button>
-  );
-};
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, AlertCircle } from 'lucide-react';
 
 const RevenueAudit: React.FC = () => {
-  const [step, setStep] = useState(0);
-  const [score, setScore] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
-  const [isSectionHovered, setIsSectionHovered] = useState(false);
-  const sectionRef = useRef(null);
+  const [revenue, setRevenue] = useState(50000); // Monthly Revenue (Reference)
+  const [hours, setHours] = useState(10); // Weekly Admin Hours
+  const [bloat, setBloat] = useState(3); // Redundant Apps
+  const [leakage, setLeakage] = useState(0);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "center center"]
-  });
+  useEffect(() => {
+    // STRICT CALCULATION LOGIC:
+    // 1. Labor Waste: Hours * $150/hr (Exec Value) * 52 weeks
+    // 2. Tech Waste: Apps * $50/mo * 12 months
+    
+    const laborCost = hours * 150 * 52;
+    const techCost = bloat * 50 * 12;
+    
+    setLeakage(laborCost + techCost);
+  }, [hours, bloat]);
 
-  const yMovement = useTransform(scrollYProgress, [0, 1], [100, 0]);
-  const boxOpacity = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
-
-  const handleAnswer = (weight: number) => {
-    setScore(prev => prev + weight);
-    if (step < QUESTIONS.length - 1) {
-      setStep(prev => prev + 1);
-    } else {
-      setIsFinished(true);
-    }
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
   };
 
-  const progress = isFinished ? 100 : Math.max(2, (step / QUESTIONS.length) * 100);
-
   return (
-    <section 
-      ref={sectionRef} 
-      id="audit-quiz" 
-      onMouseEnter={() => setIsSectionHovered(true)}
-      onMouseLeave={() => setIsSectionHovered(false)}
-      className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/10"
-    >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_#C5A05908,_transparent)] pointer-events-none"></div>
-      
-      <motion.div 
-        style={{ y: yMovement, opacity: boxOpacity }}
-        className="max-w-[1000px] mx-auto bg-[#1a1a1a]/95 backdrop-blur-sm p-8 md:p-16 border border-white/10 relative overflow-hidden group/audit rounded-none shadow-2xl"
-      >
-        {/* Architectural Red Corner Brackets */}
-        <div className="absolute inset-0 pointer-events-none p-4">
-          {[
-            "top-0 left-0 border-t border-l",
-            "top-0 right-0 border-t border-r",
-            "bottom-0 left-0 border-b border-l",
-            "bottom-0 right-0 border-b border-r"
-          ].map((pos, i) => (
-            <motion.div 
-              key={i}
-              className={`absolute w-4 h-4 border-[#E21E3F] ${pos}`}
-              animate={{ opacity: isSectionHovered ? 1 : 0 }}
-              transition={{ duration: 0.4 }}
-            />
-          ))}
+    <section id="audit" className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 border-t border-[#1a1a1a]/10">
+      <div className="max-w-[1600px] mx-auto">
+        
+        {/* BRIDGE COPY */}
+        <div className="mb-20 max-w-4xl">
+           <span className="font-mono text-xs text-[#1a1a1a] tracking-[0.4em] mb-6 block uppercase font-bold">
+             <span className="text-[#E21E3F]">/</span> THE COST OF CHAOS
+           </span>
+           <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-[0.95] tracking-tighter mb-8">
+             Friction isn't just annoying. <br />
+             It is <span className="italic text-[#E21E3F]">Expensive.</span>
+           </h2>
+           <p className="font-sans text-xl font-light text-[#1a1a1a]/70 leading-relaxed border-l border-[#E21E3F]/30 pl-6 max-w-2xl">
+             I identified the potential leaks in the previous section. Now, use this tool to quantify exactly what that "Operational Drag" is costing your bottom line.
+           </p>
         </div>
 
-        {/* Machine Progress Bar - Signal Red during diagnosis, Gold on completion */}
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-white/5 overflow-hidden">
-          <motion.div 
-            className={`h-full relative shadow-[0_0_15px_rgba(197,160,89,0.3)] ${isFinished ? 'bg-[#C5A059]' : 'bg-[#E21E3F]'}`}
-            initial={{ width: "2%" }}
-            animate={{ width: `${progress}%` }}
-            transition={{ type: "spring", stiffness: 45, damping: 15 }}
-          />
-        </div>
-
-        <AnimatePresence mode="wait">
-          {!isFinished ? (
-            <motion.div 
-              key={step} 
-              initial={{ x: 30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -30, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              className="relative z-10"
-            >
-              <div className="flex justify-between items-center mb-12">
-                <div className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E21E3F] animate-pulse shadow-[0_0_8px_#E21E3F]"></span>
-                  <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.3em] uppercase font-bold">Diagnostic_Active</span>
-                </div>
-                <span className="font-mono text-[10px] text-white tracking-[0.3em] uppercase">NODE_0{step + 1} // 0{QUESTIONS.length}</span>
-              </div>
+        {/* CALCULATOR INTERFACE */}
+        <div className="bg-white border border-[#1a1a1a]/10 p-8 md:p-16 relative shadow-sm">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
               
-              <h3 className="font-serif text-3xl md:text-5xl text-[#FFF2EC] mb-16 leading-tight tracking-[-0.03em]">
-                {QUESTIONS[step].text}
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {QUESTIONS[step].options.map((option, idx) => (
-                  <DiagnosticButton 
-                    key={idx} 
-                    text={option} 
-                    onClick={() => handleAnswer(QUESTIONS[step].weights[idx])} 
-                  />
-                ))}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="result"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="relative z-10 text-center py-10"
-            >
-              <div className="flex justify-center mb-10">
-                 <div className="w-20 h-20 rounded-full border border-[#E21E3F]/20 flex items-center justify-center relative">
-                    <motion.div 
-                      className="absolute inset-0 rounded-full border border-[#E21E3F]"
-                      animate={{ scale: [1, 1.2, 1], opacity: [1, 0, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+              {/* INPUTS COLUMN */}
+              <div className="space-y-16">
+                 {/* Question 1 - Reference Only */}
+                 <div>
+                    <div className="flex justify-between items-end mb-6">
+                       <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/60">01 // Monthly Revenue</label>
+                       <span className="font-serif text-3xl text-[#1a1a1a]">{formatCurrency(revenue)}</span>
+                    </div>
+                    <p className="font-sans text-xs text-[#1a1a1a]/40 mb-6 italic pl-1">For context only. Does not affect waste calculation.</p>
+                    <input 
+                      type="range" 
+                      min="5000" 
+                      max="500000" 
+                      step="5000" 
+                      value={revenue}
+                      onChange={(e) => setRevenue(Number(e.target.value))}
+                      className="w-full h-[2px] bg-[#1a1a1a]/10 appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-[#1a1a1a] [&::-webkit-slider-thumb]:rounded-none hover:[&::-webkit-slider-thumb]:bg-[#C5A059] transition-colors focus:outline-none"
                     />
-                    <Activity className="w-8 h-8 text-[#E21E3F]" />
+                 </div>
+
+                 {/* Question 2 */}
+                 <div>
+                    <div className="flex justify-between items-end mb-6">
+                       <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/60">02 // Weekly Admin Hours</label>
+                       <span className="font-serif text-3xl text-[#1a1a1a]">{hours} hrs</span>
+                    </div>
+                    <p className="font-sans text-xs text-[#1a1a1a]/40 mb-6 italic pl-1">Data entry, email chasing, admin.</p>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="40" 
+                      step="1" 
+                      value={hours}
+                      onChange={(e) => setHours(Number(e.target.value))}
+                      className="w-full h-[2px] bg-[#1a1a1a]/10 appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-[#1a1a1a] [&::-webkit-slider-thumb]:rounded-none hover:[&::-webkit-slider-thumb]:bg-[#C5A059] transition-colors focus:outline-none"
+                    />
+                 </div>
+
+                 {/* Question 3 */}
+                 <div>
+                    <div className="flex justify-between items-end mb-6">
+                       <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/60">03 // Redundant Apps</label>
+                       <span className="font-serif text-3xl text-[#1a1a1a]">{bloat} apps</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="20" 
+                      step="1" 
+                      value={bloat}
+                      onChange={(e) => setBloat(Number(e.target.value))}
+                      className="w-full h-[2px] bg-[#1a1a1a]/10 appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-[#1a1a1a] [&::-webkit-slider-thumb]:rounded-none hover:[&::-webkit-slider-thumb]:bg-[#C5A059] transition-colors focus:outline-none"
+                    />
                  </div>
               </div>
 
-              <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.5em] uppercase font-bold mb-6 block">Diagnostic_Complete // Results_Calculated</span>
-              
-              <h3 className="font-serif text-4xl md:text-6xl text-[#FFF2EC] mb-6 leading-tight tracking-[-0.03em]">
-                Revenue Leakage <br />
-                <span className="italic">Analysis:</span>
-              </h3>
+              {/* OUTPUT COLUMN */}
+              <div className="bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/10 p-12 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                 {/* Top Accent Line */}
+                 <div className={`absolute top-0 left-0 w-full h-1 transition-colors duration-500 ${leakage > 0 ? 'bg-[#E21E3F]' : 'bg-[#1a1a1a]/20'}`}></div>
+                 
+                 <AlertCircle className={`w-12 h-12 mb-8 opacity-80 stroke-[1.5] transition-colors duration-500 ${leakage > 0 ? 'text-[#E21E3F]' : 'text-[#1a1a1a]/20'}`} />
+                 
+                 <span className={`font-mono text-[10px] tracking-[0.3em] uppercase mb-6 font-bold transition-colors duration-500 ${leakage > 0 ? 'text-[#E21E3F]' : 'text-[#1a1a1a]/40'}`}>
+                   Estimated Annual Waste
+                 </span>
+                 
+                 <motion.div 
+                   key={leakage}
+                   initial={{ scale: 0.95, opacity: 0.5 }}
+                   animate={{ scale: 1, opacity: 1 }}
+                   className={`font-serif text-5xl md:text-7xl lg:text-8xl mb-8 tracking-tighter leading-none transition-colors duration-500 ${leakage > 0 ? 'text-[#E21E3F]' : 'text-[#1a1a1a]'}`}
+                 >
+                    {formatCurrency(leakage)}
+                 </motion.div>
+                 
+                 <p className="font-sans text-sm text-[#1a1a1a]/50 max-w-xs mb-12 leading-relaxed">
+                    {leakage > 0 
+                      ? "This is capital currently evaporating from your P&L due to operational inefficiencies and manual drag." 
+                      : "System operational. No estimated waste detected based on current inputs."}
+                 </p>
 
-              <div className="text-8xl md:text-[10rem] font-sans font-extralight text-[#E21E3F] mb-10 tabular-nums tracking-tighter">
-                {Math.round((score / 90) * 100)}%
+                 <AnimatePresence>
+                   {leakage > 0 && (
+                     <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                     >
+                       <a 
+                         href="https://meetings-ap1.hubspot.com/felipe"
+                         target="_blank"
+                         className="group relative inline-flex items-center gap-4 px-10 py-5 bg-transparent border border-[#C5A059] text-white font-mono text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden"
+                       >
+                          <div className="absolute inset-0 bg-[#C5A059] group-hover:-translate-y-full transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                          <span className="relative z-10 transition-colors duration-500 group-hover:text-[#C5A059]">[ STOP THE BLEEDING ]</span>
+                          <ArrowRight className="w-4 h-4 relative z-10 transition-all duration-500 group-hover:translate-x-1 group-hover:text-[#C5A059]" />
+                       </a>
+                     </motion.div>
+                   )}
+                 </AnimatePresence>
               </div>
 
-              <p className="font-sans text-white/50 max-w-xl mx-auto mb-16 leading-relaxed text-lg">
-                Your current infrastructure is failing to capture high-intent demand. This leakage represents a terminal drag on your acquisition velocity. 
-              </p>
+           </div>
+        </div>
 
-              <div className="flex justify-center">
-                <a 
-                  href="https://meetings-ap1.hubspot.com/felipe"
-                  target="_blank"
-                  className="group relative inline-flex items-center gap-6 px-12 py-6 border border-[#C5A059] bg-transparent text-[#C5A059] overflow-hidden transition-all duration-500 rounded-none"
-                >
-                  <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                  <span className="relative z-10 font-mono text-xs uppercase tracking-[0.4em] font-bold transition-colors duration-500 group-hover:text-black">Apply Repair Protocol</span>
-                  <ArrowRight className="relative z-10 w-4 h-4 transition-colors duration-500 group-hover:text-black group-hover:translate-x-1 transition-transform" />
-                </a>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+      </div>
     </section>
   );
 };
