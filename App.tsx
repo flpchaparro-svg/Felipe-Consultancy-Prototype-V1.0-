@@ -19,6 +19,7 @@ import Pillar5 from './components/Pillar5';
 import Pillar6 from './components/Pillar6';
 import Pillar7 from './components/Pillar7';
 import GlobalFooter from './components/GlobalFooter';
+import HeroVisual from './components/HeroVisual';
 import { ServiceDetail } from './types';
 import { Menu, X, ArrowRight, ChevronDown, Target, Zap, BarChart3, ArrowUpRight, Microscope, Palette, Briefcase, Droplets, Database, Repeat, EyeOff } from 'lucide-react';
 
@@ -158,7 +159,7 @@ const App: React.FC = () => {
   const [isArchHovered, setIsArchHovered] = useState(false);
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [scrambleText, setScrambleText] = useState("STRATEGIST");
+  const [scrambleText, setScrambleText] = useState("ARCHITECT");
   const [deploymentCounter, setDeploymentCounter] = useState(13.51);
   const [navVisible, setNavVisible] = useState(true);
   const [hoveredCardIdx, setHoveredCardIdx] = useState<number | null>(null);
@@ -200,7 +201,7 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    const roles = ["STRATEGIST", "ARCHITECT", "ENGINEER"];
+    const roles = ["ARCHITECT", "NAVIGATOR", "ENGINEER"];
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let roleIndex = 0;
     
@@ -217,8 +218,8 @@ const App: React.FC = () => {
         );
         if (iterations >= target.length) clearInterval(interval);
         iterations += 1;
-      }, 60); // Deliberate system calculation feel
-    }, 7000); // 7s interval as requested
+      }, 60); 
+    }, 7000); 
 
     const targetValue = 14.00;
     const counterInterval = setInterval(() => {
@@ -398,29 +399,50 @@ const App: React.FC = () => {
           {currentView === 'landing' ? (
             <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <section id="hero" className="relative min-h-screen w-full flex items-center pt-20 overflow-hidden content-layer">
+                <HeroVisual />
                 <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
                   <div className="lg:col-span-12 flex flex-col justify-center">
                     <div className="flex items-center gap-6 mb-10 overflow-hidden">
                       <span className="h-[1px] w-8 bg-[#1a1a1a] animate-extend-line"></span>
-                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">/ Business Growth <span className={`font-mono font-bold tracking-widest ml-2 transition-colors duration-700 text-[#E21E3F]`}>{scrambleText}</span></span>
+                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">
+                        <span className="text-[#E21E3F]">/</span> SYDNEY BUSINESS GROWTH 
+                        <span 
+                          className="font-mono font-bold tracking-widest ml-2 transition-colors duration-700"
+                          style={{ color: scrambleText === "NAVIGATOR" ? "#C5A059" : "#E21E3F" }}
+                        >
+                          [ {scrambleText} ]
+                        </span>
+                      </span>
                     </div>
-                    <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.9] tracking-tighter text-[#1a1a1a] mb-10">
-                      <div className="overflow-hidden"><span className="block reveal-text">Not an Agency.</span></div>
+                    <h1 className="font-serif text-5xl md:text-7xl lg:text-[6rem] leading-[1] tracking-tighter text-[#1a1a1a] mb-10">
+                      <div className="overflow-hidden"><span className="block reveal-text">Built on Drive.</span></div>
                       <div className="overflow-hidden">
                         <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
-                          A <span className="soft-steel-shine italic">Revenue Engine.</span>
+                          <span className="soft-steel-shine italic" style={{ color: '#C5A059' }}>Not Paperwork.</span>
                         </span>
                       </div>
                     </h1>
-                    <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-xl border-l border-[#C5A059]/30 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>Agencies are slow. Freelancers are unreliable. I combine Strategic Web Design with AI-driven operations to build systems that scale your revenue without adding headcount. Direct collaboration. No fluff.</p>
-                    <div className="flex flex-col sm:flex-row gap-8 items-start animate-fade-in" style={{ animationDelay: '1s' }}>
-                      <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="relative group px-10 py-5 border border-black overflow-hidden transition-all duration-300 bg-transparent text-black hover:text-white">
-                        <div className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
-                        <span className="relative z-10 font-mono text-xs uppercase tracking-[0.2em]">Apply For Access</span>
+                    <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed mb-8 md:mb-16 max-w-xl border-l border-[#C5A059]/30 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>Stop burning your best people on repetitive tasks. I build the digital systems that let you reclaim your margin and your sanity. No jargon. No fluff. Just logic that works.</p>
+                    <div className="flex flex-col sm:flex-row gap-12 items-center animate-fade-in" style={{ animationDelay: '1s' }}>
+                      
+                      {/* Primary CTA: Solid Black -> Ghost with bottom-to-top slide effect */}
+                      <a 
+                        href="https://meetings-ap1.hubspot.com/felipe" 
+                        target="_blank" 
+                        className="relative group px-12 py-6 bg-black text-white border border-black overflow-hidden transition-all duration-300 rounded-none font-mono text-xs uppercase tracking-[0.3em] font-bold shadow-[0_15px_30px_-10px_rgba(0,0,0,0.3)] hover:shadow-none"
+                      >
+                        <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)"></div>
+                        <span className="relative z-10 group-hover:text-black transition-colors duration-500">[ GET MY 15-MIN FRICTION MAP ]</span>
                       </a>
-                      <a href="#process" className="relative group py-5 flex items-center gap-3">
-                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300">Audit The Friction</span>
-                        <ArrowRight className="w-4 h-4 text-[#1a1a1a] rotate-90 transition-all duration-300 group-hover:translate-y-1.5 group-hover:stroke-[3px]" />
+                      
+                      {/* Secondary CTA: Original text-link style with downward chevron */}
+                      <a 
+                        href="#process" 
+                        onClick={(e) => { e.preventDefault(); const el = document.getElementById('process'); el?.scrollIntoView({ behavior: 'smooth' }); }} 
+                        className="relative group py-5 flex items-center gap-3"
+                      >
+                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300">EXPLORE THE 7 PILLARS</span>
+                        <ChevronDown className="w-5 h-5 text-[#1a1a1a] transition-all duration-300 group-hover:translate-y-1.5" />
                       </a>
                     </div>
                   </div>
@@ -445,6 +467,32 @@ const App: React.FC = () => {
                   </motion.div>
                 </div>
               </div>
+
+              {/* Diagnosis Section */}
+              <motion.section 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+                className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30"
+              >
+                <div className="max-w-[1400px] mx-auto">
+                  <div className="flex flex-col text-left">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] mb-8 block">
+                      <span className="text-[#E21E3F]">/</span> THE PROBLEM
+                    </span>
+                    <h2 className="font-serif text-4xl md:text-6xl leading-tight tracking-tighter text-[#1a1a1a] mb-10">
+                      You didn’t start your business to become an administrative hostage.
+                    </h2>
+                    <p className="font-sans text-xl font-light text-[#1a1a1a]/70 leading-relaxed mb-8 max-w-3xl">
+                      If you are reading this while the rest of the world is quiet, you know the feeling. The anxiety of growth is real—revenue is up, but so is the friction. Your team is drowning in manual work, leads are leaking through the cracks, and your CRM feels like a liability instead of a source of truth.
+                    </p>
+                    <p className="font-sans text-xl font-semibold text-[#1a1a1a] leading-relaxed max-w-3xl border-l-2 border-[#C5A059] pl-6">
+                      You are 'Burning People' to bridge gaps that should be handled by synchronised systems. I don't just build websites; I build exits from the daily grind. We look at the map together and find the fastest path to scaling without the chaos.
+                    </p>
+                  </div>
+                </div>
+              </motion.section>
 
               <section id="process" className="w-full relative z-30 bg-[#FFF2EC] content-layer py-32 px-6 md:px-12 lg:px-20">
                 <div className="max-w-[1600px] mx-auto">
@@ -503,7 +551,6 @@ const App: React.FC = () => {
                         <div className="hidden md:block absolute top-0 left-0 w-full h-[2px] bg-[#C5A059] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                         <span className="font-mono text-xs text-[#C5A059]/80 mb-3 block uppercase">PHASE {step.phase}</span>
                         <h3 className="font-serif text-3xl mb-4 text-[#1a1a1a]">{step.title}</h3>
-                        {/* Changed step.task to step.text to match the provided data structure */}
                         <p className="font-sans text-sm text-[#1a1a1a]/70 leading-relaxed">{step.text}</p>
                       </div>
                     ))}

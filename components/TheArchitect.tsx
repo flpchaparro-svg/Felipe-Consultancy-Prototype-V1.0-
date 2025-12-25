@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, ArrowUpRight } from 'lucide-react';
@@ -17,11 +18,18 @@ const TheArchitect: React.FC = () => {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-8 relative group"
           >
-            {/* Flickering Gold Scan Frame */}
-            <div className="absolute -inset-8 border border-[#C5A059]/40 pointer-events-none animate-flicker z-10"></div>
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-[#C5A059] animate-scan-line z-20"></div>
+            {/* pulse-based surgical breath frame */}
+            <div className="absolute -inset-8 border border-[#C5A059]/40 pointer-events-none animate-pulse duration-[3000ms] z-10"></div>
             
-            <div className="aspect-[16/10] lg:aspect-[16/9] bg-[#1a1a1a] relative overflow-hidden grayscale group-hover:grayscale-[0.5] transition-all duration-1000 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)]">
+            {/* Subtle technical sweep scan line */}
+            <motion.div 
+              initial={{ top: '0%' }}
+              animate={{ top: '100%' }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 w-full h-[1px] bg-[#C5A059] opacity-30 z-20 pointer-events-none"
+            />
+            
+            <div className="aspect-[16/10] lg:aspect-[16/9] bg-[#1a1a1a] relative overflow-hidden grayscale group-hover:grayscale-[0.5] transition-all duration-1000 border border-black/20 rounded-none shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)]">
               <video 
                 autoPlay 
                 loop 
@@ -52,8 +60,8 @@ const TheArchitect: React.FC = () => {
               transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="mt-12 lg:mt-0 p-8 lg:p-20 bg-transparent mix-blend-difference text-white"
             >
-              <span className="font-mono text-[10px] text-[#C5A059] tracking-[0.5em] mb-8 block uppercase font-bold">/ THE_ARCHITECT_LOG</span>
-              <h2 className="font-serif text-5xl md:text-7xl lg:text-9xl leading-[0.8] mb-12 tracking-tighter">
+              <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.5em] mb-8 block uppercase font-bold">/ THE_ARCHITECT_LOG</span>
+              <h2 className="font-serif text-5xl md:text-7xl lg:text-9xl leading-[0.8] mb-12 tracking-[-0.05em]">
                 I don't hire juniors. <br />
                 <span className="italic text-white/30">I hire silicon.</span>
               </h2>
@@ -70,7 +78,7 @@ const TheArchitect: React.FC = () => {
                   <a 
                     href="https://meetings-ap1.hubspot.com/felipe" 
                     target="_blank"
-                    className="flex items-center justify-center w-16 h-16 rounded-full border border-white/20 hover:border-[#C5A059] transition-all duration-500 group/link"
+                    className="flex items-center justify-center w-16 h-16 rounded-none border border-white/20 hover:border-[#C5A059] transition-all duration-500 group/link"
                   >
                     <ArrowUpRight className="w-6 h-6 text-white group-hover/link:text-[#C5A059] transition-colors" />
                   </a>
@@ -81,13 +89,14 @@ const TheArchitect: React.FC = () => {
 
         </div>
 
-        <div className="mt-32 pt-10 border-t border-black/5 flex flex-wrap justify-between items-center gap-8 opacity-40">
-          <div className="flex gap-12 font-mono text-[9px] uppercase tracking-[0.4em]">
+        {/* Discovery-Based Design Footer */}
+        <div className="mt-32 pt-10 border-t border-black/5 flex flex-wrap justify-between items-center gap-8">
+          <div className="flex gap-12 font-mono text-[9px] uppercase tracking-[0.4em] opacity-10 hover:opacity-100 transition-opacity duration-700 cursor-help">
             <span>[ LATENCY: 2ms ]</span>
             <span>[ THROUGHPUT: 1.4PB/S ]</span>
             <span>[ UPTIME: 99.99% ]</span>
           </div>
-          <div className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#A31D33]">
+          <div className="font-mono text-[9px] uppercase tracking-[0.4em] text-[#E21E3F] font-bold">
             CRITICAL_PATH_LOCKED
           </div>
         </div>
