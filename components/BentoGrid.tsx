@@ -51,19 +51,20 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   ];
 
   return (
-    <section id="architecture" className="relative h-screen max-h-[900px] min-h-[850px] py-12 px-6 lg:px-12 bg-[#FFF2EC] overflow-hidden flex flex-col content-layer">
+    <section id="architecture" className="relative h-screen max-h-[1100px] min-h-[900px] py-12 px-6 lg:px-12 bg-[#FFF2EC] overflow-hidden flex flex-col content-layer">
       <div className="max-w-screen-2xl mx-auto w-full h-full flex flex-col">
-        <div className="flex justify-between items-end mb-8 shrink-0">
-          <div>
-            <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.5em] font-bold mb-2 block uppercase">Architecture_Protocol_v5.4</span>
-            <h2 className="text-4xl lg:text-7xl font-serif text-[#1a1a1a] leading-none tracking-tighter">
-              The Revenue <span className="italic">Engine.</span>
-            </h2>
-          </div>
-          <div className="hidden lg:block text-right">
-            <span className="text-[#1a1a1a]/40 text-[9px] font-mono tracking-widest uppercase block">Sensor_Array:</span>
-            <span className="text-[#1a1a1a] text-xs font-bold font-mono uppercase">LIVE // SYNC_ACTIVE</span>
-          </div>
+        
+        {/* UPDATED HEADER SECTION - Typography matched to RevenueAudit */}
+        <div className="mb-20 shrink-0 text-center max-w-4xl mx-auto">
+          <span className="font-mono text-xs text-[#1a1a1a] tracking-[0.4em] mb-6 block uppercase font-bold">
+            <span className="text-[#E21E3F]">/</span> PROCESS ARCHITECTURE
+          </span>
+          <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-[0.95] tracking-tighter mb-8">
+            I Engineer The Entire <span className="font-bold text-[#C5A059]">Ecosystem</span>
+          </h2>
+          <p className="font-sans text-xl font-light text-[#1a1a1a]/70 leading-relaxed max-w-2xl mx-auto">
+            I don't just build websites. I treat your business as a single living organism. By linking your Marketing, Sales, and Operations into one synchronized reaction, I eliminate the friction that burns out your people and ensure data flows seamlessly from the first click to the final invoice.
+          </p>
         </div>
 
         <div className="flex-1 grid grid-cols-12 grid-rows-6 gap-4 overflow-hidden">
@@ -123,41 +124,4 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
             })}
           </div>
 
-          <div className="col-span-12 row-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {bottomRowServices.map((service) => {
-              const isActive = activeId === service.id;
-              const labelMap: Record<string, string> = {
-                'control-tower': '07',
-                'team-protocols': '06',
-                'media-logistics': '05',
-                'augmented-workforce': '04'
-              };
-              const displayLabel = labelMap[service.id];
-
-              return (
-                <motion.div 
-                  key={service.id}
-                  onMouseEnter={() => setActiveId(service.id)}
-                  onClick={() => onServiceClick(service)}
-                  className={`group border border-black/20 p-6 cursor-pointer transition-all duration-500 flex flex-col justify-between overflow-hidden relative rounded-none ${isActive ? 'bg-[#1a1a1a] shadow-xl' : 'bg-white/60 hover:bg-white'}`}
-                >
-                  <div className="flex justify-between items-start z-10">
-                    <div className="space-y-1">
-                      <span className={`text-[11px] font-mono font-bold tracking-widest block transition-opacity duration-500 ${isActive ? 'text-[#C5A059]' : 'opacity-50'}`}>{displayLabel}</span>
-                      <TechnicalLabel active={isActive} />
-                    </div>
-                  </div>
-                  <div className="z-10">
-                    <h4 className={`text-xl font-serif uppercase tracking-tighter leading-tight mb-2 transition-colors ${isActive ? 'text-[#C5A059]' : 'group-hover:text-[#C5A059]'}`}>{service.title}</h4>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default BentoGrid;
+          <div className="col-span-12 row
