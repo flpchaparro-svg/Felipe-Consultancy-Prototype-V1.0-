@@ -3,6 +3,7 @@ export interface ServiceDetail {
   id: string;
   title: string;
   subtitle: string;
+  technicalLabel: string; // New field for the "Status" text
   description: string;
   features: string[];
   visualPrompt: string;

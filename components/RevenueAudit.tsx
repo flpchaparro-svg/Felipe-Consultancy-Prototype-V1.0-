@@ -33,11 +33,11 @@ const RevenueAudit: React.FC = () => {
              <span className="text-[#E21E3F]">/</span> THE COST OF CHAOS
            </span>
            <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-[0.95] tracking-tighter mb-8">
-             Friction isn't just annoying. <br />
-             It is <span className="italic text-[#E21E3F]">Expensive.</span>
+             Friction isn't just annoying, <br />
+             it is <span className="italic text-[#E21E3F]">Expensive.</span>
            </h2>
            <p className="font-sans text-xl font-light text-[#1a1a1a]/70 leading-relaxed border-l border-[#E21E3F]/30 pl-6 max-w-2xl">
-             I identified the potential leaks in the previous section. Now, use this tool to quantify exactly what that "Operational Drag" is costing your bottom line.
+             I identified the potential leaks in the previous section, so now use this tool to quantify exactly what that "Operational Drag" is costing your bottom line.
            </p>
         </div>
 
@@ -123,7 +123,7 @@ const RevenueAudit: React.FC = () => {
                  
                  <p className="font-sans text-sm text-[#1a1a1a]/50 max-w-xs mb-12 leading-relaxed">
                     {leakage > 0 
-                      ? "This is capital currently evaporating from your P&L due to operational inefficiencies and manual drag." 
+                      ? "This is capital currently evaporating from your P&L (Profit & Loss) due to operational inefficiencies and manual drag." 
                       : "System operational. No estimated waste detected based on current inputs."}
                  </p>
 

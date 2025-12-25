@@ -133,7 +133,7 @@ const GrowthGraph: React.FC = () => {
     adminG.append('text')
       .attr('y', -12)
       .attr('class', 'font-mono text-[9px] uppercase tracking-[0.3em] fill-[#1a1a1a] opacity-40')
-      .text('ADMIN LOAD // MINIMIZING');
+      .text('ADMIN LOAD // MINIMISING');
 
     const adminBarBg = adminG.append('rect')
       .attr('width', chartWidth)
@@ -425,25 +425,25 @@ const FrictionAuditSection: React.FC = () => {
     { 
       label: '01 // LEAKAGE', 
       title: 'Revenue Leakage', 
-      body: "Demand is expiring in the inbox. Your website is a brochure, not a catcher. You are paying for leads you fail to catch.", 
+      body: "Demand is expiring in the inbox because your website is just a brochure, not a catcher, which means you are paying for leads you fail to catch.", 
       icon: AlertTriangle 
     },
     { 
       label: '02 // SILOS', 
       title: 'Data Silos', 
-      body: "Sales uses one tool. Ops uses another. Finance lives in Excel. Nothing talks to each other. You have zero 'Source of Truth'.", 
+      body: "Sales uses one tool while Ops uses another, and Finance lives in Excel. Since nothing talks to each other, you have zero 'Source of Truth'.", 
       icon: Database 
     },
     { 
       label: '03 // TRAP', 
       title: 'The Busywork Trap', 
-      body: "You are wasting 40% of your week on manual data entry. You are playing 'Chief Admin Officer' instead of steering the ship.", 
+      body: "You are wasting 40% of your week on manual data entry, essentially playing 'Chief Admin Officer' instead of steering the ship.", 
       icon: Clock 
     },
     { 
       label: '04 // BLIND', 
       title: 'Flying Blind', 
-      body: "You manage by gut feeling because you can't see the numbers. You don't know your exact Profit or LTV until the accountant calls.", 
+      body: "You manage by gut feeling because you can't see the numbers, so you don't know your exact Profit or LTV until the accountant calls.", 
       icon: EyeOff 
     }
   ];
@@ -459,10 +459,10 @@ const FrictionAuditSection: React.FC = () => {
           </span>
           <h2 className="font-serif text-4xl md:text-6xl font-light leading-[0.95] mb-6 text-[#1a1a1a]">
             The 'Grind' isn't random. <br />
-            It is <span className='italic text-[#E21E3F]'>Structural.</span>
+            It is <span className='italic text-[#E21E3F]'>Engineered.</span>
           </h2>
           <p className="font-sans text-lg font-light text-[#1a1a1a]/70 leading-relaxed border-l border-[#E21E3F]/30 pl-6 max-w-2xl">
-            We cannot build your exit until we identify the lock. Most businesses are bleeding out in one of these four specific areas.
+            We cannot build your exit until we identify the lock, as most businesses are bleeding out in one of these four specific areas.
           </p>
         </div>
       </div>
@@ -730,17 +730,17 @@ const App: React.FC = () => {
                     
                     <h1 className="font-serif text-7xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tight text-[#1a1a1a] mb-10">
                       <div className="overflow-hidden">
-                        <span className="block reveal-text">Built on Drive.</span>
+                        <span className="block reveal-text">Built on Logic,</span>
                       </div>
                       <div className="overflow-hidden">
                         <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
-                          Not <span className="italic text-[#C5A059]">Paperwork.</span>
+                          not <span className="italic text-[#C5A059]">Paperwork.</span>
                         </span>
                       </div>
                     </h1>
 
                     <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-                      Stop burning your best people on repetitive tasks. I build the digital systems that let you reclaim your margin and your sanity. No jargon. No fluff. Just logic that works.
+                      Stop burning your best people on repetitive tasks. I build the digital systems that let you reclaim your margin and your sanity with no jargon, no fluff, and just logic that works.
                     </p>
 
                     <div className="mt-16 flex flex-col sm:flex-row items-center gap-12 animate-fade-in" style={{ animationDelay: '1s' }}>
@@ -792,7 +792,7 @@ const App: React.FC = () => {
                     <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 min-h-[300px]">
                       <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">02 / SYMPTOMS</span>
                       <p className="font-sans text-lg font-light text-[#1a1a1a]/70 leading-relaxed">
-                        If you are reading this while the rest of the world is quiet, you know the feeling. Revenue is up, but so is the friction. Your team is drowning in manual work.
+                        If you are reading this while the rest of the world is quiet, you know the feeling. Revenue is up, but so is the friction, and your team is drowning in manual work.
                       </p>
                     </div>
                     <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#E21E3F]/5 min-h-[300px]">
@@ -800,7 +800,7 @@ const App: React.FC = () => {
                       <div className="space-y-4">
                         <div className="font-sans text-3xl font-bold text-[#E21E3F] uppercase tracking-tighter">Burning People</div>
                         <p className="font-sans text-sm text-[#E21E3F]/70 leading-relaxed uppercase tracking-widest">
-                          Using expensive human talent to bridge gap in your software.
+                          Using expensive human talent to bridge the gap in your software.
                         </p>
                       </div>
                     </div>
@@ -811,7 +811,7 @@ const App: React.FC = () => {
                       </p>
                       <div className="flex items-center gap-3 font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
-                        SYSTEMS_OPTIMIZED
+                        SYSTEMS_OPTIMISED
                       </div>
                     </div>
                   </div>

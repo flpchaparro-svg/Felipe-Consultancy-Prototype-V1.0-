@@ -25,13 +25,13 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
 
   const handlePillarNavigation = () => {
     const mapping: Record<string, string> = {
-      'capture-core': 'pillar1',
-      'nervous-system': 'pillar2',
-      'media-logistics': 'pillar3',
-      'digital-labor': 'pillar4',
-      'augmented-workforce': 'pillar5',
-      'team-protocols': 'pillar6',
-      'control-tower': 'pillar7'
+      'pillar-1': 'pillar1',
+      'pillar-2': 'pillar2',
+      'pillar-3': 'pillar3',
+      'pillar-4': 'pillar4',
+      'pillar-5': 'pillar5',
+      'pillar-6': 'pillar6',
+      'pillar-7': 'pillar7'
     };
 
     const pillarId = mapping[service.id];
@@ -113,9 +113,16 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
                   </div>
                   <button 
                     onClick={handlePillarNavigation}
-                    className="group flex items-center gap-4 px-10 py-5 bg-[#1a1a1a] text-white hover:bg-[#E21E3F] transition-all duration-500 text-xs font-bold tracking-widest uppercase"
+                    className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
                   >
-                    Explore System Architecture <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    {/* Sliding Black Background (Slides UP on Hover) */}
+                    <div className="absolute inset-0 bg-[#1a1a1a] group-hover:-translate-y-full transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                    
+                    {/* Button Content (Changes Color on Hover) */}
+                    <div className="relative z-10 flex items-center gap-4 group-hover:text-[#1a1a1a] transition-colors duration-500">
+                      <span>[ EXPLORE PILLAR PAGE ]</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </button>
                 </div>
               </div>

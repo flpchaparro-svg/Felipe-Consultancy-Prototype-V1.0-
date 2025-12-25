@@ -4,26 +4,26 @@ import { Activity, ArrowUpRight, X } from 'lucide-react';
 
 const CASE_STUDIES = [
   {
-    id: 'alpha',
-    client: 'SaaS Enterprise',
-    result: 42,
-    suffix: '% Conv',
-    tag: 'Capture_Core',
-    stack: ['OpenAI', 'Make.com', 'React'],
-    description: 'Replaced a manual lead triage team with autonomous AI agents. Zero leakage across 14,000 monthly inquiries.',
-    metrics: ['Latency: <200ms', 'Accuracy: 99.4%', 'ROI: 12x'],
-    bg: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1200'
+    id: 'logistics',
+    client: 'National Trade Fleet',
+    result: 100,
+    suffix: '% Capture',
+    tag: 'REVENUE_CAPTURE',
+    stack: ['Vapi.ai', 'Make.com', 'HubSpot'],
+    description: 'Deployed a Voice AI interface to handle inbound emergency calls for a 40-van fleet. Eliminated missed-call revenue leakage instantly.',
+    metrics: ['Missed Calls: 0%', 'Response Time: <2s', 'Revenue Saved: $45k/mo'],
+    bg: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1200' // Industrial/Engineering vibe
   },
   {
-    id: 'beta',
-    client: 'Fintech Series A',
-    result: 30,
-    suffix: 'hr/wk',
-    tag: 'Digital_Labor',
-    stack: ['Anthropic', 'Node.js', 'AWS'],
-    description: 'Automated the end-to-end data reconciliation engine, removing human friction from the finance stack.',
-    metrics: ['Error Rate: 0%', 'Uptime: 100%', 'Saved: 120hrs/mo'],
-    bg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200'
+    id: 'legal',
+    client: 'Boutique Law Firm',
+    result: 25,
+    suffix: 'hrs/wk',
+    tag: 'LABOUR_ARBITRAGE',
+    stack: ['Claude 3.5', 'Supabase', 'Python'],
+    description: 'Automated the extraction of data from client emails directly into the Case Management System. Removed the need for a junior paralegal.',
+    metrics: ['Data Entry: 0hrs', 'Accuracy: 100%', 'Billable Gain: +$8k/mo'],
+    bg: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1200' // High-end office/Meeting vibe
   }
 ];
 
@@ -140,8 +140,8 @@ const EvidenceVault: React.FC = () => {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div>
-            <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">/ The Evidence Vault</span>
-            <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-none tracking-tighter">System <span className="italic text-black/20">Deployments.</span></h2>
+            <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">/ DEPLOYMENT LOGS</span>
+            <h2 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] leading-none tracking-tighter">Operational <span className="italic text-black/20">Logs.</span></h2>
           </div>
           <div className="flex items-center gap-3 font-mono text-black/30 text-[10px] uppercase tracking-widest text-right">
             <Activity className="w-3 h-3 text-[#C5A059]" />
@@ -194,7 +194,7 @@ const EvidenceVault: React.FC = () => {
                   <ul className="space-y-8">
                     {activeStudy.metrics.map((m, i) => (
                       <li key={i} className="flex items-center gap-6 group">
-                        <div className="w-1.5 h-1.5 bg-[#C5A059] group-hover:rotate-45 transition-transform duration-300"></div>
+                        <div className="w-1.5 h-1.5 bg-[#E21E3F] group-hover:rotate-45 transition-transform duration-300"></div>
                         <span className="font-sans font-medium text-xl tracking-tight text-[#1a1a1a]">{m}</span>
                       </li>
                     ))}
@@ -207,7 +207,7 @@ const EvidenceVault: React.FC = () => {
                     className="group relative mt-16 flex items-center justify-center py-5 px-8 bg-transparent border border-black text-black font-mono text-[10px] uppercase tracking-[0.3em] transition-all duration-500 rounded-none overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-                    <span className="relative z-10 transition-colors duration-500 group-hover:text-white">Replicate This Engine</span>
+                    <span className="relative z-10 transition-colors duration-500 group-hover:text-white">[ REPLICATE THIS ARCHITECTURE ]</span>
                   </a>
                 </div>
               </div>
