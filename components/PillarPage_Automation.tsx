@@ -1,63 +1,63 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Zap, ShoppingBag, ShieldCheck, Gem, CheckCircle2 } from 'lucide-react';
-import PillarVisual_Catchment from './PillarVisual_Catchment';
+import { ArrowLeft, ArrowRight, Receipt, FileSignature, Bot, Link2, CheckCircle2 } from 'lucide-react';
+import PillarVisual_Turbine from './PillarVisual_Turbine';
 
 interface PillarPageProps {
   onBack: () => void;
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
+const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
   const services = [
     {
-      id: 'local',
-      icon: Zap,
+      id: 'finance',
+      icon: Receipt,
       accent: 'text-[#E21E3F]',
       bgAccent: 'bg-[#E21E3F]',
-      title: 'Tier 01 // Local Velocity',
-      tagline: 'Rapid Deployment. High Conversion.',
-      promise: 'A complete lead-generation asset live in 7 days.',
-      who: 'For businesses that need speed. You might be a service provider, a consultant, or a local operator. You don\'t need a "custom-coded masterpiece"—you need a phone that rings.',
-      description: 'We strip away the complexity. We use a high-speed framework (WordPress/Elementor) to build a site designed for one thing: capturing leads. It is mobile-perfect, Google-friendly, and easy for you to edit yourself later. No 3-month wait times. We build it, we launch it, you get paid.',
-      specs: ['7-Day Turnaround', 'WordPress + Elementor Pro', 'Mobile-First Conversion Design', 'Basic SEO Foundation']
+      title: 'Tier 01 // Financial Autopilot',
+      tagline: 'Zero-Touch. Cashflow.',
+      promise: 'From "Deal Won" to "Invoice Paid" without clicking a button.',
+      who: 'For Service Providers drowning in admin. You spend your Sunday nights sending invoices and chasing late payments manually.',
+      description: 'We decouple your revenue from your admin time. We connect your CRM to your Accounting software (Xero/MYOB). When a deal is signed, the invoice is generated, sent, and reconciled automatically. If they don\'t pay, the system chases them for you. You just watch the bank balance grow.',
+      specs: ['CRM to Xero/Stripe Sync', 'Auto-Chasing Logic', 'Receipt Matching', 'Tax Compliance Automation']
     },
     {
-      id: 'retail',
-      icon: ShoppingBag,
+      id: 'onboarding',
+      icon: FileSignature,
       accent: 'text-[#C5A059]',
       bgAccent: 'bg-[#C5A059]',
-      title: 'Tier 02 // The Retail Ecosystem',
-      tagline: 'Unified Commerce. Synced Inventory.',
-      promise: 'Your physical floor and digital store working as one.',
-      who: 'For anyone selling physical goods. Whether you have one boutique or a warehouse, the pain is the same: Inventory Chaos.',
-      description: 'We don\'t just build "Online Stores." We build synchronized ecosystems. We connect your Point of Sale (POS) to your Website so you never double-sell an item again. We set up your shipping logic so you don\'t lose margin on delivery. It is a set-and-forget sales engine.',
-      specs: ['Shopify Architecture', 'POS Integration (Square/Vend)', 'Shipping Logic Automation', 'Automated Email Flows']
+      title: 'Tier 02 // The Onboarding Engine',
+      tagline: 'Speed. Consistency.',
+      promise: 'The Magic Button. Launch a new client in 30 seconds, not 3 hours.',
+      who: 'For Agencies & Consultants. Setting up a new client is a friction point. It takes hours to do contracts, folders, and welcome emails.',
+      description: 'We turn your onboarding into a single click. You trigger the "Won" stage, and the system generates the custom contract (DocuSign), creates the Google Drive/Slack channels, and sends the welcome sequence. Your client feels an instant, premium experience, and you save hours of admin.',
+      specs: ['DocuSign/PandaDoc Automation', 'Project Folder Logic', 'Welcome Sequences', 'Team Task Assignment']
     },
     {
-      id: 'performance',
-      icon: ShieldCheck,
+      id: 'ai_workforce',
+      icon: Bot,
       accent: 'text-[#1a1a1a]',
       bgAccent: 'bg-[#1a1a1a]',
-      title: 'Tier 03 // Performance Architecture',
-      tagline: 'Institutional Authority. Custom Engineering.',
-      promise: 'An instant-loading "Digital Fortress" that commands respect.',
-      who: 'For high-ticket brands where "Trust" is the currency. Financial firms, Medical Groups, Construction, and Agencies.',
-      description: 'At this level, a template isn\'t enough. If you sell a $50k service, your site cannot look cheap. We build on "Headless" architecture (Next.js). This means your site loads instantly, cannot be hacked, and feels like a Fortune 500 asset. It proves your competence before you even speak.',
-      specs: ['Headless Tech (Next.js)', '0.5s Load Times', 'Unhackable Security', 'Advanced CRM Integration']
+      title: 'Tier 03 // The AI Workforce',
+      tagline: '24/7 Scale. No Headcount.',
+      promise: 'Digital Employees that never sleep, never complain, and never miss a lead.',
+      who: 'For High-Inquiry Businesses. Your team is burning out answering the same 5 questions all day on email and WhatsApp.',
+      description: 'We deploy AI Agents trained on your specific business knowledge. They live on your website and socials, qualifying leads, answering complex FAQs, and booking meetings directly into your calendar. They handle the noise so your humans can handle the high-value deals.',
+      specs: ['Custom GPT Training', '24/7 Chat Availability', 'Calendar Booking Sync', 'Tone-of-Voice calibration']
     },
     {
-      id: 'flagship',
-      icon: Gem,
+      id: 'ecosystem',
+      icon: Link2,
       accent: 'text-[#E21E3F]',
       bgAccent: 'bg-[#E21E3F]',
-      title: 'Tier 04 // The Flagship Experience',
-      tagline: 'Digital Theatre. Sensory Immersion.',
-      promise: 'A bespoke digital environment that has no competitors.',
-      who: 'For Visionaries and Luxury Brands. You don\'t want to "fit in." You want to dominate.',
-      description: 'This is where we break the rules. We use 3D, WebGL, and cinematic motion to create a site that feels like a movie. We treat the user journey as a performance. If you need to justify premium pricing or stand out in a crowded global market, this is the weapon you choose.',
-      specs: ['Custom 3D / WebGL', 'Cinematic Motion Design', 'Bespoke User Journey', 'Award-Winning Aesthetics']
+      title: 'Tier 04 // Ecosystem Sync',
+      tagline: 'The Invisible Bridge.',
+      promise: 'Connect your disparate systems. Data flows like water.',
+      who: 'For E-commerce & Logistics. You are manually moving data between Shopify, your Warehouse, and your CRM. It is slow and error-prone.',
+      description: 'We build the middleware infrastructure (Make/Zapier) that acts as the nervous system for your tools. We ensure inventory updates in real-time, shipping labels print automatically, and customer data is perfectly mirrored across your entire stack. No more copy-pasting.',
+      specs: ['API Middleware Architecture', 'Inventory Sync Logic', 'Error Handling Protocols', 'Multi-Platform Integration']
     }
   ];
 
@@ -86,35 +86,35 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full pt-32 lg:pt-0">
               
               <div className="relative z-10">
-                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_01 // ACQUISITION</span>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_03 // VELOCITY</span>
                 <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight mb-8">
-                  Digital <br />
-                  <span className="italic text-[#E21E3F]">Revenue.</span>
+                  Fulfillment <br />
+                  <span className="italic text-[#E21E3F]">Architecture.</span>
                 </h1>
                 <p className="font-sans text-xl text-[#1a1a1a]/70 leading-relaxed max-w-md border-l-2 border-[#C5A059] pl-6 mb-12">
-                   Your website is not a brochure. It is a machine. <br/>
-                   We engineer the architecture to guide the user from <strong>Curiosity</strong> to <strong>Conversion</strong> with mathematical precision.
+                   Revenue should not depend on Headcount. <br/>
+                   We build the digital workforce that handles the admin, so your human team can focus on the <strong>High-Value</strong> work.
                 </p>
                 
-                <div className="flex items-center gap-2 animate-bounce cursor-pointer" onClick={() => document.getElementById('tiers')?.scrollIntoView({ behavior: 'smooth' })}>
-                    <span className="font-mono text-[10px] uppercase tracking-widest opacity-50">Explore Service Tiers</span>
+                <div className="flex items-center gap-2 animate-bounce">
+                    <span className="font-mono text-[10px] uppercase tracking-widest opacity-50">Select your Automation</span>
                     <ArrowRight className="w-4 h-4 rotate-90 opacity-50" />
                 </div>
               </div>
 
               <div className="h-[400px] lg:h-[600px] flex items-center justify-center lg:justify-end relative z-0">
-                 <PillarVisual_Catchment />
+                 <PillarVisual_Turbine />
               </div>
            </div>
         </div>
 
         {/* --- THE SERVICE STACK (Vertical Layout) --- */}
-        <div id="tiers" className="py-20">
+        <div className="py-20">
            
            <div className="mb-20">
-              <h2 className="font-serif text-4xl md:text-5xl mb-6">Select your Engine.</h2>
+              <h2 className="font-serif text-4xl md:text-5xl mb-6">Choose your Engine.</h2>
               <p className="font-sans text-lg text-[#1a1a1a]/60 max-w-2xl">
-                We don't offer "one size fits all." We have four distinct architectural tiers, designed for specific stages of business growth.
+                Automation is not about being "lazy." It is about being "scalable." <br/> Identify where you are burning human hours.
               </p>
            </div>
 
@@ -171,14 +171,15 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                 ))}
                             </ul>
 
+                            {/* --- STANDARDIZED BUTTON --- */}
                             <button 
                                 onClick={() => onNavigate('landing', 'booking')}
-                                className="w-full py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group/btn border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] flex items-center justify-center"
+                                className="w-full py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group/btn border border-[#1a1a1a]"
                             >
                                 <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                                <span className="relative z-10 flex items-center gap-2 group-hover/btn:text-[#1a1a1a] transition-colors duration-500">
-                                    [ BOOK_CONSULTATION ]
-                                    <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                                <span className="relative z-10 flex items-center justify-center gap-4 group-hover/btn:text-[#1a1a1a] transition-colors duration-500 font-mono text-[10px] uppercase tracking-[0.2em]">
+                                  [ BOOK_CONSULTATION ]
+                                  <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                                 </span>
                             </button>
                         </div>
@@ -194,7 +195,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
         {/* BOTTOM CTA */}
         <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
-           <h2 className="font-serif text-5xl md:text-6xl mb-8">Still Unsure? <br/> <span className="italic text-[#E21E3F]">Let's Audit.</span></h2>
+           <h2 className="font-serif text-5xl md:text-6xl mb-8">Stop grinding. <br/> <span className="italic text-[#E21E3F]">Start Scaling.</span></h2>
            <button 
              onClick={() => onNavigate('landing', 'booking')}
              className="group relative flex items-center justify-center px-10 py-6 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
@@ -212,4 +213,4 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
   );
 };
 
-export default Pillar1;
+export default PillarPage_Automation;

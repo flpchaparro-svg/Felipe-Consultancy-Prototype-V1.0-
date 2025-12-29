@@ -1,253 +1,168 @@
-
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Microscope, Zap, Users, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import ProtocolVisual_Geodesic from './ProtocolVisual_Geodesic';
 
 interface ProtocolPageProps {
   onBack: () => void;
+  onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack }) => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack, onNavigate }) => {
 
-  const phases = [
+  const steps = [
     {
       id: '01',
-      title: 'The Diagnostic',
-      subtitle: 'Forensic Audit',
-      duration: '3 Days',
-      desc: 'We map your data reality and identify where revenue is leaking. We define the "Control Tower" metrics that will govern the build.',
-      icon: Microscope,
-      color: '#E21E3F'
+      title: 'The Audit',
+      subtitle: 'Diagnosis',
+      text: "We stop guessing. Before we build anything, I look at your raw data, your current tools, and your team's workflow. We need to identify exactly where you are leaking time and money to establish a baseline for success."
     },
     {
       id: '02',
-      title: 'The Build',
-      subtitle: 'Engine Engineering',
-      duration: '14 Days',
-      desc: 'We configure the CRM, code the automations, and build the "Digital Employees" (AI Agents) that will handle your repetitive logic.',
-      icon: Zap,
-      color: '#C5A059'
+      title: 'The Strategy',
+      subtitle: 'Design',
+      text: "Once we know the problem, we design the solution. We map out exactly how the new system will work—which tools talk to which, and who is responsible for what—before we write a single line of code. We agree on the plan, and we lock the scope."
     },
     {
       id: '03',
-      title: 'The Adoption',
-      subtitle: 'Behavioral Engineering',
-      duration: '5 Days',
-      desc: 'We train your staff and deploy the Internal Media Engine to ensure the system actually sticks and adoption is absolute.',
-      icon: Users,
-      color: '#1a1a1a'
+      title: 'The Build',
+      subtitle: 'Execution',
+      text: (
+        <>
+          This phase adapts to the specific Architecture we are deploying. If we are building for <strong className="text-[#E21E3F]">Acquisition</strong>, I am rewiring your CRM and lead flows. If we are targeting <strong className="text-[#C5A059]">Velocity</strong>, I am training AI agents and automating content pipelines. If we are deploying <strong className="text-black">Intelligence</strong>, I am connecting your fragmented data sources into a central command tower. Regardless of the system, I execute autonomously while you focus on the business.
+        </>
+      )
     },
     {
       id: '04',
-      title: 'The Scale',
-      subtitle: 'The Watchtower',
-      duration: 'Ongoing',
-      desc: 'Monthly optimization, feature updates, and performance calibration to keep the engine running at peak ROI.',
-      icon: ShieldCheck,
-      color: '#C5A059'
+      title: 'The Handoff',
+      subtitle: 'Launch',
+      text: "I don't just finish the build and leave. A system is only useful if your team knows how to drive it. I train your staff, document the protocols, and only hand over the keys once the engine is stable and running smoothly."
     }
   ];
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15
-      }
-    }
-  };
-
-  // Fix: Added casting to any for ease property and variants to satisfy Framer Motion's strict typing for the Easing property
-  const itemFade = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.6, 
-        ease: "easeOut" as any 
-      } 
-    }
-  };
 
   return (
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }}
-      className="relative min-h-screen w-full bg-[#FFF2EC] text-[#1a1a1a] pb-20 overflow-x-hidden content-layer"
+      className="min-h-screen bg-[#FFF2EC] text-[#1a1a1a] pt-32 pb-0 px-0 relative z-[150] overflow-x-hidden flex flex-col"
     >
-      {/* PROGRESSIVE TIMELINE BACKGROUND */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="max-w-[1400px] mx-auto h-full px-6 md:px-12 lg:px-20 relative">
-          <div className="absolute top-0 bottom-0 left-0 right-0 flex justify-between">
-            {['01', '05', '10', '14', '20+'].map((day) => (
-              <div key={day} className="relative h-full flex flex-col items-center">
-                <div className="h-full w-[1px] bg-black/[0.03]" />
-                <span className="absolute top-32 font-mono text-[9px] text-black/10 uppercase tracking-widest -translate-x-1/2">Day_{day}</span>
-              </div>
-            ))}
-          </div>
-          
-          {/* Moving Pulse line */}
-          <motion.div 
-            className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C5A059]/20 to-transparent"
-            animate={{ y: [-100, 100, -100] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </div>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow">
         
-        <div className="absolute bottom-[10%] right-[5%] font-mono text-[9px] text-black/10 uppercase tracking-[0.5em] rotate-90 origin-right">
-          [ PROTOCOL_V.3.3 // EXECUTION_VELOCITY ]
-        </div>
-      </div>
-
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10 pt-32">
-        
-        {/* TOP NAV */}
-        <div className="flex justify-between items-center mb-16">
-          <div className="flex items-center gap-6">
-            <button 
-              onClick={onBack}
-              className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              [ ENGINE OVERVIEW )
-            </button>
-            <span className="font-mono text-[10px] text-black/20 uppercase tracking-[0.3em]">/ THE_PROTOCOL</span>
-          </div>
-          <div className="hidden md:block font-mono text-[9px] text-black/40 uppercase tracking-[0.4em]">
-            METHODOLOGY_CORE_LOG // 2025
-          </div>
-        </div>
-
-        {/* HERO SECTION */}
-        <section className="mb-40">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <span className="font-mono text-xs text-[#E21E3F] tracking-[0.4em] mb-6 block uppercase">/ The_Execution_Framework</span>
-            <h1 className="font-serif text-6xl md:text-8xl lg:text-[8.5rem] leading-[0.9] tracking-tighter mb-10">
-              Execution at <br />
-              <span className="italic text-[#C5A059]">Velocity.</span>
-            </h1>
-            <p className="font-sans text-xl md:text-2xl font-light text-[#1a1a1a]/70 max-w-3xl leading-relaxed border-l border-black/20 pl-8">
-              I don’t do "6-Month Strategies." I work in high-impact Sprints. We move from diagnostic to deployment in days, not quarters.
-            </p>
-          </motion.div>
-        </section>
-
-        {/* 4-PHASE SPRINT CYCLE */}
-        <section className="mb-40">
-          <div className="border-t border-black/10 pt-20 mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
-            <h2 className="font-serif text-5xl italic">The Sprint Cycle.</h2>
-            <span className="font-mono text-[10px] text-black/40 uppercase tracking-widest">/ LINEAR_PHASE_DECOUPLED</span>
-          </div>
-
-          <motion.div 
-            variants={staggerContainer as any}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 bg-black/5 border border-black/5"
+        {/* NAV BACK */}
+        <div className="flex justify-between items-center mb-24">
+          <button 
+            onClick={onBack}
+            className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors"
           >
-            {phases.map((phase) => (
-              <motion.div 
-                key={phase.id}
-                variants={itemFade as any}
-                className="bg-[#FFF2EC] p-10 flex flex-col justify-between hover:bg-white transition-colors duration-500 group min-h-[450px]"
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-12">
-                    <span className="font-mono text-[9px] text-black/30 tracking-widest uppercase">Phase_{phase.id}</span>
-                    <span className="font-mono text-[9px] text-[#C5A059] tracking-widest uppercase font-bold">{phase.duration}</span>
-                  </div>
-                  <phase.icon className="w-8 h-8 mb-8 text-black/10 group-hover:text-[#E21E3F] transition-colors duration-500" />
-                  <h3 className="font-serif text-3xl mb-2">{phase.title}</h3>
-                  <p className="font-mono text-[10px] text-black/40 uppercase tracking-widest mb-6">{phase.subtitle}</p>
-                  <p className="font-sans text-sm text-black/60 leading-relaxed">{phase.desc}</p>
-                </div>
-                
-                <div className="mt-12 pt-8 border-t border-black/5 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#C5A059]">Protocol_Active</span>
-                  <CheckCircle2 className="w-4 h-4 text-[#C5A059]" />
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </section>
-
-        {/* SPRINT LOGIC SECTION */}
-        <section className="mb-40 grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-          <div className="lg:col-span-5 sticky top-32">
-            <span className="font-mono text-xs text-[#E21E3F] tracking-[0.4em] mb-6 block uppercase">/ Why_Sprints_Work</span>
-            <h2 className="font-serif text-5xl md:text-6xl mb-8 leading-tight">Consulting is Dead. <br /><span className="italic text-[#C5A059]">Sprints are Eternal.</span></h2>
-            <p className="font-sans text-lg text-black/60 leading-relaxed mb-8">
-              Traditional consulting sells time. I sell outcomes. The Sprint model ensures we stay agile, focused, and move at the speed of modern business.
-            </p>
-          </div>
-          
-          <div className="lg:col-span-7 space-y-12">
-            {[
-              { 
-                title: 'Aggressive Feedback Loops', 
-                text: 'We don\'t wait for a month-end review. We pivot based on daily data signals. This reduces the "Distance to Truth."' 
-              },
-              { 
-                title: 'Reduced Technical Risk', 
-                text: 'Deploying in small, functional units prevents "Massive Failure." If a logic gate breaks, we see it instantly in the Control Tower.' 
-              },
-              { 
-                title: 'Immediate Cash Flow Impact', 
-                text: 'By focusing on "Capture Core" first, we create ROI within the first 14 days, effectively funding the rest of the build.' 
-              }
-            ].map((logic, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.2 }}
-                className="p-10 border border-black/5 bg-white shadow-sm hover:shadow-xl transition-all duration-500 flex gap-8 items-start"
-              >
-                <div className="font-mono text-xs text-[#C5A059] font-bold">0{idx + 1}</div>
-                <div>
-                  <h4 className="font-serif text-2xl mb-4">{logic.title}</h4>
-                  <p className="font-sans text-sm text-black/50 leading-relaxed">{logic.text}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* FINAL CALL TO ACTION */}
-        <section className="py-24 border-t border-black/10 flex flex-col items-center text-center">
-          <span className="font-mono text-[10px] text-black/30 tracking-[0.5em] uppercase mb-8">INITIATE_PROTOCOL_V.3.3</span>
-          <h2 className="font-serif text-5xl md:text-7xl mb-12 italic max-w-4xl">Ready to stop planning and start <span className="text-[#C5A059]">deploying?</span></h2>
-          <a 
-            href="https://meetings-ap1.hubspot.com/felipe" 
-            target="_blank"
-            className="group relative px-12 py-6 bg-[#1a1a1a] text-white font-mono text-xs uppercase tracking-[0.3em] overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-            <span className="relative z-10 flex items-center gap-4">
-              Schedule Diagnostic <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </a>
-        </section>
-
-        <div className="py-12 border-t border-black/10 flex items-center justify-between gap-4 mt-20">
-          <div className="flex items-center gap-4">
-            <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
-            <span className="font-mono text-[10px] uppercase tracking-widest text-black/40">PROTOCOL_READY // VELOCITY_OPTIMIZED</span>
-          </div>
-          <button onClick={onBack} className="font-mono text-[10px] uppercase tracking-[0.4em] text-[#E21E3F] hover:underline underline-offset-4">
-            Return to HQ
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            / Return_to_Engine
           </button>
         </div>
+
+        {/* --- SECTION 1: HERO (Visual + Title Only) --- */}
+        <div className="mb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          {/* LEFT: TITLE */}
+          <div>
+            <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ OPERATING_PROTOCOL</span>
+            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight mb-8">
+              The Rules of <br />
+              <span className="italic text-black/20">Engagement.</span>
+            </h1>
+            <p className="font-sans text-xl text-[#1a1a1a]/60 leading-relaxed max-w-md border-l-2 border-[#C5A059] pl-6">
+               A strict protocol to move from Chaos to Order.
+            </p>
+          </div>
+
+          {/* RIGHT: GEODESIC VISUAL */}
+          <div className="h-full min-h-[500px] flex items-center justify-center lg:justify-end">
+            <ProtocolVisual_Geodesic />
+          </div>
+
+        </div>
+
+        {/* --- SECTION 2: THE PHILOSOPHY (Text Only) --- */}
+        <div className="mb-40 max-w-5xl">
+           <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-16 text-[#1a1a1a]">
+             To guarantee results, we break <br/>
+             <span className="italic text-[#E21E3F]">standard agency habits.</span>
+           </h2>
+           
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block font-bold">01 // The Outcome</span>
+                <p className="font-sans text-lg text-[#1a1a1a]/70 leading-relaxed">
+                  Most consultants sell you their time. I sell a solved problem. This distinction changes everything. Because I am focused on the Outcome rather than the Hour, my incentive is efficiency, not filling a timesheet.
+                </p>
+              </div>
+              
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block font-bold">02 // The Truth</span>
+                <p className="font-sans text-lg text-[#1a1a1a]/70 leading-relaxed">
+                  We operate on <strong>Truth over Comfort</strong>. I am not here to validate your current processes; I am here to improve them. If a foundation is cracked, I will tell you. We don't patch symptoms; we fix the root cause.
+                </p>
+              </div>
+           </div>
+        </div>
+
+        {/* --- SECTION 3: THE EXECUTION SEQUENCE --- */}
+        <div className="mb-32">
+          <div className="font-mono text-[10px] uppercase tracking-[0.25em] font-bold mb-16 text-[#1a1a1a]/40 border-b border-black/10 pb-4">
+            Execution_Sequence
+          </div>
+          
+          <div className="space-y-0 relative border-l border-black/10 ml-4 md:ml-0">
+            {steps.map((step, i) => (
+              <motion.div 
+                key={step.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group py-12 pl-12 md:pl-0 flex flex-col md:flex-row gap-8 md:items-baseline relative"
+              >
+                 {/* Timeline Dot */}
+                 <div className="absolute left-[-5px] top-16 w-2 h-2 bg-[#1a1a1a] rounded-full md:hidden" />
+
+                 <div className="w-32 shrink-0 font-mono text-xs text-[#E21E3F] font-bold tracking-widest pt-2">
+                   {step.id} //
+                 </div>
+
+                 <div className="flex-grow grid grid-cols-1 md:grid-cols-12 gap-8 border-b border-black/5 pb-12 group-last:border-none">
+                    <div className="md:col-span-4">
+                       <span className="font-mono text-[9px] uppercase tracking-widest text-[#C5A059] mb-3 block">{step.subtitle}</span>
+                       <h3 className="font-serif text-4xl text-[#1a1a1a]">{step.title}</h3>
+                    </div>
+                    <div className="md:col-span-7">
+                       <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
+                         {step.text}
+                       </p>
+                    </div>
+                 </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* BOTTOM CTA */}
+        <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
+           <h2 className="font-serif text-5xl md:text-6xl mb-8">Ready to start <br/> the <span className="italic text-[#E21E3F]">Process?</span></h2>
+           <button 
+             onClick={() => onNavigate('landing', 'booking')}
+             className="group relative flex items-center justify-center px-10 py-6 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
+           >
+             <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+             <span className="relative z-10 flex items-center gap-4 group-hover:text-[#1a1a1a] transition-colors duration-500">
+               [ INITIATE_AUDIT ]
+               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+             </span>
+           </button>
+        </div>
+
       </div>
+
     </motion.div>
   );
 };

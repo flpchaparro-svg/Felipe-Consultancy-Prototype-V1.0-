@@ -1,63 +1,63 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Zap, ShoppingBag, ShieldCheck, Gem, CheckCircle2 } from 'lucide-react';
-import PillarVisual_Catchment from './PillarVisual_Catchment';
+import { ArrowLeft, ArrowRight, Mic2, Library, Share2, Rocket, CheckCircle2 } from 'lucide-react';
+import PillarVisual_Broadcast from './PillarVisual_Broadcast';
 
 interface PillarPageProps {
   onBack: () => void;
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
+const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
   const services = [
     {
-      id: 'local',
-      icon: Zap,
+      id: 'synthetic',
+      icon: Mic2,
       accent: 'text-[#E21E3F]',
       bgAccent: 'bg-[#E21E3F]',
-      title: 'Tier 01 // Local Velocity',
-      tagline: 'Rapid Deployment. High Conversion.',
-      promise: 'A complete lead-generation asset live in 7 days.',
-      who: 'For businesses that need speed. You might be a service provider, a consultant, or a local operator. You don\'t need a "custom-coded masterpiece"—you need a phone that rings.',
-      description: 'We strip away the complexity. We use a high-speed framework (WordPress/Elementor) to build a site designed for one thing: capturing leads. It is mobile-perfect, Google-friendly, and easy for you to edit yourself later. No 3-month wait times. We build it, we launch it, you get paid.',
-      specs: ['7-Day Turnaround', 'WordPress + Elementor Pro', 'Mobile-First Conversion Design', 'Basic SEO Foundation']
+      title: 'Tier 01 // The Synthetic Studio',
+      tagline: 'Voice Cloning. Avatar Synthesis.',
+      promise: 'Your presence is everywhere, but you are nowhere.',
+      who: 'For Camera-Shy Experts (Law/Finance). You know you need video authority, but you hate filming and don\'t have 4 hours to set up lights.',
+      description: 'We decouple your presence from your physical output. We clone your voice and visual persona. You send a text script, and our studio produces a high-fidelity video of you delivering the message. You stay in deep work while your digital twin handles the marketing.',
+      specs: ['AI Voice Cloning', 'Video Synthesis', 'Script-to-Screen Logic', 'Anti-Uncanny Protocols']
     },
     {
-      id: 'retail',
-      icon: ShoppingBag,
+      id: 'authority',
+      icon: Library,
       accent: 'text-[#C5A059]',
       bgAccent: 'bg-[#C5A059]',
-      title: 'Tier 02 // The Retail Ecosystem',
-      tagline: 'Unified Commerce. Synced Inventory.',
-      promise: 'Your physical floor and digital store working as one.',
-      who: 'For anyone selling physical goods. Whether you have one boutique or a warehouse, the pain is the same: Inventory Chaos.',
-      description: 'We don\'t just build "Online Stores." We build synchronized ecosystems. We connect your Point of Sale (POS) to your Website so you never double-sell an item again. We set up your shipping logic so you don\'t lose margin on delivery. It is a set-and-forget sales engine.',
-      specs: ['Shopify Architecture', 'POS Integration (Square/Vend)', 'Shipping Logic Automation', 'Automated Email Flows']
+      title: 'Tier 02 // The Authority Matrix',
+      tagline: 'Video SEO. Knowledge Graph.',
+      promise: 'Own the search results for your client\'s deepest fears.',
+      who: 'For Specialists (Surgeons/Consultants). You are tired of seeing competitors with less skill ranking higher on Google because they have better blogs.',
+      description: 'We don\'t write generic blogs. We build a video-first Authority Library. We record you answering the top 50 questions in your niche, then turn those videos into SEO-rich articles. When a client searches for a solution at 2 AM, they find you.',
+      specs: ['Topic Cluster Protocol', 'Video-to-Text SEO', 'YouTube Optimization', 'Semantic Authority']
     },
     {
-      id: 'performance',
-      icon: ShieldCheck,
+      id: 'distribution',
+      icon: Share2,
       accent: 'text-[#1a1a1a]',
       bgAccent: 'bg-[#1a1a1a]',
-      title: 'Tier 03 // Performance Architecture',
-      tagline: 'Institutional Authority. Custom Engineering.',
-      promise: 'An instant-loading "Digital Fortress" that commands respect.',
-      who: 'For high-ticket brands where "Trust" is the currency. Financial firms, Medical Groups, Construction, and Agencies.',
-      description: 'At this level, a template isn\'t enough. If you sell a $50k service, your site cannot look cheap. We build on "Headless" architecture (Next.js). This means your site loads instantly, cannot be hacked, and feels like a Fortune 500 asset. It proves your competence before you even speak.',
-      specs: ['Headless Tech (Next.js)', '0.5s Load Times', 'Unhackable Security', 'Advanced CRM Integration']
+      title: 'Tier 03 // The Distribution Grid',
+      tagline: 'Logistics. Omni-Channel.',
+      promise: 'Create once, publish everywhere. Zero manual uploading.',
+      who: 'For the "Sunday Grind" Victim. You create the content, but you burn out trying to format, caption, and post it to LinkedIn, Instagram, and YouTube.',
+      description: 'We treat content as a supply chain. You drop a raw video file into a folder, and the Grid takes over. It automatically resizes the video, writes the captions, and schedules the post across every channel. You are the talent; we are the road crew.',
+      specs: ['Auto-Resizing Logic', 'Caption AI Generation', 'Multi-Channel Scheduling', 'Asset Management']
     },
     {
-      id: 'flagship',
-      icon: Gem,
+      id: 'terminal',
+      icon: Rocket,
       accent: 'text-[#E21E3F]',
       bgAccent: 'bg-[#E21E3F]',
-      title: 'Tier 04 // The Flagship Experience',
-      tagline: 'Digital Theatre. Sensory Immersion.',
-      promise: 'A bespoke digital environment that has no competitors.',
-      who: 'For Visionaries and Luxury Brands. You don\'t want to "fit in." You want to dominate.',
-      description: 'This is where we break the rules. We use 3D, WebGL, and cinematic motion to create a site that feels like a movie. We treat the user journey as a performance. If you need to justify premium pricing or stand out in a crowded global market, this is the weapon you choose.',
-      specs: ['Custom 3D / WebGL', 'Cinematic Motion Design', 'Bespoke User Journey', 'Award-Winning Aesthetics']
+      title: 'Tier 04 // The Conversion Terminal',
+      tagline: 'Campaign Ops. Speedboats.',
+      promise: 'Launch a world-class offer in 24 hours. Zero developer dependency.',
+      who: 'For Growth Marketers & Ad Spenders. You have a campaign idea, but your main corporate site is too slow or rigid to handle it.',
+      description: 'We build "Speedboats"—single-purpose, high-velocity landing pages designed purely for conversion. They live on a subdomain, load instantly, and are decoupled from your main IT infrastructure. You can launch a new offer tomorrow without a single meeting.',
+      specs: ['Framer/Webflow Speedboats', 'High-Velocity Templates', 'Zero-Lag Embeds', 'Ad-Tracking Optimization']
     }
   ];
 
@@ -86,35 +86,35 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full pt-32 lg:pt-0">
               
               <div className="relative z-10">
-                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_01 // ACQUISITION</span>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_05 // PRESENCE</span>
                 <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight mb-8">
-                  Digital <br />
-                  <span className="italic text-[#E21E3F]">Revenue.</span>
+                  Media <br />
+                  <span className="italic text-[#E21E3F]">Logistics.</span>
                 </h1>
                 <p className="font-sans text-xl text-[#1a1a1a]/70 leading-relaxed max-w-md border-l-2 border-[#C5A059] pl-6 mb-12">
-                   Your website is not a brochure. It is a machine. <br/>
-                   We engineer the architecture to guide the user from <strong>Curiosity</strong> to <strong>Conversion</strong> with mathematical precision.
+                   We decouple your authority from your physical time. <br/>
+                   We turn one hour of expertise into a month of <strong>Omnipresence</strong> through supply chain engineering.
                 </p>
                 
-                <div className="flex items-center gap-2 animate-bounce cursor-pointer" onClick={() => document.getElementById('tiers')?.scrollIntoView({ behavior: 'smooth' })}>
-                    <span className="font-mono text-[10px] uppercase tracking-widest opacity-50">Explore Service Tiers</span>
+                <div className="flex items-center gap-2 animate-bounce">
+                    <span className="font-mono text-[10px] uppercase tracking-widest opacity-50">Select your Channel</span>
                     <ArrowRight className="w-4 h-4 rotate-90 opacity-50" />
                 </div>
               </div>
 
               <div className="h-[400px] lg:h-[600px] flex items-center justify-center lg:justify-end relative z-0">
-                 <PillarVisual_Catchment />
+                 <PillarVisual_Broadcast />
               </div>
            </div>
         </div>
 
         {/* --- THE SERVICE STACK (Vertical Layout) --- */}
-        <div id="tiers" className="py-20">
+        <div className="py-20">
            
            <div className="mb-20">
-              <h2 className="font-serif text-4xl md:text-5xl mb-6">Select your Engine.</h2>
+              <h2 className="font-serif text-4xl md:text-5xl mb-6">Choose your Broadcast.</h2>
               <p className="font-sans text-lg text-[#1a1a1a]/60 max-w-2xl">
-                We don't offer "one size fits all." We have four distinct architectural tiers, designed for specific stages of business growth.
+                Content is not art; it is a supply chain. <br/> Identify where your message is getting stuck.
               </p>
            </div>
 
@@ -171,14 +171,15 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                 ))}
                             </ul>
 
+                            {/* --- STANDARDIZED BUTTON --- */}
                             <button 
                                 onClick={() => onNavigate('landing', 'booking')}
-                                className="w-full py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group/btn border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] flex items-center justify-center"
+                                className="w-full py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group/btn border border-[#1a1a1a]"
                             >
                                 <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                                <span className="relative z-10 flex items-center gap-2 group-hover/btn:text-[#1a1a1a] transition-colors duration-500">
-                                    [ BOOK_CONSULTATION ]
-                                    <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                                <span className="relative z-10 flex items-center justify-center gap-4 group-hover/btn:text-[#1a1a1a] transition-colors duration-500 font-mono text-[10px] uppercase tracking-[0.2em]">
+                                  [ BOOK_CONSULTATION ]
+                                  <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                                 </span>
                             </button>
                         </div>
@@ -194,7 +195,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
         {/* BOTTOM CTA */}
         <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
-           <h2 className="font-serif text-5xl md:text-6xl mb-8">Still Unsure? <br/> <span className="italic text-[#E21E3F]">Let's Audit.</span></h2>
+           <h2 className="font-serif text-5xl md:text-6xl mb-8">Stop posting. <br/> <span className="italic text-[#E21E3F]">Start broadcasting.</span></h2>
            <button 
              onClick={() => onNavigate('landing', 'booking')}
              className="group relative flex items-center justify-center px-10 py-6 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
@@ -212,4 +213,4 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
   );
 };
 
-export default Pillar1;
+export default PillarPage_Media;

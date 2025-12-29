@@ -1,63 +1,63 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Zap, ShoppingBag, ShieldCheck, Gem, CheckCircle2 } from 'lucide-react';
-import PillarVisual_Catchment from './PillarVisual_Catchment';
+import { ArrowLeft, ArrowRight, Bot, Brain, ShieldAlert, PhoneCall, CheckCircle2 } from 'lucide-react';
+import PillarVisual_Brain from './PillarVisual_Brain';
 
 interface PillarPageProps {
   onBack: () => void;
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
+const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
   const services = [
     {
-      id: 'local',
-      icon: Zap,
+      id: 'concierge',
+      icon: Bot,
       accent: 'text-[#E21E3F]',
       bgAccent: 'bg-[#E21E3F]',
-      title: 'Tier 01 // Local Velocity',
-      tagline: 'Rapid Deployment. High Conversion.',
-      promise: 'A complete lead-generation asset live in 7 days.',
-      who: 'For businesses that need speed. You might be a service provider, a consultant, or a local operator. You don\'t need a "custom-coded masterpiece"—you need a phone that rings.',
-      description: 'We strip away the complexity. We use a high-speed framework (WordPress/Elementor) to build a site designed for one thing: capturing leads. It is mobile-perfect, Google-friendly, and easy for you to edit yourself later. No 3-month wait times. We build it, we launch it, you get paid.',
-      specs: ['7-Day Turnaround', 'WordPress + Elementor Pro', 'Mobile-First Conversion Design', 'Basic SEO Foundation']
+      title: 'Tier 01 // The Growth Concierge',
+      tagline: 'Always-On. Sales Qualifier.',
+      promise: 'The Gatekeeper. An SDR that never sleeps.',
+      who: 'For Real Estate, High-Ticket Coaching, & Luxury Sales. You are drowning in "Tire Kickers"—people who ask "Is this available?" but have no money.',
+      description: 'We install a "Gatekeeper AI" on your site and socials. It acts as a polite but firm filter. It answers inquiries instantly, checks for budget and timeline, and ONLY lets the qualified leads book a time on your calendar. You stop waking up to junk meetings.',
+      specs: ['24/7 Chat Qualification', 'Calendar Booking Sync', 'Human Handoff Logic', 'Tone-of-Voice Calibration']
     },
     {
-      id: 'retail',
-      icon: ShoppingBag,
+      id: 'internal',
+      icon: Brain,
       accent: 'text-[#C5A059]',
       bgAccent: 'bg-[#C5A059]',
-      title: 'Tier 02 // The Retail Ecosystem',
-      tagline: 'Unified Commerce. Synced Inventory.',
-      promise: 'Your physical floor and digital store working as one.',
-      who: 'For anyone selling physical goods. Whether you have one boutique or a warehouse, the pain is the same: Inventory Chaos.',
-      description: 'We don\'t just build "Online Stores." We build synchronized ecosystems. We connect your Point of Sale (POS) to your Website so you never double-sell an item again. We set up your shipping logic so you don\'t lose margin on delivery. It is a set-and-forget sales engine.',
-      specs: ['Shopify Architecture', 'POS Integration (Square/Vend)', 'Shipping Logic Automation', 'Automated Email Flows']
+      title: 'Tier 02 // The Internal Analyst',
+      tagline: 'Company Brain. Knowledge Wiki.',
+      promise: 'Clone your brain. Stop answering the same question twice.',
+      who: 'For Agencies & Consultancies. You are the "Bottleneck Founder." Your staff constantly interrupts you to ask things that are already in the handbook.',
+      description: 'We ingest your entire Google Drive, Slack history, and SOPs into a private "Company Brain." Your staff can ask: "What is our pricing for Project X?" or "How do I handle this objection?" and get an instant, cited answer. It cuts training time in half.',
+      specs: ['Vector Database (Pinecone)', 'Slack/Teams Integration', 'Document Scraping', 'Source Citation']
     },
     {
-      id: 'performance',
-      icon: ShieldCheck,
+      id: 'custom',
+      icon: ShieldAlert,
       accent: 'text-[#1a1a1a]',
       bgAccent: 'bg-[#1a1a1a]',
-      title: 'Tier 03 // Performance Architecture',
-      tagline: 'Institutional Authority. Custom Engineering.',
-      promise: 'An instant-loading "Digital Fortress" that commands respect.',
-      who: 'For high-ticket brands where "Trust" is the currency. Financial firms, Medical Groups, Construction, and Agencies.',
-      description: 'At this level, a template isn\'t enough. If you sell a $50k service, your site cannot look cheap. We build on "Headless" architecture (Next.js). This means your site loads instantly, cannot be hacked, and feels like a Fortune 500 asset. It proves your competence before you even speak.',
-      specs: ['Headless Tech (Next.js)', '0.5s Load Times', 'Unhackable Security', 'Advanced CRM Integration']
+      title: 'Tier 03 // Custom Architecture',
+      tagline: 'Safety. Data Sovereignty.',
+      promise: 'Sovereign AI. Your data never leaves the building.',
+      who: 'For FinTech, Law, & Wealth Management. You want to use AI to summarize portfolios or contracts, but you are terrified of a data leak.',
+      description: 'We build "Walled Garden" AI environments. We use private APIs and local hosting to ensure that your sensitive client data is processed securely and NEVER used to train a public model. You get the intelligence of GPT-4 with the security of a bank vault.',
+      specs: ['PII Redaction Layers', 'Local Model Hosting', 'Zero-Retention APIs', 'Enterprise Compliance']
     },
     {
-      id: 'flagship',
-      icon: Gem,
+      id: 'voice',
+      icon: PhoneCall,
       accent: 'text-[#E21E3F]',
       bgAccent: 'bg-[#E21E3F]',
-      title: 'Tier 04 // The Flagship Experience',
-      tagline: 'Digital Theatre. Sensory Immersion.',
-      promise: 'A bespoke digital environment that has no competitors.',
-      who: 'For Visionaries and Luxury Brands. You don\'t want to "fit in." You want to dominate.',
-      description: 'This is where we break the rules. We use 3D, WebGL, and cinematic motion to create a site that feels like a movie. We treat the user journey as a performance. If you need to justify premium pricing or stand out in a crowded global market, this is the weapon you choose.',
-      specs: ['Custom 3D / WebGL', 'Cinematic Motion Design', 'Bespoke User Journey', 'Award-Winning Aesthetics']
+      title: 'Tier 04 // The Voice Interface',
+      tagline: 'Phone Agent. Zero Latency.',
+      promise: 'Never miss a call again. Replaces the "Robot Menu".',
+      who: 'For Emergency Trades (Plumbers/Locksmiths) & Medical Clinics. You are physically working and cannot pick up the phone. Every missed ring is revenue lost.',
+      description: 'We replace your voicemail with a hyper-realistic Voice AI. It sounds human, understands Australian accents, and can handle the full booking process. It takes the customer\'s details, checks your availability, and books the job while you are under a sink or in surgery.',
+      specs: ['Human-Inflection Voice (ElevenLabs)', 'Twilio Telephony Sync', 'Real-Time CRM Logging', 'SMS Follow-Up']
     }
   ];
 
@@ -86,24 +86,24 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center h-full pt-32 lg:pt-0">
               
               <div className="relative z-10">
-                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_01 // ACQUISITION</span>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_04 // COGNITION</span>
                 <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight mb-8">
-                  Digital <br />
-                  <span className="italic text-[#E21E3F]">Revenue.</span>
+                  Cognitive <br />
+                  <span className="italic text-[#E21E3F]">Infrastructure.</span>
                 </h1>
                 <p className="font-sans text-xl text-[#1a1a1a]/70 leading-relaxed max-w-md border-l-2 border-[#C5A059] pl-6 mb-12">
-                   Your website is not a brochure. It is a machine. <br/>
-                   We engineer the architecture to guide the user from <strong>Curiosity</strong> to <strong>Conversion</strong> with mathematical precision.
+                   The Voice & Reason of the business. <br/>
+                   We don't just build chatbots; we engineer <strong>Digital Employees</strong> that can reason, speak, and act 24/7.
                 </p>
                 
                 <div className="flex items-center gap-2 animate-bounce cursor-pointer" onClick={() => document.getElementById('tiers')?.scrollIntoView({ behavior: 'smooth' })}>
-                    <span className="font-mono text-[10px] uppercase tracking-widest opacity-50">Explore Service Tiers</span>
+                    <span className="font-mono text-[10px] uppercase tracking-widest opacity-50">Meet your new team</span>
                     <ArrowRight className="w-4 h-4 rotate-90 opacity-50" />
                 </div>
               </div>
 
               <div className="h-[400px] lg:h-[600px] flex items-center justify-center lg:justify-end relative z-0">
-                 <PillarVisual_Catchment />
+                 <PillarVisual_Brain />
               </div>
            </div>
         </div>
@@ -112,9 +112,9 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
         <div id="tiers" className="py-20">
            
            <div className="mb-20">
-              <h2 className="font-serif text-4xl md:text-5xl mb-6">Select your Engine.</h2>
+              <h2 className="font-serif text-4xl md:text-5xl mb-6">Choose your Agent.</h2>
               <p className="font-sans text-lg text-[#1a1a1a]/60 max-w-2xl">
-                We don't offer "one size fits all." We have four distinct architectural tiers, designed for specific stages of business growth.
+                AI is not a toy. It is leverage. <br/> Identify the human bottleneck you need to remove.
               </p>
            </div>
 
@@ -171,14 +171,15 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                 ))}
                             </ul>
 
+                            {/* --- STANDARDIZED BUTTON --- */}
                             <button 
                                 onClick={() => onNavigate('landing', 'booking')}
-                                className="w-full py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group/btn border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] flex items-center justify-center"
+                                className="w-full py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group/btn border border-[#1a1a1a]"
                             >
                                 <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                                <span className="relative z-10 flex items-center gap-2 group-hover/btn:text-[#1a1a1a] transition-colors duration-500">
-                                    [ BOOK_CONSULTATION ]
-                                    <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                                <span className="relative z-10 flex items-center justify-center gap-4 group-hover/btn:text-[#1a1a1a] transition-colors duration-500 font-mono text-[10px] uppercase tracking-[0.2em]">
+                                  [ BOOK_CONSULTATION ]
+                                  <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                                 </span>
                             </button>
                         </div>
@@ -194,7 +195,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
         {/* BOTTOM CTA */}
         <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
-           <h2 className="font-serif text-5xl md:text-6xl mb-8">Still Unsure? <br/> <span className="italic text-[#E21E3F]">Let's Audit.</span></h2>
+           <h2 className="font-serif text-5xl md:text-6xl mb-8">Stop answering. <br/> <span className="italic text-[#E21E3F]">Start Designing.</span></h2>
            <button 
              onClick={() => onNavigate('landing', 'booking')}
              className="group relative flex items-center justify-center px-10 py-6 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
@@ -212,4 +213,4 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
   );
 };
 
-export default Pillar1;
+export default PillarPage_Cognitive;

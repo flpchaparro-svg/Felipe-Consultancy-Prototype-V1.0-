@@ -6,7 +6,9 @@ import Modal from './components/Modal';
 import D3Background from './components/D3Background';
 import TheArchitect from './components/TheArchitect';
 import EvidenceVault from './components/EvidenceVault';
+import BookingCTA from './components/BookingCTA';
 import EvidenceVaultPage from './components/EvidenceVaultPage';
+import EvidencePage from './components/EvidencePage';
 import RevenueAudit from './components/RevenueAudit';
 import AboutPage from './components/AboutPage'; 
 import ArchitecturePage from './components/ArchitecturePage';
@@ -14,15 +16,21 @@ import ProtocolPage from './components/ProtocolPage';
 import ContactPage from './components/ContactPage';
 import Pillar1 from './components/Pillar1';
 import Pillar2 from './components/Pillar2';
-import Pillar3 from './components/Pillar3';
+import PillarPage_Automation from './components/PillarPage_Automation';
+import PillarPage_Cognitive from './components/PillarPage_Cognitive';
+import PillarPage_Media from './components/PillarPage_Media';
+import PillarPage_Adoption from './components/PillarPage_Adoption';
+import PillarPage_Intelligence from './components/PillarPage_Intelligence';
 import Pillar4 from './components/Pillar4';
 import Pillar5 from './components/Pillar5';
 import Pillar6 from './components/Pillar6';
 import Pillar7 from './components/Pillar7';
 import GlobalFooter from './components/GlobalFooter';
+import GlobalHeader from './components/GlobalHeader';
 import HeroVisual from './components/HeroVisual';
+import PageTransition from './components/PageTransition';
 import { ServiceDetail } from './types';
-import { Menu, X, ArrowRight, ChevronDown, Target, Zap, BarChart3, ArrowUpRight, Microscope, Palette, Briefcase, Droplets, Database, Repeat, EyeOff, AlertTriangle, Clock } from 'lucide-react';
+import { ArrowRight, ChevronDown, Target, Zap, BarChart3, Clock, AlertTriangle, Database, EyeOff } from 'lucide-react';
 
 const TECH_STACK = [
   'OpenAI', 'Anthropic', 'Claude', 'Make.com', 'HubSpot', 'Stripe', 'Shopify', 
@@ -531,13 +539,8 @@ const FrictionStep: React.FC<{ point: any, index: number, onInView: () => void }
 const App: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isArchHovered, setIsArchHovered] = useState(false);
-  const [isLogoHovered, setIsLogoHovered] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrambleText, setScrambleText] = useState("ARCHITECT");
-  const [deploymentCounter, setDeploymentCounter] = useState(13.51);
-  const [navVisible, setNavVisible] = useState(true);
   const [hoveredCardIdx, setHoveredCardIdx] = useState<number | null>(null);
 
   type ViewState = 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'pillar1' | 'pillar2' | 'pillar3' | 'pillar4' | 'pillar5' | 'pillar6' | 'pillar7' | 'contact';
@@ -555,12 +558,6 @@ const App: React.FC = () => {
     const previous = scrollY.getPrevious() || 0;
     const diff = latest - previous;
     scrollVelocity.set(Math.abs(diff));
-
-    if (latest > previous && latest > 150) {
-      setNavVisible(false);
-    } else {
-      setNavVisible(true);
-    }
     setScrolled(latest > 50);
   });
 
@@ -606,8 +603,6 @@ const App: React.FC = () => {
 
   const navigateTo = (view: ViewState, sectionId?: string) => {
     setCurrentView(view);
-    setIsMenuOpen(false);
-    setIsArchHovered(false);
     window.scrollTo(0, 0);
     if (sectionId) {
       setTimeout(() => {
@@ -626,24 +621,13 @@ const App: React.FC = () => {
       'evidence': 'evidence',
       'contact': 'contact'
     };
-    navigateTo(viewMap[view] || (view as ViewState), sectionId);
+    // Map pillars if string comes as 'pillar1' etc.
+    if (view.startsWith('pillar')) {
+       navigateTo(view as ViewState, sectionId);
+    } else {
+       navigateTo(viewMap[view] || (view as ViewState), sectionId);
+    }
   };
-
-  const archPillars = [
-    { system: 'Acquisition', icon: Target, items: [
-      { id: 'pillar1', name: 'Digital Revenue Architecture' },
-      { id: 'pillar2', name: 'CRM Capture Core' },
-      { id: 'pillar3', name: 'Media Logistics' }
-    ]},
-    { system: 'Productivity', icon: Zap, items: [
-      { id: 'pillar4', name: 'Automation Architecture' },
-      { id: 'pillar5', name: 'Cognitive Infrastructure' },
-      { id: 'pillar6', name: 'Adoption Architecture' }
-    ]},
-    { system: 'Scale', icon: BarChart3, items: [
-      { id: 'pillar7', name: 'Intelligence Services' }
-    ]}
-  ];
 
   const xPercent = useTransform(carouselX, (value) => `${value}%`);
 
@@ -651,205 +635,158 @@ const App: React.FC = () => {
     <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC] min-h-screen flex flex-col">
       <D3Background />
 
-      <motion.nav 
-        initial={{ y: 0 }}
-        animate={{ y: navVisible ? 0 : -100 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 w-full z-[300] px-6 md:px-12 py-6 flex justify-between items-center transition-all duration-500 ${scrolled || isArchHovered ? 'bg-[#FFF2EC]/95 backdrop-blur-md border-b border-black/5 shadow-sm py-3' : 'border-b border-transparent'}`} 
-        onMouseLeave={() => setIsArchHovered(false)}
-      >
-        <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('landing'); }} className="flex items-center gap-3 group cursor-pointer" onMouseEnter={() => setIsLogoHovered(true)} onMouseLeave={() => setIsLogoHovered(false)}>
-          <div className="font-mono text-[10px] font-bold border border-[#1a1a1a] px-2 py-0.5 bg-[#1a1a1a] text-[#FFF2EC] shrink-0 select-none">[FC)</div>
-          <div className="flex font-bold text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a] items-center h-4 overflow-hidden select-none">
-            <span>Felipe</span>
-            <div className="relative ml-2 h-4 overflow-hidden">
-              <motion.div animate={{ y: isLogoHovered ? -16 : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} className="flex flex-col">
-                <span className="h-4 flex items-center whitespace-nowrap">Chaparro</span>
-                <span className="h-4 flex items-center text-[#C5A059]">Home</span>
-              </motion.div>
-            </div>
-          </div>
-        </a>
+      <GlobalHeader 
+        currentView={currentView} 
+        onNavigate={handleGlobalNavigate} 
+        scrolled={scrolled} 
+      />
 
-        <div className="hidden md:flex items-center gap-12">
-          <button onClick={() => navigateTo('about')} className={`nav-link text-[10px] font-bold uppercase transition-colors ${currentView === 'about' ? 'text-[#C5A059] opacity-100' : 'text-[#1a1a1a] opacity-70 hover:opacity-100'}`}>Origins</button>
-          <div className="relative" onMouseEnter={() => setIsArchHovered(true)}>
-            <button onClick={() => navigateTo('architecture')} className={`nav-link text-[10px] font-bold uppercase transition-colors flex items-center gap-2 ${currentView === 'architecture' || currentView.startsWith('pillar') ? 'text-[#C5A059] opacity-100' : 'text-[#1a1a1a] opacity-70 hover:opacity-100'}`}>
-              Architecture <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isArchHovered ? 'rotate-180' : ''}`} />
-            </button>
-            <AnimatePresence>
-              {isArchHovered && (
-                <motion.div initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.98 }} className="absolute top-full -left-20 mt-4 w-[600px] bg-[#FFF2EC] border border-black/5 shadow-2xl p-8 grid grid-cols-3 gap-8 z-[500]">
-                  {archPillars.map((system) => (
-                    <div key={system.system}>
-                      <div className="flex items-center gap-2 mb-4 text-[#1a1a1a]">
-                        <system.icon className="w-3.5 h-3.5 text-[#C5A059]" />
-                        <span className="font-mono text-[9px] uppercase tracking-[0.2em] font-bold">{system.system}</span>
-                      </div>
-                      <div className="space-y-2.5">
-                        {system.items.map((item) => (
-                          <button key={item.id} onClick={() => navigateTo(item.id as ViewState)} className="block text-left font-serif text-[1.1rem] leading-tight text-[#1a1a1a] hover:text-[#C5A059] transition-colors tracking-wide">{item.name}</button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-          <button onClick={() => navigateTo('protocol')} className={`nav-link text-[10px] font-bold uppercase transition-colors ${currentView === 'protocol' ? 'text-[#C5A059] opacity-100' : 'text-[#1a1a1a] opacity-70 hover:opacity-100'}`}>Protocol</button>
-          <button onClick={() => navigateTo('evidence')} className={`nav-link text-[10px] font-bold uppercase transition-colors ${currentView === 'evidence' ? 'text-[#C5A059] opacity-100' : 'text-[#1a1a1a] opacity-70 hover:opacity-100'}`}>Evidence</button>
-          <button onClick={() => navigateTo('contact')} className={`nav-link text-[10px] font-bold uppercase transition-colors ${currentView === 'contact' ? 'text-[#C5A059] opacity-100' : 'text-[#1a1a1a] opacity-70 hover:opacity-100'}`}>Contact</button>
-          <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="text-xs font-bold uppercase tracking-[0.25em] text-[#E21E3F] border-b border-[#E21E3F] pb-0.5 hover:border-b-2 hover:pb-1 transition-all duration-300">Audit My System</a>
-        </div>
-        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-[#1a1a1a] z-[310] relative">
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </motion.nav>
-
-      <main className="flex-grow">
-        <AnimatePresence mode="wait">
-          {currentView === 'landing' ? (
-            <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <section id="hero" className="min-h-screen w-full flex items-center pt-20 overflow-hidden relative z-20 content-layer">
-                <HeroVisual />
-                <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
-                  <div className="lg:col-span-12 flex flex-col justify-center">
-                    <div className="flex items-center gap-6 mb-10 overflow-hidden">
-                      <span className="h-[1px] w-12 bg-[#1a1a1a] animate-extend-line"></span>
-                      <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">
-                        SYDNEY BUSINESS GROWTH 
-                        <span 
-                          className="font-mono font-bold tracking-widest ml-2 transition-colors duration-700"
-                          style={{ color: scrambleText === "NAVIGATOR" ? "#C5A059" : (scrambleText === "ENGINEER" ? "#E21E3F" : "#1a1a1a") }}
-                        >
-                          [ {scrambleText} ]
-                        </span>
-                      </span>
-                    </div>
-                    
-                    <h1 className="font-serif text-7xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tight text-[#1a1a1a] mb-10">
-                      <div className="overflow-hidden">
-                        <span className="block reveal-text">Built on Logic,</span>
-                      </div>
-                      <div className="overflow-hidden">
-                        <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
-                          not <span className="italic text-[#C5A059]">Paperwork.</span>
+      <PageTransition currentView={currentView}>
+        <main className="flex-grow">
+          <AnimatePresence mode="wait">
+            {currentView === 'landing' ? (
+              <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <section id="hero" className="min-h-screen w-full flex items-center pt-20 overflow-hidden relative z-20 content-layer">
+                  <HeroVisual />
+                  <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
+                    <div className="lg:col-span-12 flex flex-col justify-center">
+                      <div className="flex items-center gap-6 mb-10 overflow-hidden">
+                        <span className="h-[1px] w-12 bg-[#1a1a1a] animate-extend-line"></span>
+                        <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">
+                          SYDNEY BUSINESS GROWTH 
+                          <span 
+                            className="font-mono font-bold tracking-widest ml-2 transition-colors duration-700"
+                            style={{ color: scrambleText === "NAVIGATOR" ? "#C5A059" : (scrambleText === "ENGINEER" ? "#E21E3F" : "#1a1a1a") }}
+                          >
+                            [ {scrambleText} ]
+                          </span>
                         </span>
                       </div>
-                    </h1>
-
-                    <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-                      Stop burning your best people on repetitive tasks. I build the digital systems that let you reclaim your margin and your sanity with no jargon, no fluff, and just logic that works.
-                    </p>
-
-                    <div className="mt-16 flex flex-col sm:flex-row items-center gap-12 animate-fade-in" style={{ animationDelay: '1s' }}>
-                      <a 
-                        href="https://meetings-ap1.hubspot.com/felipe" 
-                        target="_blank" 
-                        className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
-                      >
-                        <div className="absolute inset-0 bg-[#1a1a1a] group-hover:-translate-y-full transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                        <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ GET MY 15-MIN FRICTION MAP ]</span>
-                      </a>
                       
-                      <a 
-                        href="#diagnosis" 
-                        onClick={(e) => { e.preventDefault(); const el = document.getElementById('diagnosis'); el?.scrollIntoView({ behavior: 'smooth' }); }} 
-                        className="relative group flex items-center gap-3"
-                      >
-                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold uppercase">EXPLORE THE 7 PILLARS</span>
-                        <ChevronDown className="w-5 h-5 text-[#1a1a1a] transition-all duration-300 group-hover:translate-y-1.5" />
-                      </a>
+                      <h1 className="font-serif text-7xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tight text-[#1a1a1a] mb-10">
+                        <div className="overflow-hidden">
+                          <span className="block reveal-text">Built on Logic,</span>
+                        </div>
+                        <div className="overflow-hidden">
+                          <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
+                            not <span className="italic text-[#C5A059]">Paperwork.</span>
+                          </span>
+                        </div>
+                      </h1>
+
+                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+                        Stop burning your best people on repetitive tasks. I build the digital systems that let you reclaim your margin and your sanity with no jargon, no fluff, and just logic that works.
+                      </p>
+
+                      <div className="mt-16 flex flex-col sm:flex-row items-center gap-12 animate-fade-in" style={{ animationDelay: '1s' }}>
+                        <a 
+                          href="https://meetings-ap1.hubspot.com/felipe" 
+                          target="_blank" 
+                          className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
+                        >
+                          <div className="absolute inset-0 bg-[#1a1a1a] group-hover:-translate-y-full transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                          <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ GET MY 15-MIN FRICTION MAP ]</span>
+                        </a>
+                        
+                        <a 
+                          href="#diagnosis" 
+                          onClick={(e) => { e.preventDefault(); const el = document.getElementById('diagnosis'); el?.scrollIntoView({ behavior: 'smooth' }); }} 
+                          className="relative group flex items-center gap-3"
+                        >
+                          <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold uppercase">EXPLORE THE 7 PILLARS</span>
+                          <ChevronDown className="w-5 h-5 text-[#1a1a1a] transition-all duration-300 group-hover:translate-y-1.5" />
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
+                </section>
 
-              <div className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30 carousel-mask" onMouseEnter={() => isCarouselHovered.current = true} onMouseLeave={() => isCarouselHovered.current = false}>
-                <div className="flex whitespace-nowrap">
-                  <motion.div className="flex gap-32 items-center pr-20" style={{ x: xPercent }}>
-                    {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
-                      <span key={i} className="font-mono text-[10px] font-bold tracking-[0.5em] uppercase mix-blend-luminosity opacity-15 hover:opacity-60 hover:text-[#C5A059] transition-all duration-300 cursor-default">{tech}</span>
-                    ))}
-                  </motion.div>
+                <div className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30 carousel-mask" onMouseEnter={() => isCarouselHovered.current = true} onMouseLeave={() => isCarouselHovered.current = false}>
+                  <div className="flex whitespace-nowrap">
+                    <motion.div className="flex gap-32 items-center pr-20" style={{ x: xPercent }}>
+                      {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
+                        <span key={i} className="font-mono text-[10px] font-bold tracking-[0.5em] uppercase mix-blend-luminosity opacity-15 hover:opacity-60 hover:text-[#C5A059] transition-all duration-300 cursor-default">{tech}</span>
+                      ))}
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
 
-              <motion.section id="diagnosis" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, margin: "-100px" }} className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden">
-                <div className="max-w-[1600px] mx-auto border-t border-l border-[#1a1a1a]/10">
-                  <div className="grid grid-cols-1 md:grid-cols-3">
-                    <div className="col-span-1 md:col-span-2 p-12 md:p-16 border-r border-b border-[#1a1a1a]/10 flex flex-col justify-center min-h-[350px]">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-10 block">01 / THE DIAGNOSIS</span>
-                      <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] text-[#1a1a1a] tracking-tighter">
-                        You didn’t start your business to become an <br />
-                        <span className="italic text-[#1a1a1a]/60">administrative hostage.</span>
-                      </h2>
-                    </div>
-                    <div className="col-span-1 border-r border-b border-[#1a1a1a]/10 bg-transparent">
-                      <GrowthGraph />
-                    </div>
-                    <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 min-h-[300px]">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">02 / SYMPTOMS</span>
-                      <p className="font-sans text-lg font-light text-[#1a1a1a]/70 leading-relaxed">
-                        If you are reading this while the rest of the world is quiet, you know the feeling. Revenue is up, but so is the friction, and your team is drowning in manual work.
-                      </p>
-                    </div>
-                    <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#E21E3F]/5 min-h-[300px]">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">03 / ERROR DETECTED</span>
-                      <div className="space-y-4">
-                        <div className="font-sans text-3xl font-bold text-[#E21E3F] uppercase tracking-tighter">Burning People</div>
-                        <p className="font-sans text-sm text-[#E21E3F]/70 leading-relaxed uppercase tracking-widest">
-                          Using expensive human talent to bridge the gap in your software.
+                <motion.section id="diagnosis" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, margin: "-100px" }} className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden">
+                  <div className="max-w-[1600px] mx-auto border-t border-l border-[#1a1a1a]/10">
+                    <div className="grid grid-cols-1 md:grid-cols-3">
+                      <div className="col-span-1 md:col-span-2 p-12 md:p-16 border-r border-b border-[#1a1a1a]/10 flex flex-col justify-center min-h-[350px]">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-10 block">01 / THE DIAGNOSIS</span>
+                        <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] text-[#1a1a1a] tracking-tighter">
+                          You didn’t start your business to become an <br />
+                          <span className="italic text-[#1a1a1a]/60">administrative hostage.</span>
+                        </h2>
+                      </div>
+                      <div className="col-span-1 border-r border-b border-[#1a1a1a]/10 bg-transparent">
+                        <GrowthGraph />
+                      </div>
+                      <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 min-h-[300px]">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">02 / SYMPTOMS</span>
+                        <p className="font-sans text-lg font-light text-[#1a1a1a]/70 leading-relaxed">
+                          If you are reading this while the rest of the world is quiet, you know the feeling. Revenue is up, but so is the friction, and your team is drowning in manual work.
                         </p>
                       </div>
-                    </div>
-                    <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#1a1a1a] text-white min-h-[300px] flex flex-col justify-between border-l-2 border-l-[#C5A059]">
-                      <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] block">04 / RESOLUTION</span>
-                      <p className="font-serif text-2xl md:text-3xl leading-tight mb-8">
-                        I build synchronised systems that exit you from the daily grind.
-                      </p>
-                      <div className="flex items-center gap-3 font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
-                        SYSTEMS_OPTIMISED
+                      <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#E21E3F]/5 min-h-[300px]">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">03 / ERROR DETECTED</span>
+                        <div className="space-y-4">
+                          <div className="font-sans text-3xl font-bold text-[#E21E3F] uppercase tracking-tighter">Burning People</div>
+                          <p className="font-sans text-sm text-[#E21E3F]/70 leading-relaxed uppercase tracking-widest">
+                            Using expensive human talent to bridge the gap in your software.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#1a1a1a] text-white min-h-[300px] flex flex-col justify-between border-l-2 border-l-[#C5A059]">
+                        <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] block">04 / RESOLUTION</span>
+                        <p className="font-serif text-2xl md:text-3xl leading-tight mb-8">
+                          I build synchronised systems that exit you from the daily grind.
+                        </p>
+                        <div className="flex items-center gap-3 font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
+                          SYSTEMS_OPTIMISED
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.section>
+                </motion.section>
 
-              <FrictionAuditSection />
+                <FrictionAuditSection />
 
-              <RevenueAudit />
-              <section id="architecture"><BentoGrid onServiceClick={handleServiceClick} /></section>
-              <EvidenceVault />
-              <TheArchitect />
-            </motion.div>
-          ) : currentView === 'about' ? (
-            <AboutPage key="about" onBack={() => navigateTo('landing')} onNavigate={handleGlobalNavigate} />
-          ) : currentView === 'architecture' ? (
-            <ArchitecturePage key="architecture" onBack={() => navigateTo('landing')} onNavigatePillar={(id: string) => navigateTo(id as ViewState)} />
-          ) : currentView === 'protocol' ? (
-            <ProtocolPage key="protocol" onBack={() => navigateTo('landing')} />
-          ) : currentView === 'evidence' ? (
-            <EvidenceVaultPage key="evidence" onBack={() => navigateTo('landing')} />
-          ) : currentView === 'contact' ? (
-            <ContactPage key="contact" onBack={() => navigateTo('landing')} />
-          ) : currentView.startsWith('pillar') ? (
-            <motion.div key={currentView} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-               {currentView === 'pillar1' && <Pillar1 onBack={() => navigateTo('architecture')} />}
-               {currentView === 'pillar2' && <Pillar2 onBack={() => navigateTo('architecture')} />}
-               {currentView === 'pillar3' && <Pillar3 onBack={() => navigateTo('architecture')} />}
-               {currentView === 'pillar4' && <Pillar4 onBack={() => navigateTo('architecture')} />}
-               {currentView === 'pillar5' && <Pillar5 onBack={() => navigateTo('architecture')} />}
-               {currentView === 'pillar6' && <Pillar6 onBack={() => navigateTo('architecture')} />}
-               {currentView === 'pillar7' && <Pillar7 onBack={() => navigateTo('architecture')} />}
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </main>
+                <RevenueAudit />
+                <section id="architecture"><BentoGrid onServiceClick={handleServiceClick} /></section>
+                <EvidenceVault />
+                <BookingCTA />
+                <TheArchitect />
+              </motion.div>
+            ) : currentView === 'about' ? (
+              <AboutPage key="about" onBack={() => navigateTo('landing')} onNavigate={handleGlobalNavigate} />
+            ) : currentView === 'architecture' ? (
+              <ArchitecturePage key="architecture" onBack={() => navigateTo('landing')} onNavigate={handleGlobalNavigate} />
+            ) : currentView === 'protocol' ? (
+              <ProtocolPage key="protocol" onBack={() => navigateTo('landing')} onNavigate={handleGlobalNavigate} />
+            ) : currentView === 'evidence' ? (
+              <EvidencePage key="evidence" onBack={() => navigateTo('landing')} onNavigate={handleGlobalNavigate} />
+            ) : currentView === 'contact' ? (
+              <ContactPage key="contact" onBack={() => navigateTo('landing')} />
+            ) : currentView.startsWith('pillar') ? (
+              <motion.div key={currentView} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                 {currentView === 'pillar1' && <Pillar1 onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+                 {currentView === 'pillar2' && <Pillar2 onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+                 {currentView === 'pillar3' && <PillarPage_Automation onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+                 {currentView === 'pillar4' && <PillarPage_Cognitive onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+                 {currentView === 'pillar5' && <PillarPage_Media onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+                 {currentView === 'pillar6' && <PillarPage_Adoption onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+                 {currentView === 'pillar7' && <PillarPage_Intelligence onBack={() => navigateTo('architecture')} onNavigate={handleGlobalNavigate} />}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </main>
+      </PageTransition>
 
-      <GlobalFooter onNavigate={handleGlobalNavigate} />
+      {currentView !== 'architecture' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
 
       <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(pillarId) => navigateTo(pillarId as ViewState)} />
     </div>

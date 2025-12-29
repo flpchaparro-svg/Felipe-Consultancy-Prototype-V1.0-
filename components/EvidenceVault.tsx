@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { Activity, ArrowUpRight, X } from 'lucide-react';
 
+// --- DATA ---
 const CASE_STUDIES = [
   {
     id: 'logistics',
@@ -12,7 +13,7 @@ const CASE_STUDIES = [
     stack: ['Vapi.ai', 'Make.com', 'HubSpot'],
     description: 'Deployed a Voice AI interface to handle inbound emergency calls for a 40-van fleet. Eliminated missed-call revenue leakage instantly.',
     metrics: ['Missed Calls: 0%', 'Response Time: <2s', 'Revenue Saved: $45k/mo'],
-    bg: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1200' // Industrial/Engineering vibe
+    bg: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1200'
   },
   {
     id: 'legal',
@@ -23,14 +24,16 @@ const CASE_STUDIES = [
     stack: ['Claude 3.5', 'Supabase', 'Python'],
     description: 'Automated the extraction of data from client emails directly into the Case Management System. Removed the need for a junior paralegal.',
     metrics: ['Data Entry: 0hrs', 'Accuracy: 100%', 'Billable Gain: +$8k/mo'],
-    bg: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1200' // High-end office/Meeting vibe
+    bg: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1200'
   }
 ];
+
+// --- COMPONENTS ---
 
 const CountingMetric: React.FC<{ value: number, suffix: string }> = ({ value, suffix }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const ref = useRef(null);
-
+  
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
@@ -45,7 +48,6 @@ const CountingMetric: React.FC<{ value: number, suffix: string }> = ({ value, su
         }, stepTime);
       }
     }, { threshold: 0.5 });
-
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [value]);
@@ -57,86 +59,120 @@ const CountingMetric: React.FC<{ value: number, suffix: string }> = ({ value, su
   );
 };
 
-const EvidenceCard: React.FC<{ study: typeof CASE_STUDIES[0], onOpen: (s: any) => void }> = ({ study, onOpen }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+const EvidenceCard: React.FC<{ 
+  study: typeof CASE_STUDIES[0], 
+  index: number, 
+  scrollProgress: any, 
+  onOpen: (s: any) => void 
+}> = ({ study, index, scrollProgress, onOpen }) => {
+  
+  // 1. SCROLL PHYSICS
+  // Even index (Left Column) moves from -200 to 0
+  // Odd index (Right Column) moves from 200 to 0
+  const xOffset = index % 2 === 0 ? -200 : 200;
+  
+  // Transform the shared scroll progress into specific X movement for this card
+  // Input: [0 (Start), 1 (End)] -> Output: [Offset, 0]
+  const x = useTransform(scrollProgress, [0, 1], [xOffset, 0]);
+  const opacity = useTransform(scrollProgress, [0, 0.3], [0, 1]); // Fade in quickly
 
-  // Tilt intensity reduced by 50% for a heavier, structural feel (Range: 10 degrees)
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [5, -5]), { damping: 25, stiffness: 200 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-5, 5]), { damping: 25, stiffness: 200 });
-
-  const bgX = useTransform(x, [-0.5, 0.5], [10, -10]);
-  const bgY = useTransform(y, [-0.5, 0.5], [10, -10]);
+  // 2. MOUSE TILT PHYSICS
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [5, -5]), { damping: 25, stiffness: 200 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-5, 5]), { damping: 25, stiffness: 200 });
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = (mouseX / width) - 0.5;
-    const yPct = (mouseY / height) - 0.5;
-    x.set(xPct);
-    y.set(yPct);
+    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(xPct);
+    mouseY.set(yPct);
   }
 
   function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
+    mouseX.set(0);
+    mouseY.set(0);
   }
 
   return (
     <motion.div 
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ 
-        rotateX, 
-        rotateY, 
-        transformStyle: 'preserve-3d',
-        boxShadow: '4px 4px 0px 0px rgba(0,0,0,0.1)'
-      }}
-      whileHover={{ y: -2 }}
-      onClick={() => onOpen(study)}
-      className="group cursor-pointer bg-[#1a1a1a] border border-white/10 p-12 relative overflow-hidden transition-all duration-500 rounded-none"
+      style={{ x, opacity }} // Bind the Scroll Physics here
+      className="h-full"
     >
       <motion.div 
-        style={{ x: bgX, y: bgY, scale: 1.15 }}
-        className="absolute inset-0 z-0 pointer-events-none opacity-20 grayscale group-hover:grayscale-0 transition-all duration-700"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{ 
+          rotateX, 
+          rotateY, 
+          transformStyle: 'preserve-3d',
+          boxShadow: '4px 4px 0px 0px rgba(0,0,0,0.1)'
+        }}
+        whileHover={{ y: -5 }}
+        onClick={() => onOpen(study)}
+        className="group cursor-pointer bg-[#1a1a1a] border border-white/10 p-12 relative overflow-hidden transition-all duration-500 rounded-none h-full"
       >
-        <img src={study.bg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-[#1a1a1a]/80 group-hover:bg-[#1a1a1a]/40 transition-colors" />
-      </motion.div>
-
-      <div className="flex justify-between items-start mb-12 relative z-10" style={{ transform: 'translateZ(20px)' }}>
-        <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.4em] uppercase font-bold">{study.tag}</span>
-        <div className="w-12 h-12 rounded-none border border-white/10 flex items-center justify-center group-hover:border-[#C5A059] group-hover:text-[#C5A059] transition-all duration-300">
-          <Activity className="w-4 h-4" />
+        {/* Background Image Logic */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-20 grayscale group-hover:grayscale-0 transition-all duration-700">
+           <img src={study.bg} alt="" className="w-full h-full object-cover scale-110 group-hover:scale-105 transition-transform duration-1000" />
+           <div className="absolute inset-0 bg-[#1a1a1a]/80 group-hover:bg-[#1a1a1a]/40 transition-colors" />
         </div>
-      </div>
 
-      <h3 className="font-serif text-4xl text-[#FFF2EC] mb-4 relative z-10 tracking-[-0.03em]" style={{ transform: 'translateZ(30px)' }}>{study.client}</h3>
-      <CountingMetric value={study.result} suffix={study.suffix} />
-      
-      <div className="flex flex-wrap gap-2 mb-8 relative z-10" style={{ transform: 'translateZ(15px)' }}>
-        {study.stack.map(tech => (
-          <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/50 uppercase tracking-widest group-hover:border-[#C5A059]/30 group-hover:text-[#FFF2EC] transition-colors">
-            {tech}
-          </span>
-        ))}
-      </div>
+        {/* Card Content */}
+        <div className="flex justify-between items-start mb-12 relative z-10" style={{ transform: 'translateZ(20px)' }}>
+          <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.4em] uppercase font-bold">{study.tag}</span>
+          <div className="w-12 h-12 border border-white/10 flex items-center justify-center group-hover:border-[#C5A059] group-hover:text-[#C5A059] transition-all">
+            <Activity className="w-4 h-4" />
+          </div>
+        </div>
 
-      <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors relative z-10">
-        View System Specs <ArrowUpRight className="w-3 h-3" />
-      </div>
+        <h3 className="font-serif text-4xl text-[#FFF2EC] mb-4 relative z-10" style={{ transform: 'translateZ(30px)' }}>{study.client}</h3>
+        <CountingMetric value={study.result} suffix={study.suffix} />
+        
+        <div className="flex flex-wrap gap-2 mb-8 relative z-10" style={{ transform: 'translateZ(15px)' }}>
+          {study.stack.map(tech => (
+            <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/50 uppercase tracking-widest group-hover:border-[#C5A059]/30 group-hover:text-[#FFF2EC] transition-colors">
+              {tech}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3 text-[10px] font-mono text-white/20 uppercase tracking-widest group-hover:text-[#C5A059] transition-colors relative z-10">
+          View System Specs <ArrowUpRight className="w-3 h-3" />
+        </div>
+      </motion.div>
     </motion.div>
   );
 };
 
+// --- MAIN COMPONENT ---
+
 const EvidenceVault: React.FC = () => {
   const [activeStudy, setActiveStudy] = useState<typeof CASE_STUDIES[0] | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 1. Track Scroll Progress of this specific section
+  // "start end" = When top of section hits bottom of viewport (Starts animating)
+  // "center center" = When center of section hits center of viewport (Cards meet)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "center center"]
+  });
+
+  // 2. Add weight/smoothing so it feels like heavy machinery
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   return (
-    <section id="evidence" className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 border-t border-black/5">
+    <section 
+      ref={containerRef} 
+      id="evidence" 
+      className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 border-t border-black/5 overflow-hidden"
+    >
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div>
@@ -149,28 +185,32 @@ const EvidenceVault: React.FC = () => {
           </div>
         </div>
 
+        {/* GRID CONTAINER */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 perspective-[2000px]">
-          {CASE_STUDIES.map((study) => (
-            <EvidenceCard key={study.id} study={study} onOpen={setActiveStudy} />
+          {CASE_STUDIES.map((study, index) => (
+            <EvidenceCard 
+              key={study.id} 
+              study={study} 
+              index={index} 
+              scrollProgress={smoothProgress} // Pass the single shared spring
+              onOpen={setActiveStudy} 
+            />
           ))}
         </div>
       </div>
 
+      {/* MODAL */}
       <AnimatePresence>
         {activeStudy && (
           <div className="fixed inset-0 z-[500] flex items-center justify-center p-6">
             <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setActiveStudy(null)}
               className="absolute inset-0 bg-black/90 backdrop-blur-md" 
             />
             <motion.div 
-              initial={{ scale: 0.98, opacity: 0, y: 10 }} 
-              animate={{ scale: 1, opacity: 1, y: 0 }} 
-              exit={{ scale: 0.98, opacity: 0, y: 10 }}
-              className="bg-white w-full max-w-4xl relative z-10 p-12 overflow-hidden rounded-none border border-black/20"
+              initial={{ scale: 0.98, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.98, opacity: 0, y: 10 }}
+              className="bg-white w-full max-w-4xl relative z-10 p-12 overflow-hidden rounded-none border border-black/20 max-h-[90vh] overflow-y-auto"
             >
               <button onClick={() => setActiveStudy(null)} className="absolute top-8 right-8 text-black/40 hover:text-[#C5A059] transition-colors z-50">
                 <X className="w-8 h-8" />
@@ -200,7 +240,6 @@ const EvidenceVault: React.FC = () => {
                     ))}
                   </ul>
 
-                  {/* Ghost-style Replicate CTA */}
                   <a 
                     href="https://meetings-ap1.hubspot.com/felipe" 
                     target="_blank" 

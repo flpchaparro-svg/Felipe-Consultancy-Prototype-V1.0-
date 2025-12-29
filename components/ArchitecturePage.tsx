@@ -1,117 +1,222 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Target, Zap, BarChart3, Activity, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Target, Database, Zap, Cpu, Layers, Users, BarChart3, ArrowRight, ArrowDownRight, Activity } from 'lucide-react';
+import GlobalFooter from './GlobalFooter';
+import ArchitectureVisual_Layers from './ArchitectureVisual_Layers';
 
 interface ArchitecturePageProps {
   onBack: () => void;
-  onNavigatePillar: (pillarId: string) => void;
+  onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigatePillar }) => {
+const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate }) => {
+
   const systems = [
     {
-      title: 'Acquisition System',
-      icon: Target,
-      color: '#E21E3F',
+      id: 'acquisition',
+      label: 'SYSTEM 01 // ACQUISITION',
+      title: 'Acquisition Architecture',
+      description: 'The goal is simple: To capture attention and turn it into data without leaks. We engineer the entry point to ensure every drop of traffic is qualified.',
+      accent: 'text-[#E21E3F]',
+      bgAccent: 'bg-[#E21E3F]',
+      borderAccent: 'border-[#E21E3F]',
       pillars: [
-        { id: 'pillar1', name: 'Digital Revenue Architecture', desc: 'Engineering web engines for high-velocity demand capture.' },
-        { id: 'pillar2', name: 'CRM Capture Core', desc: 'The central nervous system for unified data integrity.' },
-        { id: 'pillar3', name: 'Media Logistics', desc: 'Automated assembly lines for global content distribution.' }
+        { id: 'pillar1', icon: Target, title: 'Digital Revenue', subtitle: 'The Catchment', text: 'Most websites are brochures; I build conversion engines. A high-performance digital catchment that feeds the ecosystem.' },
+        { id: 'pillar2', icon: Database, title: 'Capture Core', subtitle: 'The Nervous System', text: 'The single source of truth. If a lead isn\'t tracked, it doesn\'t exist. I build the CRM architecture that remembers every interaction.' },
+        { id: 'pillar3', icon: Zap, title: 'Auto-Fulfillment', subtitle: 'The Hands', text: 'Decoupling revenue from headcount. We automate the "boring" administrative work so your team can focus on the profitable work.' },
+        // VISUAL CARD 1: DATA INGEST
+        { 
+          id: 'v1', 
+          isVisual: true, 
+          subtitle: 'Active_Listening', 
+          accent: '#E21E3F' 
+        }
       ]
     },
     {
-      title: 'Productivity System',
-      icon: Zap,
-      color: '#C5A059',
+      id: 'velocity',
+      label: 'SYSTEM 02 // VELOCITY',
+      title: 'Velocity Architecture',
+      description: 'The goal is speed. We use AI and Media Infrastructure to increase your output per hour, scaling your responsiveness infinitely.',
+      accent: 'text-[#C5A059]',
+      bgAccent: 'bg-[#C5A059]',
+      borderAccent: 'border-[#C5A059]',
       pillars: [
-        { id: 'pillar4', name: 'Automation Architecture', desc: 'Mechanical efficiency through autonomous admin protocols.' },
-        { id: 'pillar5', name: 'Cognitive Infrastructure', desc: 'Deploying agentic AI units for triage and context management.' },
-        { id: 'pillar6', name: 'Adoption Architecture', desc: 'Behavioral engineering to maximize team protocol adherence.' }
+        { id: 'pillar4', icon: Cpu, title: 'AI Agents', subtitle: 'The Voice', text: 'Digital Employees. I build Agentic AI that can reason, speak, and qualify leads 24/7 on your behalf.' },
+        { id: 'pillar5', icon: Layers, title: 'Media Logistics', subtitle: 'The Presence', text: 'An asset supply chain. We turn raw expertise into authority assets and distribute them automatically across every channel.' },
+        { id: 'pillar6', icon: Users, title: 'Internal Adoption', subtitle: 'The Culture', text: 'Protocol synchronization. I engineer the behavioral shift using micro-learning to ensure your team actually adopts the tools.' },
+        // VISUAL CARD 2: TURBINE
+        { 
+          id: 'v2', 
+          isVisual: true, 
+          subtitle: 'Processing_Cycles', 
+          accent: '#C5A059' 
+        }
       ]
     },
     {
-      title: 'Scale System',
-      icon: BarChart3,
-      color: '#1a1a1a',
+      id: 'intelligence',
+      label: 'SYSTEM 03 // INTELLIGENCE',
+      title: 'Intelligence Architecture',
+      description: 'The goal is clarity. We move you from "gut feeling" to evidence-based growth by visualizing your unit economics in real-time.',
+      accent: 'text-[#1a1a1a]',
+      bgAccent: 'bg-[#1a1a1a]',
+      borderAccent: 'border-[#1a1a1a]',
       pillars: [
-        { id: 'pillar7', name: 'Intelligence Services', desc: 'Executive dashboarding for real-time forecasting and BI.' }
+        { id: 'pillar7', icon: BarChart3, title: 'The Control Tower', subtitle: 'The Eyes', text: 'Vision locked. A centralized executive dashboard that gives you the confidence to steer the ship.' },
+        // VISUAL CARD 3: RADAR
+        { 
+          id: 'v3', 
+          isVisual: true, 
+          subtitle: 'Predictive_Model', 
+          accent: '#1a1a1a' 
+        }
       ]
     }
   ];
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }}
-      className="relative min-h-screen w-full bg-[#FFF2EC] text-[#1a1a1a] pt-32 pb-0 px-0 z-10 flex flex-col content-layer"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="min-h-screen bg-[#FFF2EC] text-[#1a1a1a] pt-32 pb-0 px-0 relative z-[150] overflow-x-hidden flex flex-col"
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-20">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow">
         
-        <div className="flex items-center gap-6 mb-16 overflow-hidden">
-          <button 
-            onClick={onBack}
-            className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors"
-          >
+        {/* NAV BACK */}
+        <div className="flex justify-between items-center mb-24">
+          <button onClick={onBack} className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            [ RETURN_HOME )
+            / Return_to_Engine
           </button>
-          <span className="h-[1px] w-12 bg-black/20"></span>
-          <span className="font-mono text-[10px] text-black/40 uppercase tracking-widest">Architecture_Overview_v5.2</span>
         </div>
 
-        <div className="mb-32">
-          <span className="font-mono text-xs text-[#E21E3F] tracking-[0.4em] mb-8 block uppercase">/ SYSTEMS_ENGINEERING</span>
-          <h1 className="font-serif text-5xl md:text-8xl lg:text-[7.5rem] leading-[0.95] tracking-tighter text-[#1a1a1a] mb-10 max-w-5xl">
-            The Blueprint for <br />
-            <span className="text-[#C5A059] italic">Autonomous Growth.</span>
-          </h1>
-          <p className="font-sans text-xl font-light text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-black/20 pl-6">
-            I don't solve problems with people; I solve them with systems. The architecture is divided into three core subsystems designed to capture demand, eliminate friction, and enable empirical scale.
-          </p>
+        {/* HERO SECTION - SPLIT LAYOUT */}
+        <div className="mb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_ARCHITECTURE</span>
+            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tight mb-8">
+              I don't sell hours. <br />
+              <span className="italic text-black/20">I sell outcomes.</span>
+            </h1>
+            <p className="font-sans text-xl text-[#1a1a1a]/60 leading-relaxed max-w-xl border-l-2 border-[#C5A059] pl-6">
+              Most agencies sell "Ingredients" (SEO, Design, Ads). I sell "Systems." <br/>
+              A 7-Pillar Architecture designed to remove human friction from your revenue cycle.
+            </p>
+          </div>
+          <div className="h-full flex items-center justify-center lg:justify-end">
+             <ArchitectureVisual_Layers />
+          </div>
         </div>
 
-        <div className="space-y-32 mb-40">
-          {systems.map((system, idx) => (
-            <section key={idx} className="border-t border-black/10 pt-20">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                <div className="lg:col-span-5">
-                  <div className="flex items-center gap-4 mb-8" style={{ color: system.color }}>
-                    <system.icon className="w-8 h-8" />
-                    <span className="font-mono text-xs uppercase tracking-[0.4em] font-bold">{system.title}</span>
-                  </div>
-                  <h2 className="font-serif text-5xl md:text-6xl mb-8 leading-tight">
-                    {system.title.split(' ')[0]} <br />
-                    <span className="italic text-black/40">{system.title.split(' ')[1]}</span>
-                  </h2>
-                </div>
-                <div className="lg:col-span-7 space-y-4">
-                  {system.pillars.map((pillar) => (
-                    <button 
-                      key={pillar.id}
-                      onClick={() => onNavigatePillar(pillar.id)}
-                      className="w-full group flex items-center justify-between p-10 bg-white border border-black/5 hover:border-[#C5A059] hover:shadow-2xl transition-all duration-500 text-left overflow-hidden relative"
-                    >
-                      <div className="absolute top-0 left-0 w-1 h-0 bg-[#C5A059] group-hover:h-full transition-all duration-500"></div>
-                      <div>
-                        <span className="font-mono text-[10px] text-[#C5A059] mb-2 block uppercase tracking-widest">PILLAR_DEEP_DIVE</span>
-                        <h3 className="font-serif text-3xl group-hover:text-[#C5A059] transition-colors">{pillar.name}</h3>
-                        <p className="font-sans text-sm text-black/50 mt-2">{pillar.desc}</p>
-                      </div>
-                      <ArrowRight className="w-6 h-6 text-black/10 group-hover:text-[#C5A059] group-hover:translate-x-2 transition-all duration-500" />
-                    </button>
-                  ))}
-                </div>
+        {/* SYSTEMS GRID */}
+        <div className="space-y-32 mb-32">
+          {systems.map((system) => (
+            <div key={system.id} className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-black/5 pt-12">
+              <div className="lg:col-span-4">
+                <div className={`font-mono text-[10px] uppercase tracking-[0.25em] font-bold mb-6 ${system.accent}`}>{system.label}</div>
+                <h2 className="font-serif text-4xl mb-6">{system.title}</h2>
+                <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed max-w-md">{system.description}</p>
+                <ArrowDownRight className={`w-8 h-8 mt-8 ${system.accent} opacity-50`} />
               </div>
-            </section>
+              
+              <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {system.pillars.map((pillar: any) => (
+                  pillar.isVisual ? (
+                    // --- VISUAL CARD RENDERER (Non-Clickable) ---
+                    <div key={pillar.id} className="group p-8 bg-[#1a1a1a]/5 border border-black/5 flex flex-col items-center justify-center relative overflow-hidden h-full min-h-[300px]">
+                        
+                        {/* ANIMATION 1: PULSING RINGS (ACQUISITION) */}
+                        {pillar.id === 'v1' && (
+                          <div className="relative flex items-center justify-center">
+                            <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }} transition={{ duration: 3, repeat: Infinity }} className="absolute w-32 h-32 rounded-full border border-[#E21E3F]" />
+                            <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.8, 0, 0.8] }} transition={{ duration: 3, repeat: Infinity, delay: 0.5 }} className="absolute w-20 h-20 rounded-full border border-[#E21E3F]" />
+                            <div className="w-4 h-4 bg-[#E21E3F] rounded-full" />
+                          </div>
+                        )}
+
+                        {/* ANIMATION 2: SPINNING TURBINE (VELOCITY) */}
+                        {pillar.id === 'v2' && (
+                          <motion.div 
+                            animate={{ rotate: 360 }} 
+                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                            className="w-32 h-32 border-2 border-dashed border-[#C5A059] rounded-full flex items-center justify-center"
+                          >
+                             <div className="w-24 h-24 border border-[#C5A059]/50 rounded-full" />
+                             <div className="absolute w-full h-1 bg-[#C5A059]/20" />
+                             <div className="absolute w-1 h-full bg-[#C5A059]/20" />
+                          </motion.div>
+                        )}
+
+                        {/* ANIMATION 3: SCANNING RADAR (INTELLIGENCE) */}
+                        {pillar.id === 'v3' && (
+                           <div className="w-full max-w-[200px] h-32 border-b border-black/20 relative overflow-hidden flex items-end justify-between px-2">
+                              {[1,2,3,4,5,6].map(i => (
+                                 <motion.div 
+                                   key={i} 
+                                   className="w-2 bg-black" 
+                                   animate={{ height: [10, 40 + Math.random()*50, 10] }} 
+                                   transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }} 
+                                 />
+                              ))}
+                              <motion.div 
+                                className="absolute top-0 left-0 w-full h-1 bg-black/10"
+                                animate={{ top: ['0%', '100%'] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                              />
+                           </div>
+                        )}
+
+                        <div className="absolute bottom-6 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50" style={{ color: pillar.accent }}>
+                           [ {pillar.subtitle} ]
+                        </div>
+                    </div>
+                  ) : (
+                    // --- STANDARD CARD RENDERER (Clickable) ---
+                    <button 
+                      key={pillar.id} 
+                      onClick={() => onNavigate(pillar.id)}
+                      className="group text-left p-8 bg-white border border-black/5 hover:border-black/20 hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col items-start h-full w-full"
+                    >
+                      <div className={`w-10 h-10 mb-6 flex items-center justify-center rounded-full bg-black/5 ${system.accent}`}>
+                        <pillar.icon className="w-5 h-5" />
+                      </div>
+                      <span className={`font-mono text-[9px] uppercase tracking-[0.2em] mb-2 block ${system.accent} opacity-70`}>{pillar.subtitle}</span>
+                      <h3 className="font-serif text-2xl mb-4 group-hover:translate-x-1 transition-transform duration-300">{pillar.title}</h3>
+                      <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed mb-8">{pillar.text}</p>
+                      
+                      {/* NEW CTA */}
+                      <div className={`mt-auto flex items-center gap-3 font-mono text-[9px] uppercase tracking-widest font-bold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ${system.accent}`}>
+                        <span>[ VIEW_SPECIFICATIONS ]</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </div>
+
+                      <div className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500 ${system.bgAccent}`} />
+                    </button>
+                  )
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 
-        <div className="py-12 border-t border-black/10 flex items-center gap-4">
-          <Activity className="w-6 h-6 text-[#C5A059]" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-black/40">Status: Blueprint_Authenticated // Verified_Systems</span>
+        {/* BOTTOM CTA */}
+        <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
+           <h2 className="font-serif text-5xl md:text-6xl mb-8">Stop guessing. <br/> Start <span className="italic text-[#E21E3F]">Engineering.</span></h2>
+           <button 
+             onClick={() => onNavigate('landing', 'booking')}
+             className="group relative flex items-center justify-center px-10 py-6 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
+           >
+             <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+             <span className="relative z-10 flex items-center gap-4 group-hover:text-[#1a1a1a] transition-colors duration-500">
+               [ INITIATE_AUDIT ]
+               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+             </span>
+           </button>
         </div>
+
       </div>
+
+      <GlobalFooter onNavigate={onNavigate} />
     </motion.div>
   );
 };
