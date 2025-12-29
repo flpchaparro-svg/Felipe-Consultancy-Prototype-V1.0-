@@ -32,7 +32,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
     {
       label: 'INTELLIGENCE',
       icon: BarChart3,
-      color: 'text-white',
+      color: 'text-[#1a1a1a]',
       links: [
         { name: '07 // Control Tower', id: 'pillar7' }
       ]
@@ -64,9 +64,8 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
           
           <div className="flex flex-col items-end gap-6 self-start lg:self-end">
              {/* HERO PHYSICS BUTTON (INVERTED FOR DARK MODE) */}
-             <a 
-                href="https://meetings-ap1.hubspot.com/felipe" 
-                target="_blank"
+             <button 
+                onClick={() => onNavigate('contact')}
                 className="group relative flex items-center justify-center px-8 py-6 bg-transparent border border-white/20 text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
@@ -74,7 +73,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
                   [ INITIATE PROTOCOL ]
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
-             </a>
+             </button>
              <span className="font-mono text-[9px] text-white/30 uppercase tracking-widest">
                Response Time: &lt;24hrs
              </span>

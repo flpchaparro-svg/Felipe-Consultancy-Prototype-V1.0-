@@ -131,12 +131,15 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
               <button onClick={() => onNavigate('evidence')} className={navClass('evidence')}>EVIDENCE</button>
             </div>
 
-            {/* TOP CTA */}
+            {/* TOP CTA - CHANGED TO INTERNAL ROUTE */}
             <div className="hidden md:flex items-center">
-               <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="group flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a] hover:text-[#E21E3F] transition-colors border-b border-transparent hover:border-[#E21E3F] pb-0.5">
+               <button 
+                 onClick={() => onNavigate('contact')} 
+                 className="group flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a] hover:text-[#E21E3F] transition-colors border-b border-transparent hover:border-[#E21E3F] pb-0.5"
+               >
                  <span>[ INITIATE_AUDIT ]</span>
                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-               </a>
+               </button>
             </div>
           </motion.nav>
         )}
@@ -191,9 +194,12 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
              </div>
 
              {/* BOTTOM CTA ICON */}
-             <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="p-4 border-t border-black/5 hover:bg-[#E21E3F] hover:text-white transition-colors group">
+             <button 
+               onClick={() => onNavigate('contact')}
+               className="p-4 border-t border-black/5 hover:bg-[#E21E3F] hover:text-white transition-colors group"
+             >
                 <Target className="w-4 h-4" />
-             </a>
+             </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -217,7 +223,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
              <button onClick={() => { onNavigate('architecture'); setIsMenuOpen(false); }} className="text-3xl font-serif mb-6 text-left hover:text-[#C5A059]">Architecture</button>
              <button onClick={() => { onNavigate('protocol'); setIsMenuOpen(false); }} className="text-3xl font-serif mb-6 text-left hover:text-[#C5A059]">Protocol</button>
              <button onClick={() => { onNavigate('evidence'); setIsMenuOpen(false); }} className="text-3xl font-serif mb-6 text-left hover:text-[#C5A059]">Evidence</button>
-             <a href="https://meetings-ap1.hubspot.com/felipe" target="_blank" className="mt-8 text-xs font-bold uppercase tracking-[0.25em] text-[#E21E3F] border-b border-[#E21E3F] pb-2 w-fit">Initiate Audit</a>
+             <button onClick={() => { onNavigate('contact'); setIsMenuOpen(false); }} className="mt-8 text-xs font-bold uppercase tracking-[0.25em] text-[#E21E3F] border-b border-[#E21E3F] pb-2 w-fit text-left">Initiate Audit</button>
           </motion.div>
         )}
       </AnimatePresence>
