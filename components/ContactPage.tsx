@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Check, AlertTriangle, Terminal } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronDown } from 'lucide-react';
 
 interface ContactPageProps {
   onBack: () => void;
@@ -11,8 +11,8 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
     name: '',
     email: '',
     company: '',
-    frictionPoint: 'Digital Revenue',
-    bleedingNeck: ''
+    frictionPoint: 'Digital Revenue // I need more leads & sales',
+    message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
@@ -27,165 +27,183 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
     }, 1500);
   };
 
+  // MAPPED PILLARS -> NEEDS
   const systems = [
-    'Digital Revenue (The Face)',
-    'CRM Intelligence (The Brain)',
-    'Automation Arch (The Muscle)',
-    'Cognitive Infra (The Voice)',
-    'Media Logistics (The Presence)',
-    'Adoption Arch (The Soul)',
-    'Intelligence Arch (The Eyes)'
+    'Digital Revenue // I need more leads & sales',
+    'Capture Core // My leads aren\'t converting',
+    'Auto-Fulfillment // Delivery is too manual',
+    'AI Agents // I want to automate admin work',
+    'Media Logistics // Content production is too slow',
+    'Internal Adoption // My team won\'t use the tools',
+    'Control Tower // I don\'t trust my data',
+    'Unsure // I need a full system audit'
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#FFF2EC] flex flex-col lg:flex-row relative z-40">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row relative z-40">
       
-      {/* LEFT COLUMN: THE HUMAN ANCHOR (STICKY) */}
-      <div className="lg:w-5/12 h-[40vh] lg:h-screen sticky top-0 bg-[#1a1a1a] text-[#FFF2EC] flex flex-col justify-between p-8 md:p-12 lg:p-16 border-r border-white/10">
-        <div>
+      {/* LEFT COLUMN: THE HUMAN ANCHOR (CREAM) */}
+      <div className="lg:w-5/12 h-auto lg:h-screen sticky top-0 bg-[#FFF2EC] text-[#1a1a1a] flex flex-col p-8 md:p-12 lg:p-20 border-r border-[#1a1a1a]/10 justify-between">
+        
+        {/* Nav */}
+        <div className="flex-none mb-12 lg:mb-0">
           <button 
             onClick={onBack} 
-            className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] opacity-60 hover:opacity-100 transition-opacity mb-12"
+            className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] opacity-60 hover:opacity-100 transition-opacity group"
           >
-            <ArrowLeft className="w-3 h-3" /> Back_To_System
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" /> 
+            Return_To_System
           </button>
-          
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[0.95] tracking-tight mb-8">
+        </div>
+
+        {/* The Promise */}
+        <div className="flex-1 flex flex-col justify-center">
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.0] mb-8">
             This is not a <br />
             <span className="italic text-[#C5A059]">Sales Call.</span>
           </h1>
           
           <div className="space-y-6 max-w-md">
-            <p className="font-sans text-sm md:text-base font-light opacity-80 leading-relaxed">
-              I don't employ salespeople. When you book an audit, you are speaking directly to me (The Architect).
+            <p className="font-sans text-lg font-light leading-relaxed">
+              I don't employ salespeople. When you submit this brief, you are starting a conversation directly with me.
             </p>
-            <p className="font-sans text-sm md:text-base font-light opacity-80 leading-relaxed">
-              We will review your current architecture, identify the leakage, and determine if my systems can close the gap.
+            <p className="font-sans text-base font-light opacity-60 leading-relaxed">
+              I will personally review your setup, identify the leakage, and determine if my systems can close the gap.
             </p>
           </div>
         </div>
 
-        <div className="hidden lg:block">
-          <div className="w-full h-[1px] bg-white/10 mb-6" />
-          <div className="flex items-center gap-4 opacity-50 font-mono text-[9px] uppercase tracking-[0.2em]">
-            <span>[ SYDNEY_BASED ]</span>
-            <span>[ GLOBAL_DEPLOYMENT ]</span>
-          </div>
+        {/* Footer */}
+        <div className="hidden lg:block flex-none opacity-40">
+           <div className="w-12 h-[1px] bg-[#C5A059] mb-4" />
+           <p className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]">
+             // DIRECT_LINE [ OPEN ]
+           </p>
         </div>
       </div>
 
-      {/* RIGHT COLUMN: THE LOGIC INTERFACE (SCROLLABLE) */}
-      <div className="lg:w-7/12 min-h-screen bg-[#FFF2EC] text-[#1a1a1a] p-8 md:p-12 lg:p-20 flex flex-col justify-center">
+      {/* RIGHT COLUMN: THE SYSTEM FORM (BLACK) */}
+      <div className="lg:w-7/12 min-h-screen bg-[#1a1a1a] text-[#FFF2EC] p-8 md:p-12 lg:p-24 flex flex-col justify-center">
         
         {!isSent ? (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="mb-12">
-              <span className="font-mono text-xs uppercase tracking-[0.4em] text-[#E21E3F] font-bold block mb-4">
-                // INITIATE AUDIT SEQUENCE
-              </span>
-              <p className="font-sans text-xl font-light text-[#1a1a1a]/70 max-w-xl">
-                Please configure your request parameters below. Precision is required.
-              </p>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-xl">
+            
+            <div className="mb-16 border-b border-white/10 pb-8">
+               <h2 className="font-serif text-3xl text-white mb-3">The Situation.</h2>
+               <p className="font-sans text-white/60">Complete the parameters below to initiate the diagnosis.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8 max-w-lg">
+            <form onSubmit={handleSubmit} className="space-y-12">
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="group">
-                  <label className="block font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-2 group-focus-within:text-[#E21E3F] transition-colors">
-                    Identification // Name
+              {/* Row 1: Name & Email */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="group relative">
+                  <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-bold mb-2">
+                    01 // Identification
                   </label>
+                  <p className="text-[11px] text-white/60 mb-2 font-sans">What is your full name?</p>
                   <input 
                     type="text" 
                     required
-                    className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-3 text-[#1a1a1a] font-serif text-xl focus:outline-none focus:border-[#E21E3F] transition-colors placeholder:text-[#1a1a1a]/10"
-                    placeholder="Enter full name"
+                    className="w-full bg-transparent border-b border-white/20 py-3 font-serif text-2xl text-white focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-white/10"
+                    placeholder="John Doe"
                     value={formState.name}
                     onChange={e => setFormState({...formState, name: e.target.value})}
                   />
                 </div>
-                <div className="group">
-                  <label className="block font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-2 group-focus-within:text-[#E21E3F] transition-colors">
-                    Communication // Email
+                <div className="group relative">
+                  <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-bold mb-2">
+                    02 // Coordinates
                   </label>
+                  <p className="text-[11px] text-white/60 mb-2 font-sans">Where can I email you?</p>
                   <input 
                     type="email" 
                     required
-                    className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-3 text-[#1a1a1a] font-serif text-xl focus:outline-none focus:border-[#E21E3F] transition-colors placeholder:text-[#1a1a1a]/10"
-                    placeholder="name@company.com"
+                    className="w-full bg-transparent border-b border-white/20 py-3 font-serif text-2xl text-white focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-white/10"
+                    placeholder="john@example.com"
                     value={formState.email}
                     onChange={e => setFormState({...formState, email: e.target.value})}
                   />
                 </div>
               </div>
 
-              <div className="group">
-                <label className="block font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-2 group-focus-within:text-[#E21E3F] transition-colors">
-                  Entity // Company URL
+              {/* Row 2: Entity */}
+              <div className="group relative">
+                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-bold mb-2">
+                  03 // Entity
                 </label>
+                <p className="text-[11px] text-white/60 mb-2 font-sans">What is your website address?</p>
                 <input 
                   type="url" 
-                  className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-3 text-[#1a1a1a] font-serif text-xl focus:outline-none focus:border-[#E21E3F] transition-colors placeholder:text-[#1a1a1a]/10"
-                  placeholder="https://company.com"
+                  className="w-full bg-transparent border-b border-white/20 py-3 font-serif text-2xl text-white focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-white/10"
+                  placeholder="company.com.au"
                   value={formState.company}
                   onChange={e => setFormState({...formState, company: e.target.value})}
                 />
               </div>
 
-              <div className="group">
-                <label className="block font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-4 group-focus-within:text-[#E21E3F] transition-colors">
-                  System_Failure_Point // Select Pillar
+              {/* Row 3: Dropdown */}
+              <div className="group relative">
+                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-bold mb-2">
+                  04 // The Handbrake
                 </label>
+                <p className="text-[11px] text-white/60 mb-4 font-sans">What is the main thing stopping you from growing?</p>
                 <div className="relative">
                   <select 
-                    className="w-full bg-transparent border-b border-[#1a1a1a]/20 py-3 text-[#1a1a1a] font-serif text-xl focus:outline-none focus:border-[#E21E3F] transition-colors appearance-none rounded-none cursor-pointer"
+                    className="w-full bg-transparent border-b border-white/20 py-3 font-serif text-2xl text-white focus:outline-none focus:border-[#C5A059] transition-colors appearance-none cursor-pointer pr-10"
                     value={formState.frictionPoint}
                     onChange={e => setFormState({...formState, frictionPoint: e.target.value})}
                   >
-                    {systems.map(s => <option key={s} value={s}>{s}</option>)}
+                    {systems.map(s => <option key={s} value={s} className="bg-[#1a1a1a] text-white">{s}</option>)}
                   </select>
-                  <Terminal className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1a1a1a]/30 pointer-events-none" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+                     <ChevronDown className="w-6 h-6 text-[#C5A059]" />
+                  </div>
                 </div>
               </div>
 
-              <div className="group">
-                <label className="block font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 mb-2 group-focus-within:text-[#E21E3F] transition-colors flex items-center gap-2">
-                   <AlertTriangle className="w-3 h-3" /> Bleeding_Neck // Define Friction
+              {/* Row 4: Message */}
+              <div className="group relative">
+                <label className="block font-mono text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-bold mb-2">
+                   05 // Context
                 </label>
+                <p className="text-[11px] text-white/60 mb-4 font-sans">Give me the details. I am analysing the system, not the symptoms.</p>
                 <textarea 
-                  rows={2}
-                  className="w-full bg-[#1a1a1a]/5 border-l-2 border-[#1a1a1a]/20 p-4 text-[#1a1a1a] font-sans text-base focus:outline-none focus:border-[#E21E3F] transition-colors placeholder:text-[#1a1a1a]/30 resize-none"
-                  placeholder="Describe the problem in 1 sentence (e.g. 'We are losing 30% of leads because we miss calls')"
-                  value={formState.bleedingNeck}
-                  onChange={e => setFormState({...formState, bleedingNeck: e.target.value})}
+                  rows={3}
+                  className="w-full bg-white/5 border-l-2 border-white/10 p-4 font-serif text-xl text-white focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-white/20 resize-none"
+                  placeholder="e.g. We have leads, but no time to call them..."
+                  value={formState.message}
+                  onChange={e => setFormState({...formState, message: e.target.value})}
                 />
               </div>
 
+              {/* Gold Button */}
               <button 
                 type="submit"
                 disabled={isSubmitting}
-                className="group w-full relative h-16 bg-[#1a1a1a] text-[#FFF2EC] overflow-hidden flex items-center justify-center mt-8 disabled:opacity-50"
+                className="group w-full relative h-20 bg-[#C5A059] text-[#1a1a1a] overflow-hidden flex items-center justify-center mt-8 disabled:opacity-50 shadow-[0_0_20px_rgba(197,160,89,0.2)]"
               >
-                <div className="absolute inset-0 bg-[#E21E3F] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                <span className="relative z-10 font-mono text-xs uppercase tracking-[0.3em] font-bold flex items-center gap-4">
-                  {isSubmitting ? 'PROCESSING...' : '[ INITIATE_AUDIT_SEQUENCE ]'}
-                  {!isSubmitting && <ArrowRight className="w-4 h-4" />}
+                {/* White Slide-Up */}
+                <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                
+                <span className="relative z-10 font-mono text-xs uppercase tracking-[0.3em] font-bold flex items-center gap-4 transition-colors">
+                  {isSubmitting ? 'UPLOADING...' : '[ INITIATE DIAGNOSIS ]'}
                 </span>
               </button>
               
             </form>
           </motion.div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md">
-             <div className="w-16 h-16 bg-[#C5A059] rounded-full flex items-center justify-center mb-8">
-               <Check className="w-8 h-8 text-[#1a1a1a]" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-md mt-20">
+             <div className="w-24 h-24 bg-[#C5A059] rounded-full flex items-center justify-center mb-8 shadow-2xl shadow-[#C5A059]/30">
+               <Check className="w-12 h-12 text-[#1a1a1a]" />
              </div>
-             <h2 className="font-serif text-4xl text-[#1a1a1a] mb-6">Request Logged.</h2>
-             <p className="font-sans text-lg font-light opacity-70 mb-8">
-               Your audit parameters have been received. I will review your architecture and respond within 24 hours.
+             <h2 className="font-serif text-5xl text-white mb-6">Brief Received.</h2>
+             <p className="font-sans text-xl font-light text-white/60 mb-12 leading-relaxed">
+               I have received your parameters. I will analyse your architecture and respond personally within 24 hours.
              </p>
-             <button onClick={onBack} className="font-mono text-xs uppercase tracking-[0.2em] border-b border-[#1a1a1a] pb-1 hover:text-[#E21E3F] hover:border-[#E21E3F] transition-colors">
-               Return to System
+             <button onClick={onBack} className="font-mono text-xs uppercase tracking-[0.2em] border-b border-white/30 pb-1 text-white hover:text-[#C5A059] hover:border-[#C5A059] transition-colors">
+               Return to Homepage
              </button>
           </motion.div>
         )}
