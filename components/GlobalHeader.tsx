@@ -52,7 +52,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
     }
   ];
 
-  // --- RENDER ---
   return (
     <>
       {/* =======================
@@ -68,7 +67,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             className="fixed top-0 w-full z-[300] px-6 md:px-12 h-24 flex justify-between items-center bg-transparent"
             onMouseLeave={() => { setIsArchHovered(false); setHoveredNav(null); }}
           >
-            {/* LOGO: Black Box / Cream Text -> Gold Hover */}
+            {/* LOGO */}
             <button 
               onClick={() => onNavigate('landing')} 
               className="flex items-center gap-3 group z-[310]"
@@ -86,7 +85,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
               </div>
             </button>
 
-            {/* DESKTOP NAV: Sliding Physics */}
+            {/* DESKTOP NAV */}
             <div className="hidden md:flex items-center gap-4 lg:gap-8">
                {navItems.map((item) => {
                  const isActive = currentView === item.id;
@@ -102,7 +101,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                        else setIsArchHovered(false);
                      }}
                    >
-                     {/* Hover Patch (The Sliding Grey) */}
+                     {/* Hover Patch */}
                      {isHovered && (
                        <motion.div 
                          layoutId="nav-bg"
@@ -111,11 +110,11 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                        />
                      )}
 
+                     {/* FIX: Removed check so clicking 'ARCHITECTURE' works even with dropdown */}
                      <button 
-                       onClick={() => !item.hasDropdown && onNavigate(item.id)}
+                       onClick={() => onNavigate(item.id)}
                        className="relative z-10 flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#1a1a1a]"
                      >
-                       {/* Active Status Dot (Pulsing Gold) */}
                        <span className={`w-1.5 h-1.5 rounded-full bg-[#C5A059] transition-all duration-300 ${isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`} />
                        
                        {item.fullLabel}
@@ -163,7 +162,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                })}
             </div>
 
-            {/* CTA: Mechanical Switch */}
+            {/* CTA */}
             <div className="hidden md:flex items-center">
                <button 
                  onClick={() => onNavigate('contact')} 
@@ -180,9 +179,8 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
         )}
       </AnimatePresence>
 
-
       {/* =======================
-          2. SIDE DOCK (Scrolled State - The Command Strip)
+          2. SIDE DOCK
       ======================== */}
       <AnimatePresence>
         {scrolled && (
@@ -191,10 +189,8 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 100, opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            // SOLID BLACK BACKGROUND with CREAM TEXT
             className="fixed right-0 top-1/2 -translate-y-1/2 z-[300] hidden md:flex flex-col bg-[#1a1a1a] border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden"
           >
-             {/* COMPACT LOGO */}
              <button 
                onClick={() => onNavigate('landing')} 
                className={`p-4 transition-all duration-300 border-b border-white/10 ${
@@ -206,7 +202,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                 <span className="font-mono text-[10px] font-bold">[FC)</span>
              </button>
 
-             {/* VERTICAL MENU: Short Code Words */}
              <div className="flex flex-col">
                 {navItems.map((item) => {
                   const isActive = currentView === item.id;
@@ -220,9 +215,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                           : 'text-[#FFF2EC]/60 hover:text-[#FFF2EC] hover:bg-white/5'
                       }`}
                     >
-                       {/* Active Dot (Vertical) */}
                        {isActive && <div className="absolute left-1 w-1 h-1 rounded-full bg-[#C5A059]" />}
-                       
                        <span className="block -rotate-90 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] font-bold">
                          {item.label}
                        </span>
@@ -231,7 +224,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                 })}
              </div>
 
-             {/* BOTTOM CTA: Gold Square Anchor */}
              <button 
                onClick={() => onNavigate('contact')}
                className="h-32 w-full bg-[#C5A059] flex items-center justify-center hover:bg-white hover:text-[#1a1a1a] transition-colors duration-300 group"
@@ -245,20 +237,15 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
       </AnimatePresence>
 
       {/* =======================
-          3. MOBILE NAVIGATION (Always On)
+          3. MOBILE NAVIGATION
       ======================== */}
-      
-      {/* ALWAYS-ON MOBILE ACTIONS */}
       <div className={`md:hidden fixed top-6 right-6 z-[310] flex items-center gap-3 transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}>
-         {/* The "Audit" Button (Visible Conversion) */}
          <button 
            onClick={() => onNavigate('contact')}
            className={`px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] border border-[#1a1a1a] bg-[#1a1a1a] text-[#FFF2EC] ${scrolled ? 'shadow-lg' : ''}`}
          >
            [ AUDIT ]
          </button>
-
-         {/* Hamburger */}
          <button 
            onClick={() => setIsMenuOpen(true)} 
            className={`p-2 bg-white/80 backdrop-blur-md border border-[#1a1a1a]/10 rounded-full text-[#1a1a1a] ${scrolled ? 'shadow-lg' : ''}`}
@@ -267,7 +254,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
          </button>
       </div>
 
-      {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
@@ -295,7 +281,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                    {item.fullLabel}
                  </button>
                ))}
-               
                <button onClick={() => { onNavigate('contact'); setIsMenuOpen(false); }} className="text-4xl font-serif text-[#1a1a1a] opacity-50">Initiate Audit</button>
              </div>
              
