@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useSpring, useTransform, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import * as d3 from 'd3';
 import BentoGrid from './components/BentoGrid';
 import Modal from './components/Modal';
@@ -590,53 +590,60 @@ const App: React.FC = () => {
                   <HeroVisual />
                   <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
                     <div className="lg:col-span-12 flex flex-col justify-center">
-                      <div className="flex items-center gap-6 mb-10 overflow-hidden">
-                        <span className="h-[1px] w-12 bg-[#1a1a1a] animate-extend-line"></span>
-                        <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#1a1a1a] mt-[1px]">
+                      <div className="flex items-center gap-4 mb-10 overflow-hidden">
+                        <span className="h-[1px] w-12 bg-[#1a1a1a]"></span>
+                        <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-[#1a1a1a] mt-[1px]">
                           SYDNEY BUSINESS GROWTH 
-                          <span 
-                            className="font-mono font-bold tracking-widest ml-2 transition-colors duration-700"
-                            style={{ color: scrambleText === "NAVIGATOR" ? "#C5A059" : (scrambleText === "ENGINEER" ? "#E21E3F" : "#1a1a1a") }}
-                          >
+                          <span className="font-mono font-bold tracking-widest ml-2 text-[#C5A059]">
                             [ {scrambleText} ]
                           </span>
                         </span>
                       </div>
                       
-                      <h1 className="font-serif text-7xl md:text-8xl lg:text-[6.5rem] leading-[0.95] tracking-tight text-[#1a1a1a] mb-10">
+                      <h1 className="font-serif text-7xl md:text-8xl lg:text-[6.5rem] leading-[0.9] tracking-tighter text-[#1a1a1a] mb-10">
                         <div className="overflow-hidden">
                           <span className="block reveal-text">Built on Logic,</span>
                         </div>
                         <div className="overflow-hidden">
-                          <span className="block reveal-text" style={{ animationDelay: '0.4s' }}>
-                            not <span className="italic text-[#C5A059]">Paperwork.</span>
+                          <span className="block reveal-text" style={{ animationDelay: '0.2s' }}>
+                            not <span className="italic font-serif text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.4)]">Guesswork.</span>
                           </span>
                         </div>
                       </h1>
 
-                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-                        Stop burning your best people on repetitive tasks. I build the digital systems that let you reclaim your margin and your sanity with no jargon, no fluff, and just logic that works.
+                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                        Stop burning your best people. I build the digital systems that exit you from the daily grind. Precision is not optional.
                       </p>
 
-                      <div className="mt-16 flex flex-col sm:flex-row items-center gap-12 animate-fade-in" style={{ animationDelay: '1s' }}>
+                      <div className="mt-16 flex flex-col sm:flex-row items-center gap-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
                         <button 
                           onClick={() => navigateTo('contact')} 
-                          className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300"
+                          className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.15em] font-bold overflow-hidden transition-all duration-300"
                         >
                           <div className="absolute inset-0 bg-[#1a1a1a] group-hover:-translate-y-full transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                          <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ GET MY 15-MIN FRICTION MAP ]</span>
+                          <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                          <span className="relative z-10 group-hover:text-white transition-colors duration-500">[ START DIAGNOSIS ]</span>
                         </button>
                         
                         <a 
-                          href="#diagnosis" 
-                          onClick={(e) => { e.preventDefault(); const el = document.getElementById('diagnosis'); el?.scrollIntoView({ behavior: 'smooth' }); }} 
-                          className="relative group flex items-center gap-3"
+                          href="#architecture" 
+                          onClick={(e) => { e.preventDefault(); navigateTo('architecture'); }} 
+                          className="relative group flex items-center gap-3 cursor-pointer"
                         >
-                          <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold uppercase">EXPLORE THE 7 PILLARS</span>
-                          <ChevronDown className="w-5 h-5 text-[#1a1a1a] transition-all duration-300 group-hover:translate-y-1.5" />
+                          <span className="font-mono text-xs uppercase tracking-[0.1em] text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold">SEE THE SYSTEM</span>
                         </a>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Plumb Line */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-32 w-[1px] bg-[#1a1a1a]/10 overflow-hidden">
+                     <motion.div 
+                       initial={{ height: 0 }}
+                       animate={{ height: "100%" }}
+                       transition={{ duration: 2, ease: "easeInOut", delay: 1 }}
+                       className="w-full bg-[#1a1a1a]"
+                     />
                   </div>
                 </section>
 
@@ -644,7 +651,7 @@ const App: React.FC = () => {
                   <div className="flex whitespace-nowrap">
                     <motion.div className="flex gap-32 items-center pr-20" style={{ x: xPercent }}>
                       {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
-                        <span key={i} className="font-mono text-[10px] font-bold tracking-[0.5em] uppercase mix-blend-luminosity opacity-15 hover:opacity-60 hover:text-[#C5A059] transition-all duration-300 cursor-default">{tech}</span>
+                        <span key={i} className="font-mono text-[10px] font-bold tracking-[0.2em] uppercase mix-blend-luminosity opacity-15 hover:opacity-60 hover:text-[#C5A059] transition-all duration-300 cursor-default">{tech}</span>
                       ))}
                     </motion.div>
                   </div>
