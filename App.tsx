@@ -33,7 +33,7 @@ const TECH_STACK = [
   'Bland AI', 'Voiceflow', 'BigQuery', 'Python', 'Looker Studio', 'Klaviyo'
 ];
 
-// --- GrowthGraph Component (Restored) ---
+// --- GrowthGraph Component ---
 const GrowthGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -288,25 +288,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleGlobalNavigate = (view: string, sectionId?: string) => {
-    // Check if view is a valid ViewState key
-    const viewMap: any = {
-        'landing': 'landing',
-        'about': 'about',
-        'architecture': 'architecture',
-        'protocol': 'protocol',
-        'evidence': 'evidence',
-        'contact': 'contact'
-    };
-    
-    // Check for pillar patterns
-    if (view.startsWith('pillar')) {
+    if (view.startsWith('pillar') || ['landing', 'about', 'architecture', 'protocol', 'evidence', 'contact'].includes(view)) {
         setCurrentView(view as ViewState);
-        window.scrollTo(0,0);
-        return;
-    }
-
-    if (viewMap[view]) {
-        setCurrentView(viewMap[view]);
         window.scrollTo(0,0);
     }
   };
@@ -329,10 +312,10 @@ const App: React.FC = () => {
                   <HeroVisual />
 
                   <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
-                    <div className="lg:col-span-12 flex flex-col justify-center">
+                    <div className="lg:col-span-12 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
                       
-                      {/* Eyebrow: Tracking Widest */}
-                      <div className="flex items-center gap-4 mb-10 overflow-hidden">
+                      {/* Eyebrow */}
+                      <div className="flex items-center gap-4 mb-10 overflow-hidden justify-center lg:justify-start">
                         <span className="h-[1px] w-12 bg-[#1a1a1a]"></span>
                         <span className="text-[11px] font-bold tracking-widest uppercase text-[#1a1a1a] mt-[1px]">
                           SYDNEY BUSINESS GROWTH 
@@ -342,20 +325,20 @@ const App: React.FC = () => {
                         </span>
                       </div>
                       
-                      {/* HEADLINE: Tracking Tight (Not Massive) */}
-                      <h1 className="font-serif text-6xl md:text-8xl lg:text-[6rem] leading-none tracking-tight text-[#1a1a1a] mb-10">
+                      {/* HEADLINE: Industrial Compression */}
+                      <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.9] tracking-tighter text-[#1a1a1a] mb-10">
                         <div className="overflow-hidden">
                           <span className="block reveal-text">Built on Logic,</span>
                         </div>
                         <div className="overflow-hidden">
                           <span className="block reveal-text" style={{ animationDelay: '0.2s' }}>
-                            not <span className="italic font-serif text-[#C5A059]">Guesswork.</span>
+                            not <span className="italic font-serif text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">Guesswork.</span>
                           </span>
                         </div>
                       </h1>
 
                       {/* SUBHEADLINE */}
-                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in text-left mx-auto lg:mx-0" style={{ animationDelay: '0.6s' }}>
                         Stop burning your best people. I build the digital systems that exit you from the daily grind. Precision is not optional.
                       </p>
 
@@ -372,7 +355,7 @@ const App: React.FC = () => {
                           <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ START_DIAGNOSIS ]</span>
                         </button>
                         
-                        {/* Secondary: EXPLORE + Down Arrow */}
+                        {/* Secondary: EXPLORE_THE_SYSTEM (Decoupled from Plumb Line) */}
                         <a 
                           href="#architecture" 
                           onClick={(e) => { e.preventDefault(); handleGlobalNavigate('architecture'); }} 
@@ -385,6 +368,20 @@ const App: React.FC = () => {
                         </a>
                       </div>
                     </div>
+                  </div>
+
+                  {/* REFINED PLUMB LINE: Shorter, slower, and grey to prevent distraction */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-16 w-[1px] bg-[#1a1a1a]/10 overflow-hidden">
+                    <motion.div 
+                      initial={{ y: '-100%' }}
+                      animate={{ y: '100%' }}
+                      transition={{ 
+                        duration: 3,        // Slower for a calmer effect
+                        repeat: Infinity, 
+                        ease: 'linear' 
+                      }}
+                      className="absolute inset-0 bg-[#1a1a1a]/40" // Grey instead of strong black
+                    />
                   </div>
                 </section>
 
