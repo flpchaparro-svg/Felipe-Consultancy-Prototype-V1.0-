@@ -32,7 +32,7 @@ const TECH_STACK = [
   'TWILIO', 'SUPABASE', 'KLAVIYO', 'STRIPE_CONNECT'
 ];
 
-// --- HELPERS (GrowthGraph) ---
+// --- HELPERS ---
 const GrowthGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -71,7 +71,58 @@ const GrowthGraph: React.FC = () => {
   return <div ref={containerRef} className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent" />;
 };
 
-// --- VISUALS: MINIMALIST WIREFRAMES ---
+const MagneticField: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    const particles: {x:number, y:number, bx:number, by:number}[] = [];
+    const spacing = 100;
+    const rows = Math.ceil(height / spacing);
+    const cols = Math.ceil(width / spacing);
+    for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+            particles.push({ x: i * spacing, y: j * spacing, bx: i * spacing, by: j * spacing });
+        }
+    }
+    let mouse = { x: -1000, y: -1000 };
+    const handleMove = (e: MouseEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+    };
+    window.addEventListener('mousemove', handleMove);
+    const animate = () => {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const force = Math.max(0, 300 - dist) / 300;
+            const angle = Math.atan2(dy, dx);
+            const moveX = Math.cos(angle) * force * -40;
+            const moveY = Math.sin(angle) * force * -40;
+            p.x += (p.bx + moveX - p.x) * 0.1;
+            p.y += (p.by + moveY - p.y) * 0.1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(26, 26, 26, ${0.05 + force * 0.1})`;
+            ctx.fill();
+        });
+        requestAnimationFrame(animate);
+    };
+    animate();
+    const handleResize = () => { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; };
+    window.addEventListener('resize', handleResize);
+    return () => { window.removeEventListener('mousemove', handleMove); window.removeEventListener('resize', handleResize); };
+  }, []);
+  return <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none" />;
+};
+
 const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -125,124 +176,175 @@ const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-// --- STICKY TAB SECTION (SYNCED SCROLL) ---
+// --- REVISED FRICTION SECTION v8: INVISIBLE STRUCTURE & EVAPORATION ---
+
+const FRICTION_POINTS = [
+  { 
+    id: 'leakage',
+    title: 'Lead Evaporation', 
+    stat: '-$500 / DAY',
+    body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox.",
+  },
+  { 
+    id: 'silos',
+    title: 'The Double-Entry Tax', 
+    stat: '15 HRS / WK',
+    body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors.",
+  },
+  { 
+    id: 'trap',
+    title: 'Admin Paralysis', 
+    stat: 'GROWTH CAP',
+    body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship.",
+  },
+  { 
+    id: 'blind',
+    title: 'Profit Blindness', 
+    stat: 'UNKNOWN',
+    body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar.",
+  }
+];
+
 const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
-    const targetRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({ target: targetRef });
-    const [activeIndex, setActiveIndex] = useState(0);
-
-    const points = [
-        { 
-          id: 'leakage',
-          title: 'Lead Evaporation', 
-          stat: '$500/day',
-          body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox.",
-        },
-        { 
-          id: 'silos',
-          title: 'Double-Entry Tax', 
-          stat: '15hrs/week',
-          body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors.",
-        },
-        { 
-          id: 'trap',
-          title: 'Admin Paralysis', 
-          stat: 'Growth Cap',
-          body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship.",
-        },
-        { 
-          id: 'blind',
-          title: 'Profit Blindness', 
-          stat: 'Risk: High',
-          body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar.",
-        }
-    ];
-
-    // Determine active index based on scroll position
-    useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        // Break scroll into segments
-        const index = Math.min(Math.floor(latest * points.length), points.length - 1);
-        setActiveIndex(index);
+    const sectionRef = useRef<HTMLDivElement>(null);
+    const [activeId, setActiveId] = useState('leakage');
+    
+    // PROGRESS BAR LOGIC
+    const { scrollYProgress } = useScroll({ 
+        target: sectionRef,
+        offset: ["start start", "end end"]
     });
+    const progressHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
     return (
-        <section ref={targetRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5 h-[500vh]">
-            <div className="sticky top-0 h-screen flex flex-col md:flex-row overflow-hidden">
+        <section ref={sectionRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
+            <MagneticField />
+            
+            <div className="flex flex-col md:flex-row relative z-10">
                 
-                {/* --- LEFT: VISUAL (Changes based on Index) --- */}
-                <div className="hidden md:flex w-1/2 h-full items-center justify-center border-r border-[#1a1a1a]/10 bg-[#FFF2EC] relative">
-                    {/* Fixed Label */}
-                    <div className="absolute top-12 left-12 z-20">
-                       <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold block">02 // THE FRICTION AUDIT</span>
-                    </div>
+                {/* --- LEFT PANEL: 40% WIDTH & CENTERED CONTENT --- */}
+                <div className="w-full md:w-2/5 h-auto md:h-screen sticky top-0 flex flex-col justify-center items-center bg-[#FFF2EC]/90 backdrop-blur-sm z-10 px-12 border-r border-[#1a1a1a]/5">
+                    
+                    <div className="max-w-md w-full">
+                        {/* Title Group */}
+                        <div className="mb-12">
+                            <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold mb-4 block opacity-70">
+                                02 // THE FRICTION AUDIT
+                            </span>
+                            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-6">
+                              Where your <br /> 
+                              <span className="text-[#E21E3F]">margin</span> <br />
+                              <span className="italic text-[#E21E3F]">evaporates.</span>
+                            </h2>
+                            {/* Context Copy */}
+                            <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
+                                Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.
+                            </p>
+                        </div>
 
-                    {/* The Changing Window */}
-                    <div className="w-[400px] h-[400px] bg-white border border-[#1a1a1a]/10 shadow-2xl relative flex items-center justify-center overflow-hidden">
-                        <AnimatePresence mode="wait">
-                            <motion.div 
-                                key={points[activeIndex].id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 1.1 }}
-                                transition={{ duration: 0.4 }}
-                                className="absolute inset-0"
-                            >
-                                <FrictionVisual type={points[activeIndex].id} />
-                            </motion.div>
-                        </AnimatePresence>
-                        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-[#1a1a1a]/40 uppercase tracking-widest">
-                            FIG. 0{activeIndex + 1}
+                        {/* Dynamic Icon */}
+                        <div className="relative w-32 h-32 my-8 flex items-center justify-center">
+                           <AnimatePresence mode="wait">
+                             <motion.div 
+                               key={activeId}
+                               initial={{ opacity: 0, scale: 0.8, filter: 'blur(5px)' }}
+                               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                               exit={{ opacity: 0, scale: 0.8, filter: 'blur(5px)' }}
+                               transition={{ duration: 0.4 }}
+                               className="absolute inset-0"
+                             >
+                                <FrictionVisual type={activeId} />
+                             </motion.div>
+                           </AnimatePresence>
+                        </div>
+
+                        {/* Status Indicator */}
+                        <div className="flex items-center gap-3">
+                           <div className="h-1.5 w-1.5 rounded-full bg-[#E21E3F] animate-pulse" />
+                           <span className="font-mono text-[10px] uppercase tracking-widest text-[#E21E3F]">
+                             DETECTING: {activeId.toUpperCase().replace('_', ' ')}
+                           </span>
                         </div>
                     </div>
                 </div>
 
-                {/* --- RIGHT: CONTENT (Syncs with Index) --- */}
-                <div className="w-full md:w-1/2 h-full flex flex-col justify-center relative p-12 md:p-24 bg-[#FFF2EC]">
-                    <div className="relative h-[300px] w-full">
-                        {points.map((point, index) => (
-                            <motion.div
-                                key={point.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ 
-                                    opacity: activeIndex === index ? 1 : 0,
-                                    y: activeIndex === index ? 0 : 20,
-                                    pointerEvents: activeIndex === index ? 'auto' : 'none'
-                                }}
-                                transition={{ duration: 0.5 }}
-                                className="absolute inset-0 flex flex-col justify-center"
-                            >
-                                <div className="flex justify-between items-start mb-8 border-b border-[#1a1a1a]/10 pb-4">
-                                    <h3 className="font-serif text-4xl md:text-5xl text-[#1a1a1a] leading-none tracking-tighter">
-                                        {point.title}
-                                    </h3>
-                                    <div className="flex flex-col items-end">
-                                        <span className="font-mono text-[9px] text-[#E21E3F] uppercase tracking-widest mb-1">COST</span>
-                                        <span className="font-mono text-sm font-bold text-[#E21E3F]">{point.stat}</span>
-                                    </div>
-                                </div>
-                                <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
-                                    {point.body}
-                                </p>
-
-                                {/* CTA on Last Slide */}
-                                {index === points.length - 1 && (
-                                    <div className="mt-12">
-                                        <button 
-                                            onClick={() => onNavigate('architecture')}
-                                            className="relative overflow-hidden px-8 py-4 bg-transparent border border-[#C5A059] text-[#C5A059] font-mono text-xs uppercase tracking-[0.2em] group inline-block"
-                                        >
-                                            <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-300">
-                                                [ VIEW_PROTOCOL ]
-                                            </span>
-                                            <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                                        </button>
-                                    </div>
-                                )}
-                            </motion.div>
-                        ))}
-                    </div>
+                {/* --- THE PROGRESS BAR --- */}
+                <div className="hidden md:block absolute left-[40%] top-0 bottom-0 w-[1px] bg-[#1a1a1a]/10 z-20">
+                    <motion.div 
+                        style={{ height: progressHeight }} 
+                        className="w-full bg-[#E21E3F]" 
+                    />
                 </div>
 
+                {/* --- RIGHT PANEL: 60% WIDTH & INVISIBLE BOX STRUCTURE --- */}
+                <div className="w-full md:w-3/5 bg-transparent relative">
+                    <div className="flex flex-col">
+                        {FRICTION_POINTS.map((point) => (
+                            // THE "INVISIBLE BOX" - Fixed Height ensures perfect alignment
+                            <div 
+                                key={point.id} 
+                                className="h-[80vh] flex items-center justify-center p-8 md:p-24 relative"
+                            >
+                                <motion.div 
+                                  // EVAPORATION EFFECT: Blur In -> Sharp -> Blur Out
+                                  initial={{ opacity: 0, filter: 'blur(10px)', y: 20 }}
+                                  whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                                  viewport={{ margin: "-20% 0px -20% 0px" }} 
+                                  onViewportEnter={() => setActiveId(point.id)}
+                                  transition={{ duration: 0.6, ease: "easeOut" }}
+                                  className="w-full max-w-xl relative"
+                                >
+                                    {/* Main Title */}
+                                    <h3 className="font-serif text-4xl md:text-5xl text-[#1a1a1a] leading-none tracking-tight mb-6">
+                                        {point.title}
+                                    </h3>
+                                    
+                                    {/* Stat Line */}
+                                    <div className="flex items-center gap-4 mb-8">
+                                        <div className="h-[1px] w-8 bg-[#1a1a1a]/20" />
+                                        <span className="font-mono text-[9px] text-[#1a1a1a]/40 tracking-widest uppercase">Loss Metric</span>
+                                        <span className="font-mono text-xl font-bold text-[#E21E3F]">
+                                            {point.stat}
+                                        </span>
+                                    </div>
+
+                                    {/* Body Text */}
+                                    <div className="border-l-2 border-[#E21E3F]/20 pl-6">
+                                        <p className="font-sans text-lg md:text-xl text-[#1a1a1a]/70 leading-relaxed font-light">
+                                            {point.body}
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        ))}
+
+                        {/* --- THE FIX CARD (Same "Box" Dimensions) --- */}
+                        <div className="h-[80vh] flex items-center justify-center p-8 md:p-24 bg-[#FFF2EC]">
+                            <motion.div 
+                               initial={{ opacity: 0, scale: 0.95 }}
+                               whileInView={{ opacity: 1, scale: 1 }}
+                               transition={{ duration: 0.5 }}
+                               className="text-center max-w-2xl"
+                            >
+                                <h3 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.9] mb-12">
+                                    You have seen the <span className="text-[#E21E3F] italic">leak.</span> <br/>
+                                    Now see the <span className="text-[#C5A059] italic">fix.</span>
+                                </h3>
+                                
+                                {/* HERO STYLE BUTTON: Black Body, Gold Hover */}
+                                <button 
+                                    onClick={() => onNavigate('architecture')}
+                                    className="group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.2em] overflow-hidden border border-[#1a1a1a]"
+                                >
+                                    {/* Hover fill */}
+                                    <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                                    
+                                    <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ EXPLORE_ARCHITECTURE ]</span>
+                                </button>
+                            </motion.div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     );
@@ -479,7 +581,7 @@ const App: React.FC = () => {
                   </div>
                 </motion.section>
 
-                {/* FRICTION SECTION (Global #02 - Sticky Tabs) */}
+                {/* FRICTION SECTION (Global #02 - Invisible Structure & Evaporation V8) */}
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
                 
                 <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
