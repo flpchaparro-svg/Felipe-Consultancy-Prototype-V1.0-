@@ -32,7 +32,7 @@ const TECH_STACK = [
   'TWILIO', 'SUPABASE', 'KLAVIYO', 'STRIPE_CONNECT'
 ];
 
-// --- GROWTH GRAPH (UNCHANGED) ---
+// --- HELPERS (GrowthGraph) ---
 const GrowthGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -71,194 +71,178 @@ const GrowthGraph: React.FC = () => {
   return <div ref={containerRef} className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent" />;
 };
 
-// --- [REVISED] WIREFRAME FRICTION VISUAL ---
+// --- VISUALS: MINIMALIST WIREFRAMES ---
 const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-    
-    // Clear
     d3.select(container).selectAll('*').remove();
-
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 600;
     const svg = d3.select(container).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`).style('overflow', 'visible');
     const g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
-
-    // STYLE: Thin Lines, Industrial
-    const strokeColor = '#1a1a1a';
-    const alertColor = '#E21E3F';
+    
+    const stroke = '#1a1a1a';
+    const alert = '#E21E3F';
 
     if (type === 'leakage') {
-       // Funnel with crack
-       g.append('path').attr('d', "M -60 -80 L -20 20 L -20 80 L 20 80 L 20 20 L 60 -80 Z").attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5).attr('stroke-dasharray', '4,4');
-       g.append('line').attr('x1', -20).attr('y1', 40).attr('x2', -40).attr('y2', 60).attr('stroke', alertColor).attr('stroke-width', 2);
+       g.append('path').attr('d', "M -60 -80 L -20 20 L -20 80 L 20 80 L 20 20 L 60 -80 Z").attr('fill', 'none').attr('stroke', stroke).attr('stroke-width', 1.5).attr('stroke-dasharray', '4,4');
+       g.append('line').attr('x1', -20).attr('y1', 40).attr('x2', -40).attr('y2', 60).attr('stroke', alert).attr('stroke-width', 2);
        const pG = g.append('g');
        d3.interval(() => {
-          pG.append('circle').attr('cx', 0).attr('cy', -80).attr('r', 2).attr('fill', strokeColor).transition().duration(2000).ease(d3.easeLinear).attr('cy', 40).transition().duration(1000).attr('cx', -60).attr('cy', 100).attr('opacity', 0).remove();
-       }, 300);
-       g.append('text').attr('y', 120).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#E21E3F] tracking-widest').text('// SYSTEM_LEAK');
+          pG.append('circle').attr('cx', 0).attr('cy', -80).attr('r', 2).attr('fill', alert).attr('opacity', 0.6)
+            .transition().duration(2500).ease(d3.easeLinear).attr('cy', -60).attr('opacity', 0).remove();
+       }, 250);
     }
     else if (type === 'silos') {
-       // Disconnected Boxes
-       g.append('rect').attr('x', -80).attr('y', -40).attr('width', 50).attr('height', 80).attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5);
-       g.append('rect').attr('x', 30).attr('y', -40).attr('width', 50).attr('height', 80).attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5);
-       g.append('line').attr('x1', -10).attr('y1', -10).attr('x2', 10).attr('y2', 10).attr('stroke', alertColor).attr('stroke-width', 1.5);
-       g.append('line').attr('x1', 10).attr('y1', -10).attr('x2', -10).attr('y2', 10).attr('stroke', alertColor).attr('stroke-width', 1.5);
-       g.append('text').attr('y', 80).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#1a1a1a] tracking-widest opacity-50').text('// NO_CONNECTION');
+       const l = g.append('line').attr('x1', -15).attr('x2', -15).attr('y1', -40).attr('y2', 40).attr('stroke', stroke).attr('stroke-width', 1.5);
+       const r = g.append('line').attr('x1', 15).attr('x2', 15).attr('y1', -40).attr('y2', 40).attr('stroke', stroke).attr('stroke-width', 1.5);
+       d3.timer((t) => {
+          const off = Math.sin(t * 0.002) * 6;
+          l.attr('transform', `translate(${-off}, 0)`);
+          r.attr('transform', `translate(${off}, 0)`);
+       });
     }
     else if (type === 'trap') {
-       // Heavy Anchor
-       g.append('path').attr('d', "M -30 20 Q 0 50 30 20 M 0 -60 L 0 35").attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 2);
-       g.append('circle').attr('cx', 0).attr('cy', -70).attr('r', 10).attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 2);
-       
-       const pulseCircle = g.append('circle').attr('cx', 0).attr('cy', 35).attr('r', 5).attr('fill', alertColor);
-       
-       // FIX: Use recursive transition instead of .repeat() which is invalid in D3
-       function repeat() {
-         pulseCircle
-           .attr('r', 5)
-           .attr('opacity', 1)
-           .transition()
-           .duration(1000)
-           .attr('r', 15)
-           .attr('opacity', 0)
-           .on('end', repeat);
-       }
-       repeat();
-
-       g.append('text').attr('y', 80).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#E21E3F] tracking-widest').text('// DRAG_COEFFICIENT_HIGH');
+       const box = g.append('rect').attr('x', -25).attr('y', -25).attr('width', 50).attr('height', 50).attr('stroke', alert).attr('stroke-width', 1.5).attr('fill', 'none');
+       d3.timer((t) => {
+          const s = 1 + Math.sin(t * 0.0015) * 0.05;
+          box.attr('transform', `scale(${s})`);
+       });
     }
     else if (type === 'blind') {
-       // Blind Eye
-       g.append('path').attr('d', "M -40 0 Q 0 -40 40 0 Q 0 40 -40 0").attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5).attr('stroke-dasharray', '2,2');
-       g.append('line').attr('x1', -30).attr('y1', 30).attr('x2', 30).attr('y2', -30).attr('stroke', alertColor).attr('stroke-width', 2);
-       g.append('text').attr('y', 80).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#1a1a1a] tracking-widest opacity-50').text('// VISUAL_LOST');
+       const defs = svg.append('defs');
+       const filter = defs.append('filter').attr('id', 'blurMe');
+       filter.append('feGaussianBlur').attr('stdDeviation', 4);
+       const c = g.append('circle').attr('r', 30).attr('fill', stroke).attr('opacity', 0.1).attr('filter', 'url(#blurMe)');
+       d3.timer((t) => {
+          const s = 1 + Math.sin(t * 0.001) * 0.2;
+          c.attr('r', 35 * s);
+       });
     }
   }, [type]);
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-// --- [REVISED] FRICTION SECTION (GALLERY SCROLL) ---
+// --- STICKY TAB SECTION (SYNCED SCROLL) ---
 const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
     const targetRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: targetRef });
-    
-    // Smooth Horizontal Scroll
-    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]); 
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const points = [
         { 
           id: 'leakage',
-          label: '01 // EVIDENCE', 
           title: 'Lead Evaporation', 
-          body: "Demand is expiring in the inbox. Your website isn't a catcher; it’s a sieve. You are paying for leads that vanish before you can touch them.",
+          stat: '$500/day',
+          body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox.",
         },
         { 
           id: 'silos',
-          label: '02 // EVIDENCE', 
-          title: 'The Double-Entry Tax', 
-          body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry.",
+          title: 'Double-Entry Tax', 
+          stat: '15hrs/week',
+          body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors.",
         },
         { 
           id: 'trap',
-          label: '03 // EVIDENCE', 
           title: 'Admin Paralysis', 
-          body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling, instead of steering the ship.",
+          stat: 'Growth Cap',
+          body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship.",
         },
         { 
           id: 'blind',
-          label: '04 // EVIDENCE', 
           title: 'Profit Blindness', 
-          body: "You know your Revenue, but you don't know your Real-Time Margin. You are flying a 747 through a storm with no radar.",
+          stat: 'Risk: High',
+          body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar.",
         }
     ];
 
-    return (
-        <section ref={targetRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
-            
-            {/* MOBILE: VERTICAL STACK */}
-            <div className="md:hidden flex flex-col py-20 px-6 gap-12">
-               <div className="mb-8">
-                   <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">02 // THE FRICTION AUDIT</span>
-                   <h2 className="font-serif text-3xl text-[#1a1a1a] mt-4 mb-4">
-                     Where your margin <span className="italic text-[#1a1a1a]/40">evaporates.</span>
-                   </h2>
-               </div>
-               {points.map((point) => (
-                  <div key={point.id} className="bg-white border border-[#1a1a1a]/5 p-8 shadow-sm">
-                      <div className="h-40 w-full mb-6 border-b border-[#1a1a1a]/5 flex items-center justify-center">
-                         <div className="w-32 h-32"><FrictionVisual type={point.id} /></div>
-                      </div>
-                      <h3 className="font-serif text-2xl text-[#1a1a1a] mb-4 tracking-tight">{point.title}</h3>
-                      <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">{point.body}</p>
-                  </div>
-               ))}
-            </div>
+    // Determine active index based on scroll position
+    useMotionValueEvent(scrollYProgress, "change", (latest) => {
+        // Break scroll into segments
+        const index = Math.min(Math.floor(latest * points.length), points.length - 1);
+        setActiveIndex(index);
+    });
 
-            {/* DESKTOP: HORIZONTAL GALLERY SCROLL */}
-            <div className="hidden md:block h-[400vh] relative"> 
-                <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
-                    
-                    {/* Fixed Header */}
-                    <div className="absolute top-12 left-12 z-20 max-w-sm">
-                       <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">02 // THE FRICTION AUDIT</span>
-                       <h2 className="font-serif text-4xl text-[#1a1a1a] mt-4 leading-[0.9] tracking-tighter">
-                         Where your margin <br /><span className="italic text-[#C5A059]">evaporates.</span>
-                       </h2>
+    return (
+        <section ref={targetRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5 h-[500vh]">
+            <div className="sticky top-0 h-screen flex flex-col md:flex-row overflow-hidden">
+                
+                {/* --- LEFT: VISUAL (Changes based on Index) --- */}
+                <div className="hidden md:flex w-1/2 h-full items-center justify-center border-r border-[#1a1a1a]/10 bg-[#FFF2EC] relative">
+                    {/* Fixed Label */}
+                    <div className="absolute top-12 left-12 z-20">
+                       <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold block">02 // THE FRICTION AUDIT</span>
                     </div>
 
-                    {/* Track */}
-                    <motion.div style={{ x }} className="flex gap-20 pl-[30vw] items-center h-full w-[400vw]">
-                        {points.map((point) => (
-                            <div 
-                              key={point.id} 
-                              className="relative h-[65vh] w-[600px] flex-shrink-0 bg-white border border-[#1a1a1a]/5 shadow-2xl p-12 flex flex-col justify-between group hover:border-[#C5A059]/30 transition-colors duration-500"
+                    {/* The Changing Window */}
+                    <div className="w-[400px] h-[400px] bg-white border border-[#1a1a1a]/10 shadow-2xl relative flex items-center justify-center overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            <motion.div 
+                                key={points[activeIndex].id}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 1.1 }}
+                                transition={{ duration: 0.4 }}
+                                className="absolute inset-0"
                             >
-                                {/* Visual */}
-                                <div className="h-[280px] w-full bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/5 flex items-center justify-center relative overflow-hidden">
-                                   <div className="w-full h-full opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 scale-90">
-                                      <FrictionVisual type={point.id} />
-                                   </div>
-                                   <div className="absolute top-4 right-4 flex items-center gap-2">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-[#E21E3F] animate-pulse" />
-                                      <span className="font-mono text-[9px] text-[#E21E3F] tracking-widest">DETECTED</span>
-                                   </div>
-                                </div>
-
-                                {/* Text */}
-                                <div>
-                                   <div className="flex items-center gap-4 mb-6 opacity-50">
-                                     <span className="font-mono text-[10px] text-[#1a1a1a] uppercase tracking-[0.2em]">{point.label}</span>
-                                     <div className="h-[1px] flex-grow bg-[#1a1a1a]/20" />
-                                   </div>
-                                   <h3 className="font-serif text-4xl text-[#1a1a1a] mb-6 leading-none tracking-tight">
-                                     {point.title}
-                                   </h3>
-                                   <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F] pl-6">
-                                     {point.body}
-                                   </p>
-                                </div>
-                            </div>
-                        ))}
-                        
-                        {/* Call to Action Card */}
-                        <div className="h-[60vh] w-[400px] flex-shrink-0 flex flex-col justify-center items-center p-12">
-                           <h3 className="font-serif text-3xl text-[#1a1a1a] text-center mb-8">
-                             Seen enough? <br />
-                             <span className="italic text-[#C5A059]">Let's fix it.</span>
-                           </h3>
-                           <button 
-                             onClick={() => onNavigate('architecture')}
-                             className="px-8 py-4 bg-[#1a1a1a] text-white font-mono text-xs uppercase tracking-widest hover:bg-[#C5A059] transition-colors"
-                           >
-                             [ EXPLORE_ARCHITECTURE ]
-                           </button>
+                                <FrictionVisual type={points[activeIndex].id} />
+                            </motion.div>
+                        </AnimatePresence>
+                        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-[#1a1a1a]/40 uppercase tracking-widest">
+                            FIG. 0{activeIndex + 1}
                         </div>
-
-                    </motion.div>
+                    </div>
                 </div>
+
+                {/* --- RIGHT: CONTENT (Syncs with Index) --- */}
+                <div className="w-full md:w-1/2 h-full flex flex-col justify-center relative p-12 md:p-24 bg-[#FFF2EC]">
+                    <div className="relative h-[300px] w-full">
+                        {points.map((point, index) => (
+                            <motion.div
+                                key={point.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ 
+                                    opacity: activeIndex === index ? 1 : 0,
+                                    y: activeIndex === index ? 0 : 20,
+                                    pointerEvents: activeIndex === index ? 'auto' : 'none'
+                                }}
+                                transition={{ duration: 0.5 }}
+                                className="absolute inset-0 flex flex-col justify-center"
+                            >
+                                <div className="flex justify-between items-start mb-8 border-b border-[#1a1a1a]/10 pb-4">
+                                    <h3 className="font-serif text-4xl md:text-5xl text-[#1a1a1a] leading-none tracking-tighter">
+                                        {point.title}
+                                    </h3>
+                                    <div className="flex flex-col items-end">
+                                        <span className="font-mono text-[9px] text-[#E21E3F] uppercase tracking-widest mb-1">COST</span>
+                                        <span className="font-mono text-sm font-bold text-[#E21E3F]">{point.stat}</span>
+                                    </div>
+                                </div>
+                                <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
+                                    {point.body}
+                                </p>
+
+                                {/* CTA on Last Slide */}
+                                {index === points.length - 1 && (
+                                    <div className="mt-12">
+                                        <button 
+                                            onClick={() => onNavigate('architecture')}
+                                            className="relative overflow-hidden px-8 py-4 bg-transparent border border-[#C5A059] text-[#C5A059] font-mono text-xs uppercase tracking-[0.2em] group inline-block"
+                                        >
+                                            <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-300">
+                                                [ VIEW_PROTOCOL ]
+                                            </span>
+                                            <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                                        </button>
+                                    </div>
+                                )}
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+
             </div>
         </section>
     );
@@ -391,7 +375,7 @@ const App: React.FC = () => {
                   </div>
                 </section>
 
-                {/* PREMIUM CAROUSEL */}
+                {/* CAROUSEL */}
                 <div 
                   className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30"
                   style={{ 
@@ -428,6 +412,7 @@ const App: React.FC = () => {
                   <div className="max-w-[1600px] mx-auto border-t border-l border-[#1a1a1a]/10">
                     <div className="grid grid-cols-1 md:grid-cols-3">
                       
+                      {/* INTRO GRID */}
                       <div className="col-span-1 md:col-span-2 p-12 md:p-16 border-r border-b border-[#1a1a1a]/10 flex flex-col justify-center min-h-[350px]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-10 block">01 / THE DIAGNOSIS</span>
                         <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] text-[#1a1a1a] tracking-tighter">
@@ -436,10 +421,12 @@ const App: React.FC = () => {
                         </h2>
                       </div>
                       
+                      {/* GRAPH */}
                       <div className="col-span-1 border-r border-b border-[#1a1a1a]/10 bg-transparent">
                         <GrowthGraph />
                       </div>
                       
+                      {/* SYMPTOMS */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 min-h-[300px]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">02 / SYMPTOMS</span>
                         <ul className="space-y-6">
@@ -464,6 +451,7 @@ const App: React.FC = () => {
                         </ul>
                       </div>
                       
+                      {/* ERROR */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#E21E3F]/5 min-h-[300px]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">03 / ERROR DETECTED</span>
                         <div className="space-y-4">
@@ -474,7 +462,7 @@ const App: React.FC = () => {
                         </div>
                       </div>
                       
-                      {/* RESOLUTION - NO ARROW */}
+                      {/* RESOLUTION (NO ARROW) */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#1a1a1a] text-white min-h-[300px] flex flex-col justify-between border-l-2 border-l-[#C5A059]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] block">04 / RESOLUTION</span>
                         <p className="font-serif text-2xl md:text-3xl leading-tight mb-8">
@@ -491,7 +479,7 @@ const App: React.FC = () => {
                   </div>
                 </motion.section>
 
-                {/* FRICTION SECTION (Global #02) */}
+                {/* FRICTION SECTION (Global #02 - Sticky Tabs) */}
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
                 
                 <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
@@ -501,31 +489,12 @@ const App: React.FC = () => {
                 <BookingCTA />
                 <TheArchitect />
               </motion.div>
-            ) : currentView === 'contact' ? (
-              <ContactPage key="contact" onBack={() => handleGlobalNavigate('landing')} />
-            ) : currentView === 'architecture' ? (
-               <ArchitecturePage key="arch" onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />
-            ) : currentView === 'about' ? (
-               <AboutPage key="about" onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />
-            ) : currentView === 'protocol' ? (
-               <ProtocolPage key="protocol" onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />
-            ) : currentView === 'evidence' ? (
-               <EvidencePage key="evidence" onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />
-            ) : currentView.startsWith('pillar') ? (
-              <motion.div key={currentView} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                 {currentView === 'pillar1' && <Pillar1 onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-                 {currentView === 'pillar2' && <Pillar2 onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-                 {currentView === 'pillar3' && <PillarPage_Automation onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-                 {currentView === 'pillar4' && <PillarPage_Cognitive onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-                 {currentView === 'pillar5' && <PillarPage_Media onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-                 {currentView === 'pillar6' && <PillarPage_Adoption onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-                 {currentView === 'pillar7' && <PillarPage_Intelligence onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
-              </motion.div>
             ) : null}
           </AnimatePresence>
         </main>
       </PageTransition>
 
+      {/* FOOTER & MODAL */}
       {currentView !== 'architecture' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
       <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
     </div>
