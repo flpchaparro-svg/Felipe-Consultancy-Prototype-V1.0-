@@ -27,56 +27,42 @@ import Feature_Group7 from './components/Feature_Group7';
 import { ServiceDetail } from './types';
 import { ChevronDown, AlertTriangle, Database, Clock, EyeOff, ArrowDown, CheckCircle2, XCircle } from 'lucide-react';
 
-// --- THE ARCHITECT STACK ---
 const TECH_STACK = [
-  'XERO', 'SHOPIFY', 'OPENAI_API', 'MAKE', 'HUBSPOT', 
-  'TWILIO', 'KLAVIYO', 'STRIPE_CONNECT'
+  'XERO', 'SHOPIFY', 'PYTHON', 'OPENAI_API', 'MAKE', 'HUBSPOT', 
+  'TWILIO', 'SUPABASE', 'KLAVIYO', 'STRIPE_CONNECT'
 ];
 
-// --- GROWTH GRAPH (Universal) ---
+// --- HELPERS (GrowthGraph, FrictionVisual) ---
 const GrowthGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!containerRef.current) return;
-    const width = 400;
-    const height = 240;
+    const width = 400; const height = 240;
     const margin = { top: 40, right: 60, bottom: 40, left: 20 };
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
-
     d3.select(containerRef.current).selectAll('*').remove();
     const svg = d3.select(containerRef.current).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('preserveAspectRatio', 'xMidYMid meet');
     const chart = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
-
     const xTicks = [0, 0.25, 0.5, 0.75, 1];
-    chart.selectAll('.grid-line').data(xTicks).enter().append('line')
-      .attr('x1', d => d * chartWidth).attr('x2', d => d * chartWidth).attr('y1', -10).attr('y2', chartHeight + 10)
-      .attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.05).attr('stroke-dasharray', '2,2');
-
+    chart.selectAll('.grid-line').data(xTicks).enter().append('line').attr('x1', d => d * chartWidth).attr('x2', d => d * chartWidth).attr('y1', -10).attr('y2', chartHeight + 10).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.05).attr('stroke-dasharray', '2,2');
     const barHeight = 12; const gap = 60;
-
-    // REVENUE VELOCITY
     const prodG = chart.append('g').attr('transform', `translate(0, ${chartHeight / 2 - gap / 2})`);
     prodG.append('text').attr('y', -12).attr('class', 'font-mono text-[9px] uppercase tracking-[0.2em] fill-[#1a1a1a] opacity-40').text('REVENUE_VELOCITY');
     prodG.append('rect').attr('width', chartWidth).attr('height', barHeight).attr('fill', '#1a1a1a').attr('opacity', 0.03);
     const prodBar = prodG.append('rect').attr('width', 0).attr('height', barHeight).attr('fill', '#C5A059');
     const prodVal = prodG.append('text').attr('x', 0).attr('y', barHeight / 2 + 4).attr('class', 'font-mono text-[10px] font-bold fill-[#C5A059]').attr('dx', 8).text('0%');
-
-    // OPERATIONAL DRAG
     const adminG = chart.append('g').attr('transform', `translate(0, ${chartHeight / 2 + gap / 2})`);
     adminG.append('text').attr('y', -12).attr('class', 'font-mono text-[9px] uppercase tracking-[0.2em] fill-[#1a1a1a] opacity-40').text('OPERATIONAL_DRAG');
     adminG.append('rect').attr('width', chartWidth).attr('height', barHeight).attr('fill', '#1a1a1a').attr('opacity', 0.03);
     const adminBar = adminG.append('rect').attr('width', chartWidth).attr('height', barHeight).attr('fill', '#E21E3F');
     const adminVal = adminG.append('text').attr('x', chartWidth).attr('y', barHeight / 2 + 4).attr('class', 'font-mono text-[10px] font-bold fill-[#E21E3F]').attr('dx', 8).text('100%');
-
     function animate() {
       const duration = 4000; const ease = d3.easeCubicInOut;
       prodBar.attr('width', 0); prodVal.attr('x', 0).text('0%');
       adminBar.attr('width', chartWidth); adminVal.attr('x', chartWidth).text('100%');
-
       prodBar.transition().duration(duration).ease(ease).attr('width', chartWidth * 0.95);
       prodVal.transition().duration(duration).ease(ease).attr('x', chartWidth * 0.95).tween('text', function() { const i = d3.interpolate(0, 95); return (t) => { prodVal.text(`${Math.round(i(t))}%`); }; });
-
       adminBar.transition().duration(duration).ease(ease).attr('width', chartWidth * 0.12);
       adminVal.transition().duration(duration).ease(ease).attr('x', chartWidth * 0.12).tween('text', function() { const i = d3.interpolate(100, 12); return (t) => { adminVal.text(`${Math.round(i(t))}%`); }; }).on('end', () => { d3.timeout(animate, 2000); });
     }
@@ -85,157 +71,71 @@ const GrowthGraph: React.FC = () => {
   return <div ref={containerRef} className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent" />;
 };
 
-// --- [RESTORED] D3 FRICTION VISUAL ---
 const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
-    
-    // Clear previous
     d3.select(container).selectAll('*').remove();
-
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 600;
-    
-    const svg = d3.select(container).append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%')
-      .attr('viewBox', `0 0 ${width} ${height}`)
-      .attr('preserveAspectRatio', 'xMidYMid meet')
-      .style('overflow', 'visible');
-
-    // --- DEFS (GLOWS & GRADIENTS) ---
+    const svg = d3.select(container).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('preserveAspectRatio', 'xMidYMid meet').style('overflow', 'visible');
     const defs = svg.append('defs');
-    
-    // 1. Glow Filter
     const filter = defs.append('filter').attr('id', 'glow');
     filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'coloredBlur');
     const merge = filter.append('feMerge');
     merge.append('feMergeNode').attr('in', 'coloredBlur');
     merge.append('feMergeNode').attr('in', 'SourceGraphic');
-
-    // 2. Gradients
-    const metalGrad = defs.append('linearGradient').attr('id', 'metalGrad')
-      .attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
+    const metalGrad = defs.append('linearGradient').attr('id', 'metalGrad').attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
     metalGrad.append('stop').attr('offset', '0%').attr('stop-color', '#333');
     metalGrad.append('stop').attr('offset', '50%').attr('stop-color', '#666');
     metalGrad.append('stop').attr('offset', '100%').attr('stop-color', '#333');
-
     const g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
 
-    // --- SCENE 0: LEAKAGE (Heavy Pipe) ---
     if (type === 'leakage') {
-       // Pipes
        g.append('rect').attr('x', -180).attr('y', -30).attr('width', 160).attr('height', 60).attr('fill', 'url(#metalGrad)').attr('rx', 4);
        g.append('rect').attr('x', 20).attr('y', -30).attr('width', 160).attr('height', 60).attr('fill', 'url(#metalGrad)').attr('rx', 4);
-       
-       // Burst
-       g.append('path').attr('d', "M -20 -25 L 0 -40 L 20 -25 L 10 0 L 20 25 L 0 40 L -20 25 L -10 0 Z")
-        .attr('fill', 'none').attr('stroke', '#E21E3F').attr('stroke-width', 3).attr('filter', 'url(#glow)');
-
-       // Particles
+       g.append('path').attr('d', "M -20 -25 L 0 -40 L 20 -25 L 10 0 L 20 25 L 0 40 L -20 25 L -10 0 Z").attr('fill', 'none').attr('stroke', '#E21E3F').attr('stroke-width', 3).attr('filter', 'url(#glow)');
        const pG = g.append('g');
-       d3.interval(() => {
-          for(let i=0; i<3; i++) {
-             pG.append('circle')
-               .attr('cx', (Math.random()-0.5)*40)
-               .attr('cy', (Math.random()-0.5)*40)
-               .attr('r', Math.random()*5+2)
-               .attr('fill', '#E21E3F')
-               .transition().duration(1500).ease(d3.easeQuadIn)
-               .attr('cy', 250) // Fall
-               .attr('cx', (Math.random()-0.5)*200) // Spread
-               .attr('r', 0).remove();
-          }
-       }, 40);
+       d3.interval(() => { for(let i=0; i<3; i++) { pG.append('circle').attr('cx', (Math.random()-0.5)*40).attr('cy', (Math.random()-0.5)*40).attr('r', Math.random()*5+2).attr('fill', '#E21E3F').transition().duration(1500).ease(d3.easeQuadIn).attr('cy', 250).attr('cx', (Math.random()-0.5)*200).attr('r', 0).remove(); } }, 40);
        g.append('text').attr('y', -70).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#E21E3F] tracking-widest').text('CRITICAL_FAILURE');
     }
-
-    // --- SCENE 1: SILOS (Monoliths) ---
     else if (type === 'silos') {
        [-100, 0, 100].forEach((x, i) => {
           const s = g.append('g').attr('transform', `translate(${x}, -50)`);
           s.append('rect').attr('x', -35).attr('y', -60).attr('width', 70).attr('height', 180).attr('fill', '#1a1a1a').attr('stroke', '#333').attr('stroke-width', 2).attr('rx', 4);
-          // Blinking Lights
           d3.range(4).forEach(r => {
-             const circle = s.append('circle')
-               .attr('cx', 20)
-               .attr('cy', -40 + r*40)
-               .attr('r', 4)
-               .attr('fill', i===1 ? '#E21E3F' : '#C5A059')
-               .attr('filter', 'url(#glow)')
-               .attr('opacity', 1);
-
-             function blink() {
-                circle.transition()
-                    .duration(400 + Math.random() * 600)
-                    .attr('opacity', 0.2)
-                    .transition()
-                    .duration(400 + Math.random() * 600)
-                    .attr('opacity', 1)
-                    .on('end', blink);
-             }
-             blink();
+             const circle = s.append('circle').attr('cx', 20).attr('cy', -40 + r*40).attr('r', 4).attr('fill', i===1 ? '#E21E3F' : '#C5A059').attr('filter', 'url(#glow)').attr('opacity', 1);
+             function blink() { circle.transition().duration(400 + Math.random() * 600).attr('opacity', 0.2).transition().duration(400 + Math.random() * 600).attr('opacity', 1).on('end', blink); } blink();
           });
        });
        g.append('text').attr('y', 150).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#1a1a1a] tracking-widest opacity-60').text('DISCONNECTED_STACK');
     }
-
-    // --- SCENE 2: TRAP (Gears) ---
     else if (type === 'trap') {
-       const gear = (r: number, t: number) => {
-          let d = "";
-          for(let i=0; i<t*2; i++){
-             const a = (Math.PI*2*i)/(t*2);
-             const rad = (i%2===0) ? r+10 : r-5;
-             d += (i===0?"M":"L") + Math.cos(a)*rad + "," + Math.sin(a)*rad + " ";
-          }
-          return d+"Z";
-       };
-       const g1 = g.append('g').attr('transform', 'translate(-65,0)');
-       g1.append('path').attr('d', gear(60, 12)).attr('fill', 'none').attr('stroke', '#1a1a1a').attr('stroke-width', 4).attr('filter', 'url(#glow)');
-       const g2 = g.append('g').attr('transform', 'translate(65,45)');
-       g2.append('path').attr('d', gear(50, 10)).attr('fill', 'none').attr('stroke', '#1a1a1a').attr('stroke-width', 4).attr('filter', 'url(#glow)');
-       
-       d3.timer((e) => {
-          g1.attr('transform', `translate(-65,0) rotate(${e*0.04})`);
-          g2.attr('transform', `translate(65,45) rotate(${e*-0.05})`);
-       });
+       const gear = (r: number, t: number) => { let d = ""; for(let i=0; i<t*2; i++){ const a = (Math.PI*2*i)/(t*2); const rad = (i%2===0) ? r+10 : r-5; d += (i===0?"M":"L") + Math.cos(a)*rad + "," + Math.sin(a)*rad + " "; } return d+"Z"; };
+       const g1 = g.append('g').attr('transform', 'translate(-65,0)'); g1.append('path').attr('d', gear(60, 12)).attr('fill', 'none').attr('stroke', '#1a1a1a').attr('stroke-width', 4).attr('filter', 'url(#glow)');
+       const g2 = g.append('g').attr('transform', 'translate(65,45)'); g2.append('path').attr('d', gear(50, 10)).attr('fill', 'none').attr('stroke', '#1a1a1a').attr('stroke-width', 4).attr('filter', 'url(#glow)');
+       d3.timer((e) => { g1.attr('transform', `translate(-65,0) rotate(${e*0.04})`); g2.attr('transform', `translate(65,45) rotate(${e*-0.05})`); });
        g.append('text').attr('y', 160).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#E21E3F] tracking-widest').text('OPERATIONAL_DRAG');
     }
-
-    // --- SCENE 3: BLIND (Radar) ---
     else if (type === 'blind') {
-       // Radar Rings
-       const rG = g.append('g');
-       rG.append('circle').attr('r', 120).attr('fill', '#1a1a1a').attr('fill-opacity', 0.05).attr('stroke', '#1a1a1a').attr('stroke-width', 2);
-       rG.append('line').attr('x1', -120).attr('x2', 120).attr('y1', 0).attr('y2', 0).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.2);
-       rG.append('line').attr('y1', -120).attr('y2', 120).attr('x1', 0).attr('x2', 0).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.2);
-
-       // Sweep
-       const scan = rG.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -120).attr('stroke', '#E21E3F').attr('stroke-width', 4).attr('filter', 'url(#glow)');
-       d3.timer((e) => { scan.attr('transform', `rotate(${e*0.15})`); });
-
-       // Noise
-       const nG = g.append('g');
-       d3.interval(() => {
-          nG.selectAll('*').remove();
-          for(let i=0; i<50; i++) nG.append('rect').attr('x', (Math.random()-0.5)*240).attr('y', (Math.random()-0.5)*240).attr('width', Math.random()*4).attr('height', 4).attr('fill', '#1a1a1a').attr('opacity', Math.random()*0.4);
-       }, 80);
+       const rG = g.append('g'); rG.append('circle').attr('r', 120).attr('fill', '#1a1a1a').attr('fill-opacity', 0.05).attr('stroke', '#1a1a1a').attr('stroke-width', 2);
+       rG.append('line').attr('x1', -120).attr('x2', 120).attr('y1', 0).attr('y2', 0).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.2); rG.append('line').attr('y1', -120).attr('y2', 120).attr('x1', 0).attr('x2', 0).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.2);
+       const scan = rG.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -120).attr('stroke', '#E21E3F').attr('stroke-width', 4).attr('filter', 'url(#glow)'); d3.timer((e) => { scan.attr('transform', `rotate(${e*0.15})`); });
+       const nG = g.append('g'); d3.interval(() => { nG.selectAll('*').remove(); for(let i=0; i<50; i++) nG.append('rect').attr('x', (Math.random()-0.5)*240).attr('y', (Math.random()-0.5)*240).attr('width', Math.random()*4).attr('height', 4).attr('fill', '#1a1a1a').attr('opacity', Math.random()*0.4); }, 80);
        g.append('text').attr('y', 160).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#1a1a1a] tracking-widest opacity-60').text('ZERO_VISIBILITY');
     }
-
   }, [type]);
-
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
 const FrictionAuditSection: React.FC = () => {
     const targetRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: targetRef });
-    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+    
+    // SCROLL FIX: Ensure we scroll through all 4 cards
+    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]); 
+
     const points = [
         { 
           id: 'leakage',
@@ -267,12 +167,36 @@ const FrictionAuditSection: React.FC = () => {
         }
     ];
     return (
-        <section ref={targetRef} className="relative h-[400vh] bg-white z-30">
-            <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-                <motion.div style={{ x }} className="flex">
+        // INCREASED HEIGHT TO 500vh FOR BETTER SCROLL TIMING
+        <section ref={targetRef} className="relative h-[500vh] bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
+            <div className="sticky top-0 h-screen flex flex-col overflow-hidden">
+                
+                {/* RESTORED: FULL INTRO BLOCK */}
+                <div className="absolute top-8 left-6 md:top-12 md:left-20 z-40 pointer-events-none max-w-lg">
+                   <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-[1px] bg-[#E21E3F]" />
+                      <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">02 // THE FRICTION AUDIT</span>
+                   </div>
+                   <h2 className="font-serif text-3xl md:text-4xl text-[#1a1a1a] mb-4">
+                     Where your margin <span className="italic text-[#1a1a1a]/40">evaporates.</span>
+                   </h2>
+                   <p className="font-sans text-sm md:text-base text-[#1a1a1a]/60 leading-relaxed border-l border-[#E21E3F] pl-4">
+                     Revenue is vanity. Profit is sanity. These are the four silent killers destroying your bottom line right now.
+                   </p>
+                </div>
+
+                {/* TRACK: WIDTH FIXED TO 400vw */}
+                <motion.div style={{ x }} className="flex h-full w-[400vw]">
                     {points.map((point, index) => (
-                        <div key={point.id} className={`relative h-screen w-screen flex-shrink-0 flex items-center justify-center p-6 md:p-20 ${index % 2 === 0 ? 'bg-white' : 'bg-[#FFF2EC]'}`}>
+                        <div 
+                          key={point.id} 
+                          // ALTERNATING: Cream -> White -> Cream -> White
+                          className={`relative h-full w-screen flex-shrink-0 flex items-center justify-center p-6 md:p-20 
+                            ${index % 2 === 0 ? 'bg-[#FFF2EC]' : 'bg-white'} 
+                          `}
+                        >
                             <div className="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+                                {/* TEXT */}
                                 <div className="order-2 lg:order-1">
                                    <div className="flex items-center gap-4 mb-8">
                                      <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-[0.3em] font-bold bg-[#E21E3F]/10 px-3 py-1">
@@ -287,9 +211,10 @@ const FrictionAuditSection: React.FC = () => {
                                      {point.body}
                                    </p>
                                 </div>
-                                <div className="order-1 lg:order-2 h-[400px] lg:h-[600px] w-full relative bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/10 rounded-sm overflow-hidden flex items-center justify-center">
+                                {/* VISUAL */}
+                                <div className="order-1 lg:order-2 h-[400px] lg:h-[600px] w-full relative bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/10 rounded-sm overflow-hidden flex items-center justify-center group">
                                    <FrictionVisual type={point.id} />
-                                   {/* Corners */}
+                                   {/* Tech Corners */}
                                    <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#1a1a1a]/20" />
                                    <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#1a1a1a]/20" />
                                 </div>
@@ -297,6 +222,7 @@ const FrictionAuditSection: React.FC = () => {
                         </div>
                     ))}
                 </motion.div>
+                
                 {/* Progress Bar */}
                 <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-64 h-1 bg-[#1a1a1a]/10 rounded-full overflow-hidden">
                    <motion.div 
@@ -380,7 +306,7 @@ const App: React.FC = () => {
                     <div className="lg:col-span-12 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
                       <div className="flex items-center gap-4 mb-10 overflow-hidden justify-center lg:justify-start">
                         <span className="h-[1px] w-12 bg-[#1a1a1a]"></span>
-                        <span className="text-[11px] font-bold tracking-widest uppercase text-[#1a1a1a] mt-[1px]">
+                        <span className="text-xs font-bold tracking-widest uppercase text-[#1a1a1a] mt-[1px]">
                           SYDNEY BUSINESS GROWTH 
                           <span className="font-mono font-bold ml-2 text-[#C5A059]">
                             [ {scrambleText} ]
@@ -412,6 +338,16 @@ const App: React.FC = () => {
                           <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
                           <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ START_DIAGNOSIS ]</span>
                         </button>
+                        
+                        <a 
+                          href="#architecture" 
+                          onClick={(e) => { e.preventDefault(); handleGlobalNavigate('architecture'); }} 
+                          className="relative group flex items-center gap-3 cursor-pointer"
+                        >
+                          <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold">
+                            SEE THE SYSTEM
+                          </span>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -450,7 +386,7 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* DIAGNOSIS SECTION (Universal) */}
+                {/* DIAGNOSIS */}
                 <motion.section 
                   id="diagnosis" 
                   initial={{ opacity: 0 }} 
@@ -458,8 +394,7 @@ const App: React.FC = () => {
                   viewport={{ once: true, margin: "-100px" }} 
                   className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden"
                 >
-                  {/* The Thread */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-20 w-[1px] bg-[#1a1a1a]/10" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-32 w-[1px] bg-[#1a1a1a]/10" />
 
                   <div className="max-w-[1600px] mx-auto border-t border-l border-[#1a1a1a]/10">
                     <div className="grid grid-cols-1 md:grid-cols-3">
@@ -527,7 +462,6 @@ const App: React.FC = () => {
                   </div>
                 </motion.section>
 
-                {/* RESTORED D3 FRICTION SECTION */}
                 <FrictionAuditSection />
                 
                 <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
