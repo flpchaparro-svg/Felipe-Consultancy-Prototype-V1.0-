@@ -455,7 +455,6 @@ const App: React.FC = () => {
                           className="flex items-center gap-3 font-mono text-[10px] text-[#C5A059] uppercase tracking-[0.3em] hover:text-white transition-colors cursor-pointer group"
                         >
                           [ VIEW PROTOCOL ]
-                          <ArrowDown className="w-3 h-3 group-hover:translate-y-1 transition-transform" />
                         </button>
                       </div>
                     </div>
