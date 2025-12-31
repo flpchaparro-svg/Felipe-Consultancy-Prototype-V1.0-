@@ -32,7 +32,7 @@ const TECH_STACK = [
   'TWILIO', 'SUPABASE', 'KLAVIYO', 'STRIPE_CONNECT'
 ];
 
-// --- HELPERS (GrowthGraph, FrictionVisual) ---
+// --- GROWTH GRAPH (UNCHANGED) ---
 const GrowthGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -71,164 +71,193 @@ const GrowthGraph: React.FC = () => {
   return <div ref={containerRef} className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent" />;
 };
 
+// --- [REVISED] WIREFRAME FRICTION VISUAL ---
 const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    
+    // Clear
     d3.select(container).selectAll('*').remove();
+
     const width = container.clientWidth || 600;
     const height = container.clientHeight || 600;
-    const svg = d3.select(container).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('preserveAspectRatio', 'xMidYMid meet').style('overflow', 'visible');
-    const defs = svg.append('defs');
-    const filter = defs.append('filter').attr('id', 'glow');
-    filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'coloredBlur');
-    const merge = filter.append('feMerge');
-    merge.append('feMergeNode').attr('in', 'coloredBlur');
-    merge.append('feMergeNode').attr('in', 'SourceGraphic');
-    const metalGrad = defs.append('linearGradient').attr('id', 'metalGrad').attr('x1', '0%').attr('y1', '0%').attr('x2', '100%').attr('y2', '100%');
-    metalGrad.append('stop').attr('offset', '0%').attr('stop-color', '#333');
-    metalGrad.append('stop').attr('offset', '50%').attr('stop-color', '#666');
-    metalGrad.append('stop').attr('offset', '100%').attr('stop-color', '#333');
+    const svg = d3.select(container).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`).style('overflow', 'visible');
     const g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
 
+    // STYLE: Thin Lines, Industrial
+    const strokeColor = '#1a1a1a';
+    const alertColor = '#E21E3F';
+
     if (type === 'leakage') {
-       g.append('rect').attr('x', -180).attr('y', -30).attr('width', 160).attr('height', 60).attr('fill', 'url(#metalGrad)').attr('rx', 4);
-       g.append('rect').attr('x', 20).attr('y', -30).attr('width', 160).attr('height', 60).attr('fill', 'url(#metalGrad)').attr('rx', 4);
-       g.append('path').attr('d', "M -20 -25 L 0 -40 L 20 -25 L 10 0 L 20 25 L 0 40 L -20 25 L -10 0 Z").attr('fill', 'none').attr('stroke', '#E21E3F').attr('stroke-width', 3).attr('filter', 'url(#glow)');
+       // Funnel with crack
+       g.append('path').attr('d', "M -60 -80 L -20 20 L -20 80 L 20 80 L 20 20 L 60 -80 Z").attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5).attr('stroke-dasharray', '4,4');
+       g.append('line').attr('x1', -20).attr('y1', 40).attr('x2', -40).attr('y2', 60).attr('stroke', alertColor).attr('stroke-width', 2);
        const pG = g.append('g');
-       d3.interval(() => { for(let i=0; i<3; i++) { pG.append('circle').attr('cx', (Math.random()-0.5)*40).attr('cy', (Math.random()-0.5)*40).attr('r', Math.random()*5+2).attr('fill', '#E21E3F').transition().duration(1500).ease(d3.easeQuadIn).attr('cy', 250).attr('cx', (Math.random()-0.5)*200).attr('r', 0).remove(); } }, 40);
-       g.append('text').attr('y', -70).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#E21E3F] tracking-widest').text('CRITICAL_FAILURE');
+       d3.interval(() => {
+          pG.append('circle').attr('cx', 0).attr('cy', -80).attr('r', 2).attr('fill', strokeColor).transition().duration(2000).ease(d3.easeLinear).attr('cy', 40).transition().duration(1000).attr('cx', -60).attr('cy', 100).attr('opacity', 0).remove();
+       }, 300);
+       g.append('text').attr('y', 120).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#E21E3F] tracking-widest').text('// SYSTEM_LEAK');
     }
     else if (type === 'silos') {
-       [-100, 0, 100].forEach((x, i) => {
-          const s = g.append('g').attr('transform', `translate(${x}, -50)`);
-          s.append('rect').attr('x', -35).attr('y', -60).attr('width', 70).attr('height', 180).attr('fill', '#1a1a1a').attr('stroke', '#333').attr('stroke-width', 2).attr('rx', 4);
-          d3.range(4).forEach(r => {
-             const circle = s.append('circle').attr('cx', 20).attr('cy', -40 + r*40).attr('r', 4).attr('fill', i===1 ? '#E21E3F' : '#C5A059').attr('filter', 'url(#glow)').attr('opacity', 1);
-             function blink() { circle.transition().duration(400 + Math.random() * 600).attr('opacity', 0.2).transition().duration(400 + Math.random() * 600).attr('opacity', 1).on('end', blink); } blink();
-          });
-       });
-       g.append('text').attr('y', 150).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#1a1a1a] tracking-widest opacity-60').text('DISCONNECTED_STACK');
+       // Disconnected Boxes
+       g.append('rect').attr('x', -80).attr('y', -40).attr('width', 50).attr('height', 80).attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5);
+       g.append('rect').attr('x', 30).attr('y', -40).attr('width', 50).attr('height', 80).attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5);
+       g.append('line').attr('x1', -10).attr('y1', -10).attr('x2', 10).attr('y2', 10).attr('stroke', alertColor).attr('stroke-width', 1.5);
+       g.append('line').attr('x1', 10).attr('y1', -10).attr('x2', -10).attr('y2', 10).attr('stroke', alertColor).attr('stroke-width', 1.5);
+       g.append('text').attr('y', 80).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#1a1a1a] tracking-widest opacity-50').text('// NO_CONNECTION');
     }
     else if (type === 'trap') {
-       const gear = (r: number, t: number) => { let d = ""; for(let i=0; i<t*2; i++){ const a = (Math.PI*2*i)/(t*2); const rad = (i%2===0) ? r+10 : r-5; d += (i===0?"M":"L") + Math.cos(a)*rad + "," + Math.sin(a)*rad + " "; } return d+"Z"; };
-       const g1 = g.append('g').attr('transform', 'translate(-65,0)'); g1.append('path').attr('d', gear(60, 12)).attr('fill', 'none').attr('stroke', '#1a1a1a').attr('stroke-width', 4).attr('filter', 'url(#glow)');
-       const g2 = g.append('g').attr('transform', 'translate(65,45)'); g2.append('path').attr('d', gear(50, 10)).attr('fill', 'none').attr('stroke', '#1a1a1a').attr('stroke-width', 4).attr('filter', 'url(#glow)');
-       d3.timer((e) => { g1.attr('transform', `translate(-65,0) rotate(${e*0.04})`); g2.attr('transform', `translate(65,45) rotate(${e*-0.05})`); });
-       g.append('text').attr('y', 160).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#E21E3F] tracking-widest').text('OPERATIONAL_DRAG');
+       // Heavy Anchor
+       g.append('path').attr('d', "M -30 20 Q 0 50 30 20 M 0 -60 L 0 35").attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 2);
+       g.append('circle').attr('cx', 0).attr('cy', -70).attr('r', 10).attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 2);
+       
+       const pulseCircle = g.append('circle').attr('cx', 0).attr('cy', 35).attr('r', 5).attr('fill', alertColor);
+       
+       // FIX: Use recursive transition instead of .repeat() which is invalid in D3
+       function repeat() {
+         pulseCircle
+           .attr('r', 5)
+           .attr('opacity', 1)
+           .transition()
+           .duration(1000)
+           .attr('r', 15)
+           .attr('opacity', 0)
+           .on('end', repeat);
+       }
+       repeat();
+
+       g.append('text').attr('y', 80).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#E21E3F] tracking-widest').text('// DRAG_COEFFICIENT_HIGH');
     }
     else if (type === 'blind') {
-       const rG = g.append('g'); rG.append('circle').attr('r', 120).attr('fill', '#1a1a1a').attr('fill-opacity', 0.05).attr('stroke', '#1a1a1a').attr('stroke-width', 2);
-       rG.append('line').attr('x1', -120).attr('x2', 120).attr('y1', 0).attr('y2', 0).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.2); rG.append('line').attr('y1', -120).attr('y2', 120).attr('x1', 0).attr('x2', 0).attr('stroke', '#1a1a1a').attr('stroke-opacity', 0.2);
-       const scan = rG.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -120).attr('stroke', '#E21E3F').attr('stroke-width', 4).attr('filter', 'url(#glow)'); d3.timer((e) => { scan.attr('transform', `rotate(${e*0.15})`); });
-       const nG = g.append('g'); d3.interval(() => { nG.selectAll('*').remove(); for(let i=0; i<50; i++) nG.append('rect').attr('x', (Math.random()-0.5)*240).attr('y', (Math.random()-0.5)*240).attr('width', Math.random()*4).attr('height', 4).attr('fill', '#1a1a1a').attr('opacity', Math.random()*0.4); }, 80);
-       g.append('text').attr('y', 160).attr('text-anchor', 'middle').attr('class', 'font-mono text-[12px] font-bold fill-[#1a1a1a] tracking-widest opacity-60').text('ZERO_VISIBILITY');
+       // Blind Eye
+       g.append('path').attr('d', "M -40 0 Q 0 -40 40 0 Q 0 40 -40 0").attr('fill', 'none').attr('stroke', strokeColor).attr('stroke-width', 1.5).attr('stroke-dasharray', '2,2');
+       g.append('line').attr('x1', -30).attr('y1', 30).attr('x2', 30).attr('y2', -30).attr('stroke', alertColor).attr('stroke-width', 2);
+       g.append('text').attr('y', 80).attr('text-anchor', 'middle').attr('class', 'font-mono text-[10px] fill-[#1a1a1a] tracking-widest opacity-50').text('// VISUAL_LOST');
     }
   }, [type]);
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-const FrictionAuditSection: React.FC = () => {
+// --- [REVISED] FRICTION SECTION (GALLERY SCROLL) ---
+const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
     const targetRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: targetRef });
     
-    // SCROLL FIX: Ensure we scroll through all 4 cards
+    // Smooth Horizontal Scroll
     const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]); 
 
     const points = [
         { 
           id: 'leakage',
-          label: '01 // LEAKAGE', 
-          title: 'Revenue Leakage', 
-          body: "Demand is expiring in the inbox because your website is just a brochure, not a catcher. You are paying for leads you fail to catch.",
-          icon: AlertTriangle
+          label: '01 // EVIDENCE', 
+          title: 'Lead Evaporation', 
+          body: "Demand is expiring in the inbox. Your website isn't a catcher; it’s a sieve. You are paying for leads that vanish before you can touch them.",
         },
         { 
           id: 'silos',
-          label: '02 // SILOS', 
-          title: 'Data Silos', 
-          body: "Sales uses one tool, Ops uses another, and Finance lives in Excel. Nothing talks to each other, so you have zero 'Source of Truth'.",
-          icon: Database
+          label: '02 // EVIDENCE', 
+          title: 'The Double-Entry Tax', 
+          body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry.",
         },
         { 
           id: 'trap',
-          label: '03 // TRAP', 
-          title: 'The Busywork Trap', 
-          body: "You are wasting 40% of your week on manual data entry, playing 'Chief Admin Officer' instead of steering the ship.",
-          icon: Clock
+          label: '03 // EVIDENCE', 
+          title: 'Admin Paralysis', 
+          body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling, instead of steering the ship.",
         },
         { 
           id: 'blind',
-          label: '04 // BLIND', 
-          title: 'Flying Blind', 
-          body: "You manage by gut feeling because you can't see the numbers. You don't know your exact Profit or LTV until the accountant calls.",
-          icon: EyeOff
+          label: '04 // EVIDENCE', 
+          title: 'Profit Blindness', 
+          body: "You know your Revenue, but you don't know your Real-Time Margin. You are flying a 747 through a storm with no radar.",
         }
     ];
+
     return (
-        // INCREASED HEIGHT TO 500vh FOR BETTER SCROLL TIMING
-        <section ref={targetRef} className="relative h-[500vh] bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
-            <div className="sticky top-0 h-screen flex flex-col overflow-hidden">
-                
-                {/* RESTORED: FULL INTRO BLOCK */}
-                <div className="absolute top-8 left-6 md:top-12 md:left-20 z-40 pointer-events-none max-w-lg">
-                   <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-[1px] bg-[#E21E3F]" />
-                      <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">02 // THE FRICTION AUDIT</span>
-                   </div>
-                   <h2 className="font-serif text-3xl md:text-4xl text-[#1a1a1a] mb-4">
+        <section ref={targetRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
+            
+            {/* MOBILE: VERTICAL STACK */}
+            <div className="md:hidden flex flex-col py-20 px-6 gap-12">
+               <div className="mb-8">
+                   <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">02 // THE FRICTION AUDIT</span>
+                   <h2 className="font-serif text-3xl text-[#1a1a1a] mt-4 mb-4">
                      Where your margin <span className="italic text-[#1a1a1a]/40">evaporates.</span>
                    </h2>
-                   <p className="font-sans text-sm md:text-base text-[#1a1a1a]/60 leading-relaxed border-l border-[#E21E3F] pl-4">
-                     Revenue is vanity. Profit is sanity. These are the four silent killers destroying your bottom line right now.
-                   </p>
-                </div>
+               </div>
+               {points.map((point) => (
+                  <div key={point.id} className="bg-white border border-[#1a1a1a]/5 p-8 shadow-sm">
+                      <div className="h-40 w-full mb-6 border-b border-[#1a1a1a]/5 flex items-center justify-center">
+                         <div className="w-32 h-32"><FrictionVisual type={point.id} /></div>
+                      </div>
+                      <h3 className="font-serif text-2xl text-[#1a1a1a] mb-4 tracking-tight">{point.title}</h3>
+                      <p className="font-sans text-sm text-[#1a1a1a]/60 leading-relaxed">{point.body}</p>
+                  </div>
+               ))}
+            </div>
 
-                {/* TRACK: WIDTH FIXED TO 400vw */}
-                <motion.div style={{ x }} className="flex h-full w-[400vw]">
-                    {points.map((point, index) => (
-                        <div 
-                          key={point.id} 
-                          // ALTERNATING: Cream -> White -> Cream -> White
-                          className={`relative h-full w-screen flex-shrink-0 flex items-center justify-center p-6 md:p-20 
-                            ${index % 2 === 0 ? 'bg-[#FFF2EC]' : 'bg-white'} 
-                          `}
-                        >
-                            <div className="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-                                {/* TEXT */}
-                                <div className="order-2 lg:order-1">
-                                   <div className="flex items-center gap-4 mb-8">
-                                     <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-[0.3em] font-bold bg-[#E21E3F]/10 px-3 py-1">
-                                       {point.label}
-                                     </span>
-                                     <div className="h-[1px] w-12 bg-[#E21E3F]/20" />
+            {/* DESKTOP: HORIZONTAL GALLERY SCROLL */}
+            <div className="hidden md:block h-[400vh] relative"> 
+                <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+                    
+                    {/* Fixed Header */}
+                    <div className="absolute top-12 left-12 z-20 max-w-sm">
+                       <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">02 // THE FRICTION AUDIT</span>
+                       <h2 className="font-serif text-4xl text-[#1a1a1a] mt-4 leading-[0.9] tracking-tighter">
+                         Where your margin <br /><span className="italic text-[#C5A059]">evaporates.</span>
+                       </h2>
+                    </div>
+
+                    {/* Track */}
+                    <motion.div style={{ x }} className="flex gap-20 pl-[30vw] items-center h-full w-[400vw]">
+                        {points.map((point) => (
+                            <div 
+                              key={point.id} 
+                              className="relative h-[65vh] w-[600px] flex-shrink-0 bg-white border border-[#1a1a1a]/5 shadow-2xl p-12 flex flex-col justify-between group hover:border-[#C5A059]/30 transition-colors duration-500"
+                            >
+                                {/* Visual */}
+                                <div className="h-[280px] w-full bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/5 flex items-center justify-center relative overflow-hidden">
+                                   <div className="w-full h-full opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 scale-90">
+                                      <FrictionVisual type={point.id} />
                                    </div>
-                                   <h3 className="font-serif text-5xl md:text-7xl text-[#1a1a1a] mb-8 leading-[0.95] tracking-tighter">
+                                   <div className="absolute top-4 right-4 flex items-center gap-2">
+                                      <div className="w-1.5 h-1.5 rounded-full bg-[#E21E3F] animate-pulse" />
+                                      <span className="font-mono text-[9px] text-[#E21E3F] tracking-widest">DETECTED</span>
+                                   </div>
+                                </div>
+
+                                {/* Text */}
+                                <div>
+                                   <div className="flex items-center gap-4 mb-6 opacity-50">
+                                     <span className="font-mono text-[10px] text-[#1a1a1a] uppercase tracking-[0.2em]">{point.label}</span>
+                                     <div className="h-[1px] flex-grow bg-[#1a1a1a]/20" />
+                                   </div>
+                                   <h3 className="font-serif text-4xl text-[#1a1a1a] mb-6 leading-none tracking-tight">
                                      {point.title}
                                    </h3>
-                                   <p className="font-sans text-xl md:text-2xl text-[#1a1a1a]/60 leading-relaxed max-w-xl border-l-2 border-[#1a1a1a]/10 pl-8">
+                                   <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F] pl-6">
                                      {point.body}
                                    </p>
                                 </div>
-                                {/* VISUAL */}
-                                <div className="order-1 lg:order-2 h-[400px] lg:h-[600px] w-full relative bg-[#1a1a1a]/[0.02] border border-[#1a1a1a]/10 rounded-sm overflow-hidden flex items-center justify-center group">
-                                   <FrictionVisual type={point.id} />
-                                   {/* Tech Corners */}
-                                   <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#1a1a1a]/20" />
-                                   <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#1a1a1a]/20" />
-                                </div>
                             </div>
+                        ))}
+                        
+                        {/* Call to Action Card */}
+                        <div className="h-[60vh] w-[400px] flex-shrink-0 flex flex-col justify-center items-center p-12">
+                           <h3 className="font-serif text-3xl text-[#1a1a1a] text-center mb-8">
+                             Seen enough? <br />
+                             <span className="italic text-[#C5A059]">Let's fix it.</span>
+                           </h3>
+                           <button 
+                             onClick={() => onNavigate('architecture')}
+                             className="px-8 py-4 bg-[#1a1a1a] text-white font-mono text-xs uppercase tracking-widest hover:bg-[#C5A059] transition-colors"
+                           >
+                             [ EXPLORE_ARCHITECTURE ]
+                           </button>
                         </div>
-                    ))}
-                </motion.div>
-                
-                {/* Progress Bar */}
-                <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-64 h-1 bg-[#1a1a1a]/10 rounded-full overflow-hidden">
-                   <motion.div 
-                     className="h-full bg-[#E21E3F]"
-                     style={{ width: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]) }}
-                   />
+
+                    </motion.div>
                 </div>
             </div>
         </section>
@@ -386,7 +415,7 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* DIAGNOSIS */}
+                {/* DIAGNOSIS SECTION (Global #01) */}
                 <motion.section 
                   id="diagnosis" 
                   initial={{ opacity: 0 }} 
@@ -445,6 +474,7 @@ const App: React.FC = () => {
                         </div>
                       </div>
                       
+                      {/* RESOLUTION - NO ARROW */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#1a1a1a] text-white min-h-[300px] flex flex-col justify-between border-l-2 border-l-[#C5A059]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] block">04 / RESOLUTION</span>
                         <p className="font-serif text-2xl md:text-3xl leading-tight mb-8">
@@ -461,7 +491,8 @@ const App: React.FC = () => {
                   </div>
                 </motion.section>
 
-                <FrictionAuditSection />
+                {/* FRICTION SECTION (Global #02) */}
+                <FrictionAuditSection onNavigate={handleGlobalNavigate} />
                 
                 <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
                 <section className="py-32 px-6 md:px-12 lg:px-20 border-t border-black/10 bg-[#FFF2EC]">
