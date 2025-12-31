@@ -32,7 +32,7 @@ const TECH_STACK = [
   'TWILIO', 'SUPABASE', 'KLAVIYO', 'STRIPE_CONNECT'
 ];
 
-// --- HELPERS ---
+// --- HELPERS (GrowthGraph, FrictionVisual, MagneticField) ---
 const GrowthGraph: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -176,7 +176,7 @@ const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-// --- REVISED FRICTION SECTION v8: INVISIBLE STRUCTURE & EVAPORATION ---
+// --- REVISED FRICTION SECTION v9: CONTAINED & COMPACT ---
 
 const FRICTION_POINTS = [
   { 
@@ -209,7 +209,6 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
     const sectionRef = useRef<HTMLDivElement>(null);
     const [activeId, setActiveId] = useState('leakage');
     
-    // PROGRESS BAR LOGIC
     const { scrollYProgress } = useScroll({ 
         target: sectionRef,
         offset: ["start start", "end end"]
@@ -218,15 +217,15 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
 
     return (
         <section ref={sectionRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
-            <MagneticField />
-            
-            <div className="flex flex-col md:flex-row relative z-10">
+            {/* FULL WIDTH BACKGROUND */}
+            <div className="absolute inset-0 z-0 overflow-hidden"><MagneticField /></div>
+
+            {/* CONTAINED WRAPPER (max-w-1450px) */}
+            <div className="flex flex-col md:flex-row relative z-10 max-w-[1450px] mx-auto">
                 
-                {/* --- LEFT PANEL: 40% WIDTH & CENTERED CONTENT --- */}
-                <div className="w-full md:w-2/5 h-auto md:h-screen sticky top-0 flex flex-col justify-center items-center bg-[#FFF2EC]/90 backdrop-blur-sm z-10 px-12 border-r border-[#1a1a1a]/5">
-                    
+                {/* --- LEFT PANEL: STICKY, CENTERED, 90vh HEIGHT --- */}
+                <div className="w-full md:w-2/5 h-auto md:h-[90vh] sticky top-[5vh] flex flex-col justify-center items-center bg-[#FFF2EC]/90 backdrop-blur-sm z-10 px-12 rounded-sm border border-[#1a1a1a]/5">
                     <div className="max-w-md w-full">
-                        {/* Title Group */}
                         <div className="mb-12">
                             <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold mb-4 block opacity-70">
                                 02 // THE FRICTION AUDIT
@@ -236,13 +235,11 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                               <span className="text-[#E21E3F]">margin</span> <br />
                               <span className="italic text-[#E21E3F]">evaporates.</span>
                             </h2>
-                            {/* Context Copy */}
                             <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
                                 Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.
                             </p>
                         </div>
 
-                        {/* Dynamic Icon */}
                         <div className="relative w-32 h-32 my-8 flex items-center justify-center">
                            <AnimatePresence mode="wait">
                              <motion.div 
@@ -258,7 +255,6 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                            </AnimatePresence>
                         </div>
 
-                        {/* Status Indicator */}
                         <div className="flex items-center gap-3">
                            <div className="h-1.5 w-1.5 rounded-full bg-[#E21E3F] animate-pulse" />
                            <span className="font-mono text-[10px] uppercase tracking-widest text-[#E21E3F]">
@@ -268,25 +264,20 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                     </div>
                 </div>
 
-                {/* --- THE PROGRESS BAR --- */}
-                <div className="hidden md:block absolute left-[40%] top-0 bottom-0 w-[1px] bg-[#1a1a1a]/10 z-20">
-                    <motion.div 
-                        style={{ height: progressHeight }} 
-                        className="w-full bg-[#E21E3F]" 
-                    />
+                {/* --- CENTER DIVIDER (Optional visual separation) --- */}
+                <div className="hidden md:block absolute left-[40%] top-0 bottom-0 w-[1px] bg-[#1a1a1a]/5 z-20">
+                    <motion.div style={{ height: progressHeight }} className="w-full bg-[#E21E3F]" />
                 </div>
 
-                {/* --- RIGHT PANEL: 60% WIDTH & INVISIBLE BOX STRUCTURE --- */}
+                {/* --- RIGHT PANEL: INVISIBLE LIST --- */}
                 <div className="w-full md:w-3/5 bg-transparent relative">
                     <div className="flex flex-col">
                         {FRICTION_POINTS.map((point) => (
-                            // THE "INVISIBLE BOX" - Fixed Height ensures perfect alignment
                             <div 
                                 key={point.id} 
-                                className="h-[80vh] flex items-center justify-center p-8 md:p-24 relative"
+                                className="h-[80vh] flex items-center justify-center p-8 md:p-24 border-b border-[#1a1a1a]/5 relative"
                             >
                                 <motion.div 
-                                  // EVAPORATION EFFECT: Blur In -> Sharp -> Blur Out
                                   initial={{ opacity: 0, filter: 'blur(10px)', y: 20 }}
                                   whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
                                   viewport={{ margin: "-20% 0px -20% 0px" }} 
@@ -294,12 +285,10 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                                   transition={{ duration: 0.6, ease: "easeOut" }}
                                   className="w-full max-w-xl relative"
                                 >
-                                    {/* Main Title */}
                                     <h3 className="font-serif text-4xl md:text-5xl text-[#1a1a1a] leading-none tracking-tight mb-6">
                                         {point.title}
                                     </h3>
                                     
-                                    {/* Stat Line */}
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="h-[1px] w-8 bg-[#1a1a1a]/20" />
                                         <span className="font-mono text-[9px] text-[#1a1a1a]/40 tracking-widest uppercase">Loss Metric</span>
@@ -308,7 +297,6 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                                         </span>
                                     </div>
 
-                                    {/* Body Text */}
                                     <div className="border-l-2 border-[#E21E3F]/20 pl-6">
                                         <p className="font-sans text-lg md:text-xl text-[#1a1a1a]/70 leading-relaxed font-light">
                                             {point.body}
@@ -318,8 +306,8 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                             </div>
                         ))}
 
-                        {/* --- THE FIX CARD (Same "Box" Dimensions) --- */}
-                        <div className="h-[80vh] flex items-center justify-center p-8 md:p-24 bg-[#FFF2EC]">
+                        {/* --- END CARD --- */}
+                        <div className="h-[80vh] flex items-center justify-center p-8 md:p-24 bg-transparent">
                             <motion.div 
                                initial={{ opacity: 0, scale: 0.95 }}
                                whileInView={{ opacity: 1, scale: 1 }}
@@ -331,15 +319,13 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                                     Now see the <span className="text-[#C5A059] italic">fix.</span>
                                 </h3>
                                 
-                                {/* HERO STYLE BUTTON: Black Body, Gold Hover */}
                                 <button 
                                     onClick={() => onNavigate('architecture')}
-                                    className="group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-[#1a1a1a] text-[#FFF2EC] font-mono text-xs uppercase tracking-[0.2em] overflow-hidden border border-[#1a1a1a]"
+                                    className="group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-[#1a1a1a] text-white overflow-hidden transition-all duration-300 hover:bg-[#C5A059] hover:text-[#1a1a1a] border border-[#1a1a1a]"
                                 >
-                                    {/* Hover fill */}
-                                    <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                                    
-                                    <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ EXPLORE_ARCHITECTURE ]</span>
+                                    <span className="font-mono text-xs uppercase tracking-[0.2em] font-bold relative z-10">
+                                        [ EXPLORE_ARCHITECTURE ]
+                                    </span>
                                 </button>
                             </motion.div>
                         </div>
@@ -477,7 +463,7 @@ const App: React.FC = () => {
                   </div>
                 </section>
 
-                {/* CAROUSEL */}
+                {/* PREMIUM CAROUSEL */}
                 <div 
                   className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30"
                   style={{ 
@@ -581,7 +567,7 @@ const App: React.FC = () => {
                   </div>
                 </motion.section>
 
-                {/* FRICTION SECTION (Global #02 - Invisible Structure & Evaporation V8) */}
+                {/* FRICTION SECTION (Global #02 - Contained V9) */}
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
                 
                 <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
