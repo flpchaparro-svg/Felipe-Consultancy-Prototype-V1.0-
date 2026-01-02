@@ -128,77 +128,138 @@ const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
+    // Cleanup
     d3.select(container).selectAll('*').remove();
-    const width = container.clientWidth || 600;
-    const height = container.clientHeight || 600;
-    const svg = d3.select(container).append('svg').attr('width', '100%').attr('height', '100%').attr('viewBox', `0 0 ${width} ${height}`).style('overflow', 'visible');
-    const g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
     
-    const stroke = '#1a1a1a';
+    const width = container.clientWidth || 600;
+    const height = container.clientHeight || 400;
+    const svg = d3.select(container).append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%')
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .style('overflow', 'visible');
+      
+    const g = svg.append('g').attr('transform', `translate(${width/2}, ${height/2})`);
+    const ink = '#1a1a1a';
     const alert = '#E21E3F';
 
+    // 1. LEAKAGE: Continuous smooth flow upwards
     if (type === 'leakage') {
-       g.append('path').attr('d', "M -60 -80 L -20 20 L -20 80 L 20 80 L 20 20 L 60 -80 Z").attr('fill', 'none').attr('stroke', stroke).attr('stroke-width', 1.5).attr('stroke-dasharray', '4,4');
-       g.append('line').attr('x1', -20).attr('y1', 40).attr('x2', -40).attr('y2', 60).attr('stroke', alert).attr('stroke-width', 2);
-       const pG = g.append('g');
-       d3.interval(() => {
-          pG.append('circle').attr('cx', 0).attr('cy', -80).attr('r', 2).attr('fill', alert).attr('opacity', 0.6)
-            .transition().duration(2500).ease(d3.easeLinear).attr('cy', -60).attr('opacity', 0).remove();
-       }, 250);
+       // Base
+       g.append('line').attr('x1', -50).attr('x2', 50).attr('y1', 60).attr('y2', 60).attr('stroke', ink).attr('stroke-width', 2).attr('opacity', 0.2);
+       
+       const particleGroup = g.append('g');
+       const emitParticle = () => {
+         particleGroup.append('circle')
+           .attr('cx', (Math.random() - 0.5) * 60)
+           .attr('cy', 60)
+           .attr('r', Math.random() * 2 + 1)
+           .attr('fill', alert)
+           .attr('opacity', 0.8)
+           .transition().duration(2500).ease(d3.easeSinOut)
+           .attr('cy', -80) // Float up
+           .attr('opacity', 0)
+           .remove();
+       };
+       // High frequency emission for "Flow" feel
+       const timer = d3.interval(emitParticle, 100); 
+       return () => timer.stop();
     }
+
+    // 2. SILOS: Fluid repulsion/attraction (Organic)
     else if (type === 'silos') {
-       const l = g.append('line').attr('x1', -15).attr('x2', -15).attr('y1', -40).attr('y2', 40).attr('stroke', stroke).attr('stroke-width', 1.5);
-       const r = g.append('line').attr('x1', 15).attr('x2', 15).attr('y1', -40).attr('y2', 40).attr('stroke', stroke).attr('stroke-width', 1.5);
+       const c1 = g.append('circle').attr('r', 15).attr('fill', 'none').attr('stroke', ink).attr('stroke-width', 2);
+       const c2 = g.append('circle').attr('r', 15).attr('fill', 'none').attr('stroke', ink).attr('stroke-width', 2);
+       
+       // Center marker (The gap)
+       g.append('line').attr('y1', -20).attr('y2', 20).attr('stroke', alert).attr('stroke-width', 1).attr('stroke-dasharray', '2,2');
+
        d3.timer((t) => {
-          const off = Math.sin(t * 0.002) * 6;
-          l.attr('transform', `translate(${-off}, 0)`);
-          r.attr('transform', `translate(${off}, 0)`);
+          // Smooth sine wave movement
+          const x = 30 + Math.sin(t * 0.002) * 15;
+          c1.attr('cx', -x);
+          c2.attr('cx', x);
+          // Pulse opacity
+          const op = 0.5 + Math.sin(t * 0.005) * 0.3;
+          c1.attr('opacity', op);
+          c2.attr('opacity', op);
        });
     }
+
+    // 3. TRAP: Heavy Breathing (Square)
     else if (type === 'trap') {
-       const box = g.append('rect').attr('x', -25).attr('y', -25).attr('width', 50).attr('height', 50).attr('stroke', alert).attr('stroke-width', 1.5).attr('fill', 'none');
+       const rect = g.append('rect')
+         .attr('x', -30).attr('y', -30)
+         .attr('width', 60).attr('height', 60)
+         .attr('fill', 'none')
+         .attr('stroke', ink).attr('stroke-width', 2);
+       
+       const inner = g.append('rect')
+         .attr('x', -10).attr('y', -10)
+         .attr('width', 20).attr('height', 20)
+         .attr('fill', alert).attr('opacity', 0.8);
+
        d3.timer((t) => {
-          const s = 1 + Math.sin(t * 0.0015) * 0.05;
-          box.attr('transform', `scale(${s})`);
+          // Slow, heavy breathe
+          const scale = 1 + Math.sin(t * 0.001) * 0.1;
+          rect.attr('transform', `scale(${scale})`);
+          // Inner box rotates slowly
+          inner.attr('transform', `rotate(${t * 0.05})`);
        });
     }
+
+    // 4. BLIND: Searching Radar (Scanning)
     else if (type === 'blind') {
-       const defs = svg.append('defs');
-       const filter = defs.append('filter').attr('id', 'blurMe');
-       filter.append('feGaussianBlur').attr('stdDeviation', 4);
-       const c = g.append('circle').attr('r', 30).attr('fill', stroke).attr('opacity', 0.1).attr('filter', 'url(#blurMe)');
+       const radar = g.append('circle').attr('r', 40).attr('fill', 'none').attr('stroke', ink).attr('stroke-width', 1).attr('opacity', 0.3);
+       const scanLine = g.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', -40).attr('stroke', alert).attr('stroke-width', 2);
+       
        d3.timer((t) => {
-          const s = 1 + Math.sin(t * 0.001) * 0.2;
-          c.attr('r', 35 * s);
+          scanLine.attr('transform', `rotate(${t * 0.1})`);
+          // Random blips
+          if (Math.random() > 0.95) {
+             g.append('circle')
+               .attr('cx', (Math.random()-0.5)*60)
+               .attr('cy', (Math.random()-0.5)*60)
+               .attr('r', 2).attr('fill', ink).attr('opacity', 1)
+               .transition().duration(500).attr('opacity', 0).remove();
+          }
        });
     }
   }, [type]);
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-// --- REVISED FRICTION SECTION v9: CONTAINED & COMPACT ---
+// --- REVISED FRICTION SECTION v10: STICKY CONTEXT + INLINE EVIDENCE ---
 
 const FRICTION_POINTS = [
   { 
     id: 'leakage',
+    number: '01',
+    label: 'CRITICAL_FAILURE',
     title: 'Lead Evaporation', 
     stat: '-$500 / DAY',
     body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox.",
   },
   { 
     id: 'silos',
+    number: '02',
+    label: 'INEFFICIENCY',
     title: 'The Double-Entry Tax', 
     stat: '15 HRS / WK',
     body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors.",
   },
   { 
     id: 'trap',
+    number: '03',
+    label: 'BOTTLENECK',
     title: 'Admin Paralysis', 
     stat: 'GROWTH CAP',
     body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship.",
   },
   { 
     id: 'blind',
+    number: '04',
+    label: 'HIGH_RISK',
     title: 'Profit Blindness', 
     stat: 'UNKNOWN',
     body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar.",
@@ -207,127 +268,83 @@ const FRICTION_POINTS = [
 
 const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
-    const [activeId, setActiveId] = useState('leakage');
     
-    const { scrollYProgress } = useScroll({ 
-        target: sectionRef,
-        offset: ["start start", "end end"]
-    });
-    const progressHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
     return (
         <section ref={sectionRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
-            {/* FULL WIDTH BACKGROUND */}
-            <div className="absolute inset-0 z-0 overflow-hidden"><MagneticField /></div>
-
-            {/* CONTAINED WRAPPER (max-w-1450px) */}
-            <div className="flex flex-col md:flex-row relative z-10 max-w-[1450px] mx-auto">
+            <MagneticField /> {/* Background D3 */}
+            
+            <div className="max-w-[1450px] mx-auto flex flex-col md:flex-row relative z-10 border-x border-[#1a1a1a]/5 bg-[#FFF2EC]/80 backdrop-blur-sm">
                 
-                {/* --- LEFT PANEL: STICKY, CENTERED, 90vh HEIGHT --- */}
-                <div className="w-full md:w-2/5 h-auto md:h-[90vh] sticky top-[5vh] flex flex-col justify-center items-center bg-[#FFF2EC]/90 backdrop-blur-sm z-10 px-12 rounded-sm border border-[#1a1a1a]/5">
-                    <div className="max-w-md w-full">
-                        <div className="mb-12">
-                            <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold mb-4 block opacity-70">
-                                02 // THE FRICTION AUDIT
-                            </span>
-                            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-6">
-                              Where your <br /> 
-                              <span className="text-[#E21E3F]">margin</span> <br />
-                              <span className="italic text-[#E21E3F]">evaporates.</span>
-                            </h2>
-                            <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
-                                Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.
-                            </p>
-                        </div>
-
-                        <div className="relative w-32 h-32 my-8 flex items-center justify-center">
-                           <AnimatePresence mode="wait">
-                             <motion.div 
-                               key={activeId}
-                               initial={{ opacity: 0, scale: 0.8, filter: 'blur(5px)' }}
-                               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                               exit={{ opacity: 0, scale: 0.8, filter: 'blur(5px)' }}
-                               transition={{ duration: 0.4 }}
-                               className="absolute inset-0"
-                             >
-                                <FrictionVisual type={activeId} />
-                             </motion.div>
-                           </AnimatePresence>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                           <div className="h-1.5 w-1.5 rounded-full bg-[#E21E3F] animate-pulse" />
-                           <span className="font-mono text-[10px] uppercase tracking-widest text-[#E21E3F]">
-                             DETECTING: {activeId.toUpperCase().replace('_', ' ')}
-                           </span>
-                        </div>
+                {/* LEFT PANEL: 40% (Sticky & Centered) */}
+                {/* Contains ONLY the Title and Intro Copy. No changing visuals here. */}
+                <div className="w-full md:w-2/5 h-auto md:h-screen sticky top-0 flex flex-col justify-center px-12 md:px-20 border-r border-[#1a1a1a]/5">
+                    <div className="max-w-md">
+                        <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold mb-6 block opacity-70">
+                            02 // THE FRICTION AUDIT
+                        </span>
+                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-8">
+                          Where your <br /> 
+                          <span className="text-[#E21E3F]">margin</span> <br />
+                          <span className="italic text-[#E21E3F]">evaporates.</span>
+                        </h2>
+                        <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">
+                            Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.
+                        </p>
                     </div>
                 </div>
 
-                {/* --- CENTER DIVIDER (Optional visual separation) --- */}
-                <div className="hidden md:block absolute left-[40%] top-0 bottom-0 w-[1px] bg-[#1a1a1a]/5 z-20">
-                    <motion.div style={{ height: progressHeight }} className="w-full bg-[#E21E3F]" />
-                </div>
-
-                {/* --- RIGHT PANEL: INVISIBLE LIST --- */}
+                {/* RIGHT PANEL: 60% (Scrolling Feed) */}
                 <div className="w-full md:w-3/5 bg-transparent relative">
-                    <div className="flex flex-col">
-                        {FRICTION_POINTS.map((point) => (
-                            <div 
-                                key={point.id} 
-                                className="h-[80vh] flex items-center justify-center p-8 md:p-24 border-b border-[#1a1a1a]/5 relative"
-                            >
-                                <motion.div 
-                                  initial={{ opacity: 0, filter: 'blur(10px)', y: 20 }}
-                                  whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                                  viewport={{ margin: "-20% 0px -20% 0px" }} 
-                                  onViewportEnter={() => setActiveId(point.id)}
-                                  transition={{ duration: 0.6, ease: "easeOut" }}
-                                  className="w-full max-w-xl relative"
-                                >
-                                    <h3 className="font-serif text-4xl md:text-5xl text-[#1a1a1a] leading-none tracking-tight mb-6">
-                                        {point.title}
-                                    </h3>
+                    {FRICTION_POINTS.map((point) => (
+                        <div key={point.id} className="min-h-[80vh] flex flex-col justify-center p-12 md:p-24 border-b border-[#1a1a1a]/5">
+                            <div className="max-w-xl">
+                                {/* 1. Number & Label */}
+                                <div className="flex items-center gap-4 mb-4">
+                                   <span className="font-serif italic text-4xl opacity-20">{point.number}</span>
+                                   <span className="font-mono text-xs text-red-600 border border-red-600/20 px-2 py-1 rounded-full font-bold">[{point.label}]</span>
+                                </div>
+
+                                {/* 2. Title & Stat */}
+                                <h3 className="font-serif text-4xl md:text-5xl mb-4 text-[#1a1a1a] tracking-tight leading-none">{point.title}</h3>
+                                <div className="font-mono text-xl text-red-600 font-bold mb-6">{point.stat}</div>
+
+                                {/* 3. Body */}
+                                <p className="font-sans text-lg md:text-xl opacity-70 mb-10 border-l-2 border-red-600/20 pl-6 leading-relaxed font-light">{point.body}</p>
+
+                                {/* 4. INLINE VISUAL (Updated) */}
+                                <div className="w-full h-48 mt-12 relative flex items-center justify-center">
+                                    {/* TRANSPARENT BACKGROUND, SUBTLE BORDER ONLY */}
+                                    <div className="absolute inset-0 bg-transparent border-t border-b border-[#1a1a1a]/5" />
                                     
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="h-[1px] w-8 bg-[#1a1a1a]/20" />
-                                        <span className="font-mono text-[9px] text-[#1a1a1a]/40 tracking-widest uppercase">Loss Metric</span>
-                                        <span className="font-mono text-xl font-bold text-[#E21E3F]">
-                                            {point.stat}
-                                        </span>
+                                    <FrictionVisual type={point.id} />
+                                    
+                                    {/* Caption floats freely */}
+                                    <div className="absolute bottom-2 left-0 font-mono text-[8px] text-[#1a1a1a]/30 uppercase tracking-widest">
+                                        FIG. {point.number} - LIVE_DATA
                                     </div>
-
-                                    <div className="border-l-2 border-[#E21E3F]/20 pl-6">
-                                        <p className="font-sans text-lg md:text-xl text-[#1a1a1a]/70 leading-relaxed font-light">
-                                            {point.body}
-                                        </p>
-                                    </div>
-                                </motion.div>
+                                </div>
                             </div>
-                        ))}
+                        </div>
+                    ))}
 
-                        {/* --- END CARD --- */}
-                        <div className="h-[80vh] flex items-center justify-center p-8 md:p-24 bg-transparent">
-                            <motion.div 
-                               initial={{ opacity: 0, scale: 0.95 }}
-                               whileInView={{ opacity: 1, scale: 1 }}
-                               transition={{ duration: 0.5 }}
-                               className="text-center max-w-2xl"
+                    {/* THE END CARD (CTA) */}
+                    <div className="h-[80vh] flex items-center justify-center p-12 md:p-24 bg-[#FFF2EC]">
+                        <div className="text-center max-w-2xl">
+                            <h3 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.9] mb-12">
+                                You have seen the <span className="text-[#E21E3F] italic">leak.</span> <br/>
+                                Now see the <span className="text-[#C5A059] italic">fix.</span>
+                            </h3>
+                            
+                            {/* Solid Black Button Logic with Gold Hover */}
+                            <button 
+                                onClick={() => onNavigate('architecture')}
+                                className="group relative inline-flex items-center justify-center px-10 py-5 bg-[#1a1a1a] text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] font-bold overflow-hidden transition-all duration-300"
                             >
-                                <h3 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.9] mb-12">
-                                    You have seen the <span className="text-[#E21E3F] italic">leak.</span> <br/>
-                                    Now see the <span className="text-[#C5A059] italic">fix.</span>
-                                </h3>
-                                
-                                <button 
-                                    onClick={() => onNavigate('architecture')}
-                                    className="group relative inline-flex items-center justify-center gap-4 px-8 py-4 bg-[#1a1a1a] text-white overflow-hidden transition-all duration-300 hover:bg-[#C5A059] hover:text-[#1a1a1a] border border-[#1a1a1a]"
-                                >
-                                    <span className="font-mono text-xs uppercase tracking-[0.2em] font-bold relative z-10">
-                                        [ EXPLORE_ARCHITECTURE ]
-                                    </span>
-                                </button>
-                            </motion.div>
+                                <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                                <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">
+                                    [ EXPLORE_ARCHITECTURE ]
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -463,7 +480,7 @@ const App: React.FC = () => {
                   </div>
                 </section>
 
-                {/* PREMIUM CAROUSEL */}
+                {/* CAROUSEL */}
                 <div 
                   className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30"
                   style={{ 
@@ -567,7 +584,7 @@ const App: React.FC = () => {
                   </div>
                 </motion.section>
 
-                {/* FRICTION SECTION (Global #02 - Contained V9) */}
+                {/* FRICTION SECTION (Global #02 - The Inline Audit V10) */}
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
                 
                 <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
