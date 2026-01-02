@@ -311,7 +311,7 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
                                 {/* 3. Body */}
                                 <p className="font-sans text-lg md:text-xl opacity-70 mb-10 border-l-2 border-red-600/20 pl-6 leading-relaxed font-light">{point.body}</p>
 
-                                {/* 4. INLINE VISUAL (Updated) */}
+                                {/* 4. INLINE VISUAL (Updated: Transparent Container) */}
                                 <div className="w-full h-48 mt-12 relative flex items-center justify-center">
                                     {/* TRANSPARENT BACKGROUND, SUBTLE BORDER ONLY */}
                                     <div className="absolute inset-0 bg-transparent border-t border-b border-[#1a1a1a]/5" />
@@ -399,10 +399,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleGlobalNavigate = (view: string, sectionId?: string) => {
-    if (view.startsWith('pillar') || ['landing', 'about', 'architecture', 'protocol', 'evidence', 'contact'].includes(view)) {
-        setCurrentView(view as ViewState);
-        window.scrollTo(0,0);
-    }
+    setCurrentView(view as ViewState);
+    window.scrollTo(0,0);
   };
 
   return (
@@ -413,7 +411,7 @@ const App: React.FC = () => {
       <PageTransition currentView={currentView}>
         <main className="flex-grow">
           <AnimatePresence mode="wait">
-            {currentView === 'landing' ? (
+            {currentView === 'landing' && (
               <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 
                 {/* HERO SECTION */}
@@ -594,13 +592,29 @@ const App: React.FC = () => {
                 <BookingCTA />
                 <TheArchitect />
               </motion.div>
-            ) : null}
+            )}
+
+            {currentView === 'about' && <AboutPage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'architecture' && <ArchitecturePage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'protocol' && <ProtocolPage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'evidence' && <EvidencePage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'contact' && <ContactPage onBack={() => handleGlobalNavigate('landing')} />}
+            
+            {/* PILLARS */}
+            {currentView === 'pillar1' && <Pillar1 onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'pillar2' && <Pillar2 onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'pillar3' && <PillarPage_Automation onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'pillar4' && <PillarPage_Cognitive onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'pillar5' && <PillarPage_Media onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'pillar6' && <PillarPage_Adoption onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+            {currentView === 'pillar7' && <PillarPage_Intelligence onBack={() => handleGlobalNavigate('architecture')} onNavigate={handleGlobalNavigate} />}
+
           </AnimatePresence>
         </main>
       </PageTransition>
 
       {/* FOOTER & MODAL */}
-      {currentView !== 'architecture' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
+      {currentView !== 'architecture' && !currentView.startsWith('pillar') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
       <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
     </div>
   );
