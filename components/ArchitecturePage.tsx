@@ -105,7 +105,7 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
             </p>
           </div>
           <div className="h-full flex items-center justify-center lg:justify-end min-h-[500px]">
-             {/* REPLACED: NEW 3D SUSPENSION COMPONENT */}
+             {/* 3D SUSPENSION COMPONENT */}
              <HeroVisual_Suspension />
           </div>
         </div>
@@ -249,4 +249,3 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
 };
 
 export default ArchitecturePage;
-    
