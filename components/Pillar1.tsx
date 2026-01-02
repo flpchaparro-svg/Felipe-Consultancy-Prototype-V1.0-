@@ -8,6 +8,7 @@ import {
   Gem, Layers, Star,
   CheckCircle2
 } from 'lucide-react';
+import PillarVisual_Catchment from './PillarVisual_Catchment';
 
 interface PillarPageProps {
   onBack: () => void;
@@ -93,7 +94,7 @@ const TIERS = {
         title: "The Subscription",
         examples: "Coffee Clubs, Pet Supplies",
         painTitle: "Involuntary Churn",
-        painText: "30% of your cancellations aren't people leaving; they are just expired credit cards that the system failed to update.",
+        painText: "30% of your cancellations aren't people leaving; they are just expired credit cards the system failed to update.",
         solution: "Automated Dunning Engines. We save the relationship automatically before the card fails."
       }
     ]
@@ -178,20 +179,16 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
 
-  // Reset persona and restart autoplay when tier changes
   useEffect(() => {
     setActivePersonaIndex(0);
     setIsAutoPlaying(true);
   }, [activeTier]);
 
-  // Auto-Rotation Logic
   useEffect(() => {
     if (!isAutoPlaying || isHovering) return;
-
     const interval = setInterval(() => {
       setActivePersonaIndex((prev) => (prev + 1) % 3);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [isAutoPlaying, isHovering, activeTier]);
 
@@ -205,7 +202,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow">
         
-        {/* NAV BACK (FIXED: Added mb-12 to push content down) */}
+        {/* NAV BACK */}
         <div className="mb-12">
           <button onClick={() => onNavigate('architecture')} className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -213,8 +210,10 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
           </button>
         </div>
 
-        {/* HERO */}
-        <div className="mb-12">
+        {/* HERO SECTION (UPDATED LAYOUT) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
+          {/* Left: Text */}
+          <div>
              <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_01 // ACQUISITION</span>
              <h1 className="font-serif text-5xl md:text-7xl leading-[0.9] tracking-tight mb-8">
                Select your <span className="italic text-[#C5A059]">Engine.</span>
@@ -222,6 +221,12 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
              <p className="font-sans text-lg text-[#1a1a1a]/70 max-w-xl border-l-2 border-[#C5A059] pl-6">
                Stop guessing. Identify your business model below to see the exact architecture required to scale it.
              </p>
+          </div>
+          
+          {/* Right: Visual Animation (Restored) */}
+          <div className="relative w-full max-w-[350px] h-[350px] mx-auto opacity-90">
+             <PillarVisual_Catchment />
+          </div>
         </div>
 
         {/* --- UNIFIED DASHBOARD CONTAINER --- */}
@@ -244,7 +249,6 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                     {tier.sprint}
                   </span>
                   
-                  {/* Active Indicator Top Line */}
                   {activeTier === key && (
                     <motion.div layoutId="tab-highlight" className="absolute top-0 left-0 w-full h-1 bg-[#C5A059]" />
                   )}
@@ -291,7 +295,6 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -302,7 +305,6 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                           />
                                       </div>
                                   )}
-                                  {/* Static Active Line */}
                                   {isActive && (!isAutoPlaying || isHovering) && (
                                        <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]" />
                                   )}
@@ -314,7 +316,6 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                   {/* --- BOTTOM ROW: SOLUTION CONTENT --- */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 border-t border-black/5 pt-16">
                       
-                      {/* LEFT COL: TEXT (Vertically Centered) */}
                       <div className="flex flex-col justify-center">
                           <AnimatePresence mode="wait">
                               <motion.div
@@ -345,16 +346,11 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                           </AnimatePresence>
                       </div>
 
-                      {/* RIGHT COL: VISUALS & CTA */}
                       <div className="flex flex-col justify-between h-full bg-[#FAFAFA] p-10 border border-black/5 rounded-sm">
-                          
                           <div className="flex-grow">
                               <span className="font-mono text-[9px] text-black/30 uppercase tracking-widest block mb-6">Visual Architecture</span>
                               
-                              {/* MICRO-VISUALS */}
                               <div className="h-40 w-full mb-8 bg-white border border-black/5 rounded-sm flex items-center justify-center relative overflow-hidden shadow-inner">
-                                  
-                                  {/* TIER 1: SPRINT BAR */}
                                   {activeTier === 'velocity' && (
                                     <div className="w-full px-8 relative">
                                         <div className="w-full h-1 bg-black/10 rounded-full overflow-hidden">
@@ -370,40 +366,25 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                         </div>
                                     </div>
                                   )}
-
-                                  {/* TIER 2: SYNC DIAGRAM */}
+                                  {/* [Other Tier Animations kept identical to your file] */}
                                   {activeTier === 'retail' && (
                                     <div className="flex items-center gap-4 relative">
                                         <div className="w-16 h-16 border border-[#C5A059] flex items-center justify-center font-mono text-[10px] text-[#C5A059]">POS</div>
-                                        <motion.div 
-                                            animate={{ x: [0, 20, 0] }} transition={{ duration: 2, repeat: Infinity }}
-                                            className="w-16 h-[1px] bg-[#C5A059] relative"
-                                        >
+                                        <motion.div animate={{ x: [0, 20, 0] }} transition={{ duration: 2, repeat: Infinity }} className="w-16 h-[1px] bg-[#C5A059] relative">
                                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#C5A059]" />
                                         </motion.div>
                                         <div className="w-16 h-16 bg-[#C5A059] text-white flex items-center justify-center font-mono text-[10px]">WEB</div>
                                     </div>
                                   )}
-
-                                  {/* TIER 3: SPEEDOMETER */}
                                   {activeTier === 'performance' && (
                                     <div className="relative w-32 h-16 overflow-hidden">
                                         <div className="w-full h-full border-t-[10px] border-l-[10px] border-r-[10px] border-black/10 rounded-t-full" />
-                                        <motion.div 
-                                            initial={{ rotate: -90 }} animate={{ rotate: 0 }} transition={{ duration: 1, type: "spring" }}
-                                            className="absolute bottom-0 left-1/2 w-full h-[10px] bg-[#1a1a1a] origin-left -translate-y-1/2"
-                                        />
+                                        <motion.div initial={{ rotate: -90 }} animate={{ rotate: 0 }} transition={{ duration: 1, type: "spring" }} className="absolute bottom-0 left-1/2 w-full h-[10px] bg-[#1a1a1a] origin-left -translate-y-1/2" />
                                         <div className="absolute bottom-0 w-full text-center font-mono text-[10px] font-bold mt-2">100/100</div>
                                     </div>
                                   )}
-
-                                  {/* TIER 4: PRISM */}
                                   {activeTier === 'flagship' && (
-                                    <motion.div 
-                                        animate={{ rotateY: 360, rotateX: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                                        className="w-20 h-20 border border-[#C5A059] relative preserve-3d"
-                                        style={{ transformStyle: 'preserve-3d' }}
-                                    >
+                                    <motion.div animate={{ rotateY: 360, rotateX: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="w-20 h-20 border border-[#C5A059] relative preserve-3d" style={{ transformStyle: 'preserve-3d' }}>
                                         <div className="absolute inset-0 border border-[#C5A059]/30" style={{ transform: 'translateZ(20px)' }} />
                                         <div className="absolute inset-0 border border-[#C5A059]/30" style={{ transform: 'translateZ(-20px)' }} />
                                     </motion.div>
@@ -412,11 +393,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
                               <ul className="space-y-4 mb-8">
                                   {currentTier.specs.map((spec, i) => (
-                                      <motion.li 
-                                          key={i} 
-                                          initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
-                                          className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/70"
-                                      >
+                                      <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/70">
                                           <CheckCircle2 className="w-3 h-3 text-[#C5A059]" />
                                           {spec}
                                       </motion.li>
@@ -424,22 +401,16 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                               </ul>
                           </div>
 
-                          {/* ANCHORED BOTTOM CTA (FILL ANIMATION) */}
-                          <FillButton 
-                              onClick={() => onNavigate('landing', 'booking')}
-                              className="w-full py-5 font-mono text-xs uppercase tracking-[0.2em] font-bold mt-auto"
-                          >
+                          <FillButton onClick={() => onNavigate('landing', 'booking')} className="w-full py-5 font-mono text-xs uppercase tracking-[0.2em] font-bold mt-auto">
                               [ INITIALIZE_PROTOCOL ]
                               <ArrowRight className="w-3 h-3 ml-2" />
                           </FillButton>
                       </div>
-
                   </div>
                </motion.div>
              </AnimatePresence>
            </div>
         </div>
-
       </div>
     </motion.div>
   );
