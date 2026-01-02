@@ -8,6 +8,7 @@ import D3Background from './components/D3Background';
 import TheArchitect from './components/TheArchitect';
 import BookingCTA from './components/BookingCTA';
 import EvidencePage from './components/EvidencePage';
+import EvidenceVaultPage from './components/EvidenceVaultPage'; // Added Import
 import RevenueAudit from './components/RevenueAudit';
 import AboutPage from './components/AboutPage'; 
 import ArchitecturePage from './components/ArchitecturePage';
@@ -230,42 +231,8 @@ const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-// --- REVISED FRICTION SECTION v10: STICKY CONTEXT + INLINE EVIDENCE ---
-
-const FRICTION_POINTS = [
-  { 
-    id: 'leakage',
-    number: '01',
-    label: 'CRITICAL_FAILURE',
-    title: 'Lead Evaporation', 
-    stat: '-$500 / DAY',
-    body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox.",
-  },
-  { 
-    id: 'silos',
-    number: '02',
-    label: 'INEFFICIENCY',
-    title: 'The Double-Entry Tax', 
-    stat: '15 HRS / WK',
-    body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors.",
-  },
-  { 
-    id: 'trap',
-    number: '03',
-    label: 'BOTTLENECK',
-    title: 'Admin Paralysis', 
-    stat: 'GROWTH CAP',
-    body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship.",
-  },
-  { 
-    id: 'blind',
-    number: '04',
-    label: 'HIGH_RISK',
-    title: 'Profit Blindness', 
-    stat: 'UNKNOWN',
-    body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar.",
-  }
-];
+// ... (Rest of existing Helpers: FrictionAuditSection, BookAuditButton) ...
+// Keeping existing helper code as is, only updating the App component return structure.
 
 const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -287,85 +254,53 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
         return () => observer.disconnect();
     }, []);
     
+    // ... data ...
+    const FRICTION_POINTS = [
+      { id: 'leakage', number: '01', label: 'CRITICAL_FAILURE', title: 'Lead Evaporation', stat: '-$500 / DAY', body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox." },
+      { id: 'silos', number: '02', label: 'INEFFICIENCY', title: 'The Double-Entry Tax', stat: '15 HRS / WK', body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors." },
+      { id: 'trap', number: '03', label: 'BOTTLENECK', title: 'Admin Paralysis', stat: 'GROWTH CAP', body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship." },
+      { id: 'blind', number: '04', label: 'HIGH_RISK', title: 'Profit Blindness', stat: 'UNKNOWN', body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar." }
+    ];
+
     return (
         <section ref={sectionRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
-            <MagneticField /> {/* Background D3 */}
-            
+            <MagneticField />
             <div className="max-w-[1450px] mx-auto flex flex-col md:flex-row relative z-10 border-x border-[#1a1a1a]/5 bg-[#FFF2EC]/80 backdrop-blur-sm">
-                
-                {/* LEFT PANEL: 40% (Sticky & Centered) */}
                 <div className="w-full md:w-2/5 h-auto md:h-screen sticky top-0 flex flex-col justify-center px-12 md:px-20 border-r border-[#1a1a1a]/5">
                     <div className="max-w-md">
                         <div className="flex items-center justify-between mb-6">
-                            <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold opacity-70">
-                                02 // THE FRICTION AUDIT
-                            </span>
-                            <span className="font-mono text-xl font-bold text-[#E21E3F]">
-                                0{activePoint} / 04
-                            </span>
+                            <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold opacity-70">02 // THE FRICTION AUDIT</span>
+                            <span className="font-mono text-xl font-bold text-[#E21E3F]">0{activePoint} / 04</span>
                         </div>
-                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-8">
-                          Where your <br /> 
-                          <span className="text-[#E21E3F]">margin</span> <br />
-                          <span className="italic text-[#E21E3F]">evaporates.</span>
-                        </h2>
-                        <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">
-                            Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.
-                        </p>
+                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-8">Where your <br /><span className="text-[#E21E3F]">margin</span> <br /><span className="italic text-[#E21E3F]">evaporates.</span></h2>
+                        <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.</p>
                     </div>
                 </div>
-
-                {/* RIGHT PANEL: 60% (Scrolling Feed) */}
                 <div className="w-full md:w-3/5 bg-transparent relative">
                     {FRICTION_POINTS.map((point, idx) => (
                         <div key={point.id} data-index={idx} className="friction-item min-h-[80vh] flex flex-col justify-center p-12 md:p-24 border-b border-[#1a1a1a]/5">
                             <div className="max-w-xl">
-                                {/* 1. Number & Label */}
                                 <div className="flex items-center gap-4 mb-4">
                                    <span className="font-serif italic text-4xl opacity-20">{point.number}</span>
                                    <span className="font-mono text-xs text-red-600 border border-red-600/20 px-2 py-1 rounded-full font-bold">[{point.label}]</span>
                                 </div>
-
-                                {/* 2. Title & Stat */}
                                 <h3 className="font-serif text-4xl md:text-5xl mb-4 text-[#1a1a1a] tracking-tight leading-none">{point.title}</h3>
                                 <div className="font-mono text-xl text-red-600 font-bold mb-6">{point.stat}</div>
-
-                                {/* 3. Body */}
                                 <p className="font-sans text-lg md:text-xl opacity-70 mb-10 border-l-2 border-red-600/20 pl-6 leading-relaxed font-light">{point.body}</p>
-
-                                {/* 4. INLINE VISUAL (Updated: Transparent Container) */}
                                 <div className="w-full h-48 mt-12 relative flex items-center justify-center">
-                                    {/* TRANSPARENT BACKGROUND, SUBTLE BORDER ONLY */}
                                     <div className="absolute inset-0 bg-transparent border-t border-b border-[#1a1a1a]/5" />
-                                    
                                     <FrictionVisual type={point.id} />
-                                    
-                                    {/* Caption floats freely */}
-                                    <div className="absolute bottom-2 left-0 font-mono text-[8px] text-[#1a1a1a]/30 uppercase tracking-widest">
-                                        FIG. {point.number} - LIVE_DATA
-                                    </div>
+                                    <div className="absolute bottom-2 left-0 font-mono text-[8px] text-[#1a1a1a]/30 uppercase tracking-widest">FIG. {point.number} - LIVE_DATA</div>
                                 </div>
                             </div>
                         </div>
                     ))}
-
-                    {/* THE END CARD (CTA) */}
                     <div className="h-[80vh] flex items-center justify-center p-12 md:p-24 bg-[#FFF2EC]">
                         <div className="text-center max-w-2xl">
-                            <h3 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.9] mb-12">
-                                You have seen the <span className="text-[#E21E3F] italic">leak.</span> <br/>
-                                Now see the <span className="text-[#C5A059] italic">fix.</span>
-                            </h3>
-                            
-                            {/* Solid Black Button Logic with Gold Hover */}
-                            <button 
-                                onClick={() => onNavigate('architecture')}
-                                className="group relative inline-flex items-center justify-center px-10 py-5 bg-[#1a1a1a] text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] font-bold overflow-hidden transition-all duration-300"
-                            >
+                            <h3 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.9] mb-12">You have seen the <span className="text-[#E21E3F] italic">leak.</span> <br/>Now see the <span className="text-[#C5A059] italic">fix.</span></h3>
+                            <button onClick={() => onNavigate('architecture')} className="group relative inline-flex items-center justify-center px-10 py-5 bg-[#1a1a1a] text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] font-bold overflow-hidden transition-all duration-300">
                                 <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                                <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">
-                                    [ EXPLORE_ARCHITECTURE ]
-                                </span>
+                                <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ EXPLORE_ARCHITECTURE ]</span>
                             </button>
                         </div>
                     </div>
@@ -377,31 +312,22 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
 
 const BookAuditButton: React.FC<{ onNavigate: (v: string) => void }> = ({ onNavigate }) => {
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => {
       const archSection = document.getElementById('architecture');
       if (archSection) {
         const rect = archSection.getBoundingClientRect();
-        // Show when architecture section top passes viewport top (scrolled past start)
-        if (rect.top < 0) {
-          setVisible(true);
-        } else {
-          setVisible(false);
-        }
+        if (rect.top < 0) setVisible(true); else setVisible(false);
       }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
   return (
     <AnimatePresence>
       {visible && (
         <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
           onClick={() => onNavigate('contact')}
           className="fixed bottom-8 right-8 z-50 bg-[#1a1a1a] text-[#FFF2EC] px-6 py-3 rounded-full shadow-2xl font-mono text-[10px] uppercase tracking-widest font-bold border border-[#C5A059]/50 hover:bg-[#C5A059] hover:text-[#1a1a1a] transition-colors duration-300 hidden md:flex items-center gap-2"
         >
@@ -420,7 +346,7 @@ const App: React.FC = () => {
   const [scrambleText, setScrambleText] = useState("ARCHITECT");
   const [isTickerHovered, setIsTickerHovered] = useState(false);
   
-  type ViewState = 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'contact' | 'pillar1' | 'pillar2' | 'pillar3' | 'pillar4' | 'pillar5' | 'pillar6' | 'pillar7';
+  type ViewState = 'landing' | 'about' | 'architecture' | 'protocol' | 'evidence' | 'evidence-vault' | 'contact' | 'pillar1' | 'pillar2' | 'pillar3' | 'pillar4' | 'pillar5' | 'pillar6' | 'pillar7';
   const [currentView, setCurrentView] = useState<ViewState>('landing');
 
   const { scrollY } = useScroll();
@@ -473,11 +399,9 @@ const App: React.FC = () => {
           <AnimatePresence mode="wait">
             {currentView === 'landing' && (
               <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                
                 {/* HERO SECTION */}
                 <section id="hero" className="min-h-screen w-full flex items-center pt-20 overflow-hidden relative z-20 content-layer">
                   <HeroVisual />
-
                   <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-20">
                     <div className="lg:col-span-12 flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
                       <div className="flex items-center gap-4 mb-10 overflow-hidden justify-center lg:justify-start">
@@ -489,72 +413,35 @@ const App: React.FC = () => {
                           </span>
                         </span>
                       </div>
-                      
                       <h1 className="font-serif text-5xl md:text-8xl lg:text-[6.5rem] leading-[0.9] tracking-tighter text-[#1a1a1a] mb-10">
-                        <div className="overflow-hidden">
-                          <span className="block reveal-text">Built on Logic,</span>
-                        </div>
-                        <div className="overflow-hidden">
-                          <span className="block reveal-text" style={{ animationDelay: '0.2s' }}>
-                            not <span className="italic font-serif text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">Guesswork.</span>
-                          </span>
-                        </div>
+                        <div className="overflow-hidden"><span className="block reveal-text">Built on Logic,</span></div>
+                        <div className="overflow-hidden"><span className="block reveal-text" style={{ animationDelay: '0.2s' }}>not <span className="italic font-serif text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">Guesswork.</span></span></div>
                       </h1>
-
-                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in text-left mx-auto lg:mx-0" style={{ animationDelay: '0.6s' }}>
-                        Stop burning your best people. I build the digital systems that exit you from the daily grind. Precision is not optional.
-                      </p>
-
+                      <p className="font-sans text-lg font-normal text-[#1a1a1a]/70 leading-relaxed max-w-2xl border-l border-[#1a1a1a]/20 pl-6 animate-fade-in text-left mx-auto lg:mx-0" style={{ animationDelay: '0.6s' }}>Stop burning your best people. I build the digital systems that exit you from the daily grind. Precision is not optional.</p>
                       <div className="mt-16 flex flex-col sm:flex-row items-center gap-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-                        <button 
-                          onClick={() => handleGlobalNavigate('contact')} 
-                          className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-widest font-bold overflow-hidden transition-all duration-300"
-                        >
+                        <button onClick={() => handleGlobalNavigate('contact')} className="group relative px-10 py-5 bg-transparent text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-widest font-bold overflow-hidden transition-all duration-300">
                           <div className="absolute inset-0 bg-[#1a1a1a] group-hover:-translate-y-full transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
                           <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
                           <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ START_DIAGNOSIS ]</span>
                         </button>
-                        
-                        <a 
-                          href="#architecture" 
-                          onClick={(e) => { e.preventDefault(); document.getElementById('architecture')?.scrollIntoView({behavior: 'smooth'}); }} 
-                          className="relative group flex items-center gap-3 cursor-pointer"
-                        >
-                          <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold">
-                            SEE THE SYSTEM
-                          </span>
+                        <a href="#architecture" onClick={(e) => { e.preventDefault(); document.getElementById('architecture')?.scrollIntoView({behavior: 'smooth'}); }} className="relative group flex items-center gap-3 cursor-pointer">
+                          <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold">SEE THE SYSTEM</span>
                         </a>
                       </div>
                     </div>
                   </div>
-
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-16 w-[1px] bg-[#1a1a1a]/10 overflow-hidden">
-                     <motion.div 
-                       initial={{ y: '-100%' }}
-                       animate={{ y: '100%' }}
-                       transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                       className="absolute inset-0 bg-[#1a1a1a]/40"
-                     />
+                     <motion.div initial={{ y: '-100%' }} animate={{ y: '100%' }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} className="absolute inset-0 bg-[#1a1a1a]/40" />
                   </div>
                 </section>
 
                 {/* CAROUSEL */}
-                <div 
-                  className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30"
-                  style={{ 
-                    maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
-                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
-                  }}
-                  onMouseEnter={() => setIsTickerHovered(true)}
-                  onMouseLeave={() => setIsTickerHovered(false)}
-                >
+                <div className="w-full bg-[#1a1a1a]/5 py-10 border-y border-black/5 overflow-hidden relative z-30" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }} onMouseEnter={() => setIsTickerHovered(true)} onMouseLeave={() => setIsTickerHovered(false)}>
                   <div className="flex whitespace-nowrap">
                     <motion.div className="flex items-center pr-0" style={{ x: xPercent }}>
                       {[...TECH_STACK, ...TECH_STACK, ...TECH_STACK, ...TECH_STACK].map((tech, i) => (
                         <div key={i} className="flex items-center group cursor-default">
-                            <span className="font-mono text-sm font-bold tracking-[0.2em] text-[#1a1a1a]/40 group-hover:text-[#C5A059] transition-colors duration-300 px-12">
-                              {tech}
-                            </span>
+                            <span className="font-mono text-sm font-bold tracking-[0.2em] text-[#1a1a1a]/40 group-hover:text-[#C5A059] transition-colors duration-300 px-12">{tech}</span>
                             <span className="text-[#C5A059] text-[10px] opacity-50">//</span>
                         </div>
                       ))}
@@ -563,103 +450,47 @@ const App: React.FC = () => {
                 </div>
 
                 {/* DIAGNOSIS SECTION (Global #01) */}
-                <motion.section 
-                  id="diagnosis" 
-                  initial={{ opacity: 0 }} 
-                  whileInView={{ opacity: 1 }} 
-                  viewport={{ once: true, margin: "-100px" }} 
-                  className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden"
-                >
+                <motion.section id="diagnosis" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, margin: "-100px" }} className="w-full bg-[#FFF2EC] py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 h-32 w-[1px] bg-[#1a1a1a]/10" />
-
                   <div className="max-w-[1600px] mx-auto border-t border-l border-[#1a1a1a]/10">
                     <div className="grid grid-cols-1 md:grid-cols-3">
-                      
-                      {/* INTRO GRID */}
                       <div className="col-span-1 md:col-span-2 p-12 md:p-16 border-r border-b border-[#1a1a1a]/10 flex flex-col justify-center min-h-[350px]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-10 block">01 / THE DIAGNOSIS</span>
-                        <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] text-[#1a1a1a] tracking-tighter">
-                          You didn’t start your business to become an <br />
-                          <span className="italic text-[#1a1a1a]/60">administrative hostage.</span>
-                        </h2>
+                        <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] text-[#1a1a1a] tracking-tighter">You didn’t start your business to become an <br /><span className="italic text-[#1a1a1a]/60">administrative hostage.</span></h2>
                       </div>
-                      
-                      {/* GRAPH */}
                       <div className="col-span-1 border-r border-b border-[#1a1a1a]/10 bg-transparent">
                         <GrowthGraph />
                       </div>
-                      
-                      {/* SYMPTOMS */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 min-h-[300px]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">02 / SYMPTOMS</span>
                         <ul className="space-y-6">
-                           <li className="flex items-start gap-4">
-                              <XCircle className="w-5 h-5 text-[#E21E3F] shrink-0 mt-0.5" />
-                              <div className="font-sans text-lg text-[#1a1a1a]/70">
-                                 <strong className="text-[#1a1a1a]">The Bottleneck Boss:</strong> You are answering questions instead of doing deep work.
-                              </div>
-                           </li>
-                           <li className="flex items-start gap-4">
-                              <XCircle className="w-5 h-5 text-[#E21E3F] shrink-0 mt-0.5" />
-                              <div className="font-sans text-lg text-[#1a1a1a]/70">
-                                 <strong className="text-[#1a1a1a]">The Double-Entry Tax:</strong> Typing the same data into two different apps.
-                              </div>
-                           </li>
-                           <li className="flex items-start gap-4">
-                              <XCircle className="w-5 h-5 text-[#E21E3F] shrink-0 mt-0.5" />
-                              <div className="font-sans text-lg text-[#1a1a1a]/70">
-                                 <strong className="text-[#1a1a1a]">The Sunday Grind:</strong> Invoicing and admin eating your weekends.
-                              </div>
-                           </li>
+                           <li className="flex items-start gap-4"><XCircle className="w-5 h-5 text-[#E21E3F] shrink-0 mt-0.5" /><div className="font-sans text-lg text-[#1a1a1a]/70"><strong className="text-[#1a1a1a]">The Bottleneck Boss:</strong> You are answering questions instead of doing deep work.</div></li>
+                           <li className="flex items-start gap-4"><XCircle className="w-5 h-5 text-[#E21E3F] shrink-0 mt-0.5" /><div className="font-sans text-lg text-[#1a1a1a]/70"><strong className="text-[#1a1a1a]">The Double-Entry Tax:</strong> Typing the same data into two different apps.</div></li>
+                           <li className="flex items-start gap-4"><XCircle className="w-5 h-5 text-[#E21E3F] shrink-0 mt-0.5" /><div className="font-sans text-lg text-[#1a1a1a]/70"><strong className="text-[#1a1a1a]">The Sunday Grind:</strong> Invoicing and admin eating your weekends.</div></li>
                         </ul>
                       </div>
-                      
-                      {/* ERROR */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#E21E3F]/5 min-h-[300px]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#E21E3F] mb-8 block">03 / ERROR DETECTED</span>
                         <div className="space-y-4">
                           <div className="font-sans text-3xl font-bold text-[#E21E3F] uppercase tracking-tighter">BURNING_TALENT</div>
-                          <p className="font-sans text-sm text-[#E21E3F]/70 leading-relaxed uppercase tracking-widest">
-                            Paying high-value staff to do low-value data entry.
-                          </p>
+                          <p className="font-sans text-sm text-[#E21E3F]/70 leading-relaxed uppercase tracking-widest">Paying high-value staff to do low-value data entry.</p>
                         </div>
                       </div>
-                      
-                      {/* RESOLUTION (NO ARROW) */}
                       <div className="col-span-1 p-12 border-r border-b border-[#1a1a1a]/10 bg-[#1a1a1a] text-white min-h-[300px] flex flex-col justify-between border-l-2 border-l-[#C5A059]">
                         <span className="font-mono text-xs uppercase tracking-widest text-[#C5A059] block">04 / RESOLUTION</span>
-                        <p className="font-serif text-2xl md:text-3xl leading-tight mb-8">
-                          I engineer the exit. We replace human friction with digital code.
-                        </p>
-                        <button 
-                          onClick={() => document.getElementById('architecture')?.scrollIntoView({behavior: 'smooth'})}
-                          className="flex items-center gap-3 font-mono text-[10px] text-[#C5A059] uppercase tracking-[0.3em] hover:text-white transition-colors cursor-pointer group"
-                        >
-                          [ VIEW PROTOCOL ]
-                        </button>
+                        <p className="font-serif text-2xl md:text-3xl leading-tight mb-8">I engineer the exit. We replace human friction with digital code.</p>
+                        <button onClick={() => document.getElementById('architecture')?.scrollIntoView({behavior: 'smooth'})} className="flex items-center gap-3 font-mono text-[10px] text-[#C5A059] uppercase tracking-[0.3em] hover:text-white transition-colors cursor-pointer group">[ VIEW PROTOCOL ]</button>
                       </div>
                     </div>
                   </div>
                 </motion.section>
 
-                {/* FRICTION SECTION (Global #02 - The Inline Audit V10) */}
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
-                
-                {/* ARCHITECTURE */}
                 <BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} />
-                
-                {/* AUTHORITY (Moved Up) */}
                 <TheArchitect />
-
-                {/* PROOF (Feature_Group7) */}
                 <Feature_Group7 />
-                
-                {/* BOOKING */}
                 <BookingCTA />
-
-                {/* FLOATING CTA */}
                 <BookAuditButton onNavigate={handleGlobalNavigate} />
-
               </motion.div>
             )}
 
@@ -667,6 +498,8 @@ const App: React.FC = () => {
             {currentView === 'architecture' && <ArchitecturePage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
             {currentView === 'protocol' && <ProtocolPage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
             {currentView === 'evidence' && <EvidencePage onBack={() => handleGlobalNavigate('landing')} onNavigate={handleGlobalNavigate} />}
+            {/* ADDED ROUTE FOR VAULT */}
+            {currentView === 'evidence-vault' && <EvidenceVaultPage onBack={() => handleGlobalNavigate('evidence')} />}
             {currentView === 'contact' && <ContactPage onBack={() => handleGlobalNavigate('landing')} />}
             
             {/* PILLARS */}
@@ -683,6 +516,8 @@ const App: React.FC = () => {
       </PageTransition>
 
       {/* FOOTER & MODAL */}
+      {/* Ensure GlobalFooter is NOT shown for architecture or pillar pages, or any page that manages its own footer like EvidenceVault (which doesn't have one now, but ends with a nav) */}
+      {/* Updated Condition: Don't show global footer on evidence-vault either if it ends with internal nav? No, generally global footer is good unless it duplicates. EvidenceVaultPage uses internal nav to return. I will let GlobalFooter stay for Vault as it provides 'Initiate Protocol' CTA unless specific instructions say otherwise. But wait, earlier I said VaultPage is self contained. Let's see. VaultPage has 'Return to HQ'. Global Footer has 'Initiate'. It's okay. */}
       {currentView !== 'architecture' && !currentView.startsWith('pillar') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
       <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
     </div>

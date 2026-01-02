@@ -3,7 +3,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import ProtocolVisual_Geodesic from './ProtocolVisual_Geodesic';
-import GlobalFooter from './GlobalFooter';
 
 interface ProtocolPageProps {
   onBack: () => void;
@@ -139,21 +138,25 @@ const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack, onNavigate }) => {
           </div>
         </div>
 
-        {/* BOTTOM CTA (MATCHING EVIDENCE PAGE) */}
-        <div className="bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-24 relative overflow-hidden">
+        {/* BOTTOM CTA - FIXED: Spacing, Dark Theme, Slide Animation */}
+        <div className="bg-zinc-900 border border-zinc-800 text-zinc-100 p-12 md:p-24 relative overflow-hidden mb-32 rounded-sm">
            <div className="relative z-10 flex flex-col items-center text-center">
               <h2 className="font-serif text-5xl md:text-6xl mb-8">Ready to start <br/> the <span className="italic text-[#C5A059]">Process?</span></h2>
+              
               <button 
                 onClick={() => onNavigate('landing', 'booking')}
-                className="px-8 py-4 bg-[#FFF2EC] text-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] hover:scale-105 transition-transform"
+                className="group relative px-10 py-5 bg-transparent text-zinc-100 border border-zinc-700 font-mono text-xs uppercase tracking-[0.3em] font-bold overflow-hidden transition-all duration-300 hover:border-zinc-500"
               >
-                 [ INITIATE_AUDIT ]
+                 <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
+                 <span className="relative z-10 group-hover:text-zinc-900 transition-colors duration-500 flex items-center gap-3">
+                    [ INITIATE_AUDIT ] <ArrowRight className="w-4 h-4" />
+                 </span>
               </button>
            </div>
         </div>
 
       </div>
-      <GlobalFooter onNavigate={onNavigate} />
+      {/* GLOBAL FOOTER REMOVED (Handled by App.tsx) */}
     </motion.div>
   );
 };
