@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as LucideIcons from 'lucide-react';
@@ -23,7 +24,7 @@ const TechnicalLabel: React.FC<{ active: boolean; text: string }> = ({ active, t
         } else {
           clearInterval(interval);
         }
-      }, 40);
+      }, 30); // Faster typing for technical feel
       return () => clearInterval(interval);
     } else {
       setDisplayText(text);
@@ -31,7 +32,7 @@ const TechnicalLabel: React.FC<{ active: boolean; text: string }> = ({ active, t
   }, [active, text]);
   
   return (
-    <div className={`font-mono text-[8px] uppercase tracking-[0.2em] transition-colors duration-500 h-3 ${active ? 'text-[#E21E3F]' : 'text-black/30'}`}>
+    <div className={`font-mono text-[8px] uppercase tracking-[0.1em] transition-colors duration-500 h-3 truncate ${active ? 'text-[#E21E3F]' : 'text-black/30'}`}>
       {displayText}
     </div>
   );
@@ -39,6 +40,7 @@ const TechnicalLabel: React.FC<{ active: boolean; text: string }> = ({ active, t
 
 const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   const [activeId, setActiveId] = useState<string>(SERVICES[0].id);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // Auto-rotate on mobile only
   useEffect(() => {
@@ -74,7 +76,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         </div>
 
         {/* 2. TOP DISPLAY (Visualizer) */}
-        <div className="relative w-full h-[400px] bg-[#1a1a1a] rounded-sm shadow-2xl overflow-hidden group border border-black/20 mb-4">
+        <div className="relative w-full h-[400px] bg-[#1a1a1a] rounded-sm shadow-2xl overflow-hidden group border border-black/20 mb-12">
              <ViewportViz type={activeService.visualPrompt} />
              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)] z-10" />
              
@@ -97,6 +99,9 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                    transition={{ duration: 0.3 }}
                    className="max-w-4xl pointer-events-auto"
                  >
+                   <div className="mb-2 font-mono text-[9px] text-[#C5A059] uppercase tracking-widest">
+                      [{activeService.systemGroup || 'SYSTEM_UNDEFINED'}]
+                   </div>
                    <h3 className="text-white text-3xl md:text-5xl font-serif mb-4 leading-none tracking-tighter">
                       {activeService.title}
                    </h3>
@@ -124,42 +129,99 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
              </div>
         </div>
 
-        {/* 3. BOTTOM GRID (7 Columns) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
-          {SERVICES.map((service, idx) => {
-            const isActive = activeId === service.id;
-            
-            return (
-              <div 
-                key={service.id}
-                onMouseEnter={() => setActiveId(service.id)}
-                onClick={() => onServiceClick(service)}
-                className={`relative p-4 border transition-all duration-300 cursor-pointer min-h-[140px] flex flex-col justify-between group rounded-sm overflow-hidden ${
-                  isActive 
-                    ? 'bg-[#1a1a1a] border-[#C5A059] shadow-xl -translate-y-1' 
-                    : 'bg-white border-black/10 hover:border-black/30'
-                }`}
-              >
-                 <div className="flex justify-between items-start mb-2">
-                   <span className={`text-[9px] font-mono font-bold tracking-widest block ${isActive ? 'text-[#C5A059]' : 'text-black/30'}`}>
-                      0{idx + 1}
-                   </span>
-                   <LucideIcons.ArrowDownRight className={`w-3 h-3 ${isActive ? 'text-[#C5A059]' : 'text-black/20'}`} />
-                 </div>
+        {/* 3. BOTTOM GRID (7 Columns with System Grouping) */}
+        <div className="relative">
+          
+          {/* SYSTEM BRACKETS (Desktop Visual Grouping) */}
+          <div className="absolute inset-0 hidden lg:grid grid-cols-7 gap-2 -top-6 -bottom-4 pointer-events-none">
+             {/* ACQUISITION (Cols 1-3) */}
+             <div className="col-span-3 border-t border-x border-[#E21E3F]/20 bg-[#E21E3F]/5 relative rounded-t-sm">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFF2EC] px-2 font-mono text-[9px] text-[#E21E3F] uppercase tracking-widest font-bold">
+                   SYS_01 [ ACQUISITION ]
+                </div>
+             </div>
+             {/* VELOCITY (Cols 4-6) */}
+             <div className="col-span-3 border-t border-x border-[#C5A059]/20 bg-[#C5A059]/5 relative rounded-t-sm">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFF2EC] px-2 font-mono text-[9px] text-[#C5A059] uppercase tracking-widest font-bold">
+                   SYS_02 [ VELOCITY ]
+                </div>
+             </div>
+             {/* INTELLIGENCE (Col 7) */}
+             <div className="col-span-1 border-t border-x border-[#1a1a1a]/20 bg-[#1a1a1a]/5 relative rounded-t-sm">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FFF2EC] px-2 font-mono text-[9px] text-[#1a1a1a] uppercase tracking-widest font-bold">
+                   SYS_03
+                </div>
+             </div>
+          </div>
 
-                 <div>
-                   <h4 className={`text-xs md:text-sm font-serif uppercase tracking-wider leading-tight mb-2 ${isActive ? 'text-white' : 'text-[#1a1a1a]'}`}>
-                     {service.title}
-                   </h4>
-                   <TechnicalLabel active={isActive} text={service.technicalLabel} />
-                 </div>
-                 
-                 {isActive && (
-                    <motion.div layoutId="active-bar" className="absolute bottom-0 left-0 h-[2px] bg-[#C5A059] w-full" />
-                 )}
-              </div>
-            );
-          })}
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 relative z-10">
+            {SERVICES.map((service, idx) => {
+              const isActive = activeId === service.id;
+              const isHovered = hoveredId === service.id;
+              
+              return (
+                <div 
+                  key={service.id}
+                  onMouseEnter={() => { setActiveId(service.id); setHoveredId(service.id); }}
+                  onMouseLeave={() => setHoveredId(null)}
+                  onClick={() => onServiceClick(service)}
+                  className={`relative p-4 border transition-all duration-300 cursor-pointer min-h-[160px] flex flex-col justify-between group rounded-sm overflow-hidden ${
+                    isActive 
+                      ? 'bg-[#1a1a1a] border-[#C5A059] shadow-xl -translate-y-2' 
+                      : 'bg-white border-black/10 hover:border-black/30'
+                  }`}
+                >
+                   <div className="flex justify-between items-start mb-2">
+                     <span className={`text-[9px] font-mono font-bold tracking-widest block ${isActive ? 'text-[#C5A059]' : 'text-black/30'}`}>
+                        0{idx + 1}
+                     </span>
+                     <LucideIcons.ArrowDownRight className={`w-3 h-3 ${isActive ? 'text-[#C5A059]' : 'text-black/20'}`} />
+                   </div>
+
+                   <div className="relative z-10">
+                     <h4 className={`text-xs md:text-sm font-serif uppercase tracking-wider leading-tight mb-2 ${isActive ? 'text-white' : 'text-[#1a1a1a]'}`}>
+                       {service.title}
+                     </h4>
+                     <TechnicalLabel active={isActive} text={service.technicalLabel} />
+                   </div>
+                   
+                   {/* MOBILE PROGRESS BAR */}
+                   {isActive && (
+                      <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#333] lg:hidden">
+                         <motion.div 
+                           initial={{ width: '0%' }}
+                           animate={{ width: '100%' }}
+                           transition={{ duration: 4, ease: "linear" }}
+                           className="h-full bg-[#C5A059]"
+                         />
+                      </div>
+                   )}
+
+                   {/* DESKTOP ACTIVE BAR */}
+                   {isActive && (
+                      <motion.div layoutId="active-bar" className="hidden lg:block absolute bottom-0 left-0 h-[2px] bg-[#C5A059] w-full" />
+                   )}
+
+                   {/* LIVE WIRE (Hover Connector to Next Pillar) */}
+                   {/* Only show if hovered, active, and not the last item */}
+                   <AnimatePresence>
+                     {isActive && idx < SERVICES.length - 1 && (
+                       <motion.div 
+                         initial={{ opacity: 0, x: -10 }}
+                         animate={{ opacity: 1, x: 0 }}
+                         exit={{ opacity: 0, x: 10 }}
+                         className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-50 items-center pointer-events-none"
+                       >
+                          <div className="w-4 h-[1px] bg-[#C5A059]" />
+                          <LucideIcons.ChevronRight className="w-3 h-3 text-[#C5A059] -ml-1" />
+                       </motion.div>
+                     )}
+                   </AnimatePresence>
+
+                </div>
+              );
+            })}
+          </div>
         </div>
 
       </div>

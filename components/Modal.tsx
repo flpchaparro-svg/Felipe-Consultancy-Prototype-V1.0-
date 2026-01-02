@@ -1,6 +1,7 @@
+
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
+import { X, CheckCircle2, ChevronRight, ArrowRight, AlertTriangle } from 'lucide-react';
 import { ServiceDetail } from '../types';
 import { COLORS } from '../constants';
 import ViewportViz from './ViewportViz';
@@ -75,8 +76,33 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
               </div>
 
               <div className="p-8 lg:p-16">
+                
+                {/* --- NEW DIAGNOSTIC CHECK --- */}
+                {service.symptom && (
+                  <div className="mb-12 p-6 border border-[#E21E3F]/20 bg-[#E21E3F]/5 flex flex-col md:flex-row items-start gap-6 rounded-sm">
+                    <div className="mt-1 w-8 h-8 rounded-full border border-[#E21E3F] flex items-center justify-center shrink-0 bg-white">
+                      <div className="w-3 h-3 bg-[#E21E3F] rounded-full animate-pulse" />
+                    </div>
+                    <div className="flex-grow">
+                      <div className="font-mono text-[10px] text-[#E21E3F] uppercase tracking-[0.2em] font-bold mb-2">
+                        System_Diagnostic
+                      </div>
+                      <p className="font-serif text-xl md:text-2xl text-[#1a1a1a] italic leading-tight">
+                        "{service.symptom}"
+                      </p>
+                    </div>
+                    <div className="self-center md:self-start shrink-0">
+                       <span className="px-3 py-1 bg-[#E21E3F] text-white text-[9px] font-mono uppercase tracking-widest font-bold rounded-full">
+                         Problem Detected
+                       </span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="mb-12">
-                  <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.4em] font-bold mb-4 block uppercase">System_Blueprint_2025</span>
+                  <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.4em] font-bold mb-4 block uppercase">
+                    System_Blueprint_2025 // {service.systemGroup || 'CORE'}
+                  </span>
                   <h2 className="text-5xl lg:text-7xl font-serif font-light leading-none mb-4">
                     {service.title}
                   </h2>
