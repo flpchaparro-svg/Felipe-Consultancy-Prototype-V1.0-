@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -13,31 +14,31 @@ const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack, onNavigate }) => {
   const steps = [
     {
       id: '01',
-      title: 'The Audit',
-      subtitle: 'Diagnosis',
-      text: "We stop guessing. Before we build anything, I look at your raw data, your current tools, and your team's workflow. We need to identify exactly where you are leaking time and money to establish a baseline for success."
+      title: 'The Friction Audit',
+      subtitle: 'Scientific Diagnosis',
+      text: "We stop guessing. I don't just look at your analytics; I look for 'Minor Labour'—the repetitive tasks burning your team. We map the data leaks to establish a baseline for friction."
     },
     {
       id: '02',
-      title: 'The Strategy',
-      subtitle: 'Design',
-      text: "Once we know the problem, we design the solution. We map out exactly how the new system will work—which tools talk to which, and who is responsible for what—before we write a single line of code. We agree on the plan, and we lock the scope."
+      title: 'Agnostic Navigation',
+      subtitle: 'Unbiased Design',
+      text: "I am not a 'HubSpot Partner' or a 'Salesforce Shop'. I am your Navigator. I survey the entire market to find the 'Right Tool for Right Now,' ensuring you never overpay for features you don't need."
     },
     {
       id: '03',
-      title: 'The Build',
-      subtitle: 'Execution',
+      title: 'The Engineering Sprint',
+      subtitle: 'High-Velocity Execution',
       text: (
         <>
-          This phase adapts to the specific Architecture we are deploying. If we are building for <strong className="text-[#E21E3F]">Acquisition</strong>, I am rewiring your CRM and lead flows. If we are targeting <strong className="text-[#C5A059]">Velocity</strong>, I am training AI agents and automating content pipelines. If we are deploying <strong className="text-black">Intelligence</strong>, I am connecting your fragmented data sources into a central command tower. Regardless of the system, I execute autonomously while you focus on the business.
+          We reject the '6-Month Waterfall'. We build in <strong className="text-[#E21E3F]">Sprints</strong>. Whether it's a 7-day <strong className="text-[#C5A059]">Velocity</strong> build or a 24-hour <strong className="text-black">Terminal</strong> launch, we deploy the asset quickly.
         </>
       )
     },
     {
       id: '04',
-      title: 'The Handoff',
-      subtitle: 'Launch',
-      text: "I don't just finish the build and leave. A system is only useful if your team knows how to drive it. I train your staff, document the protocols, and only hand over the keys once the engine is stable and running smoothly."
+      title: 'The Adoption Shift',
+      subtitle: 'Behavioral Engineering',
+      text: "Technology fails when humans resist it. I don't just send you a login; I engineer the training (Pillar 6) to ensure your staff prefers the new way. We don't leave until the system is your team's new normal."
     }
   ];
 
