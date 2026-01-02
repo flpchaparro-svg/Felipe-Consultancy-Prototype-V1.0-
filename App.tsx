@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import * as d3 from 'd3';
@@ -25,7 +26,7 @@ import HeroVisual from './components/HeroVisual';
 import PageTransition from './components/PageTransition';
 import Feature_Group7 from './components/Feature_Group7';
 import { ServiceDetail } from './types';
-import { ChevronDown, AlertTriangle, Database, Clock, EyeOff, ArrowDown, CheckCircle2, XCircle } from 'lucide-react';
+import { ChevronDown, AlertTriangle, Database, Clock, EyeOff, ArrowDown, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 
 const TECH_STACK = [
   'XERO', 'SHOPIFY', 'PYTHON', 'OPENAI_API', 'MAKE', 'HUBSPOT', 
@@ -268,6 +269,23 @@ const FRICTION_POINTS = [
 
 const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
+    const [activePoint, setActivePoint] = useState(1);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = Number(entry.target.getAttribute('data-index'));
+                    if (!isNaN(idx)) setActivePoint(idx + 1);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const items = document.querySelectorAll('.friction-item');
+        items.forEach(el => observer.observe(el));
+
+        return () => observer.disconnect();
+    }, []);
     
     return (
         <section ref={sectionRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
@@ -276,12 +294,16 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
             <div className="max-w-[1450px] mx-auto flex flex-col md:flex-row relative z-10 border-x border-[#1a1a1a]/5 bg-[#FFF2EC]/80 backdrop-blur-sm">
                 
                 {/* LEFT PANEL: 40% (Sticky & Centered) */}
-                {/* Contains ONLY the Title and Intro Copy. No changing visuals here. */}
                 <div className="w-full md:w-2/5 h-auto md:h-screen sticky top-0 flex flex-col justify-center px-12 md:px-20 border-r border-[#1a1a1a]/5">
                     <div className="max-w-md">
-                        <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold mb-6 block opacity-70">
-                            02 // THE FRICTION AUDIT
-                        </span>
+                        <div className="flex items-center justify-between mb-6">
+                            <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold opacity-70">
+                                02 // THE FRICTION AUDIT
+                            </span>
+                            <span className="font-mono text-xl font-bold text-[#E21E3F]">
+                                0{activePoint} / 04
+                            </span>
+                        </div>
                         <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-8">
                           Where your <br /> 
                           <span className="text-[#E21E3F]">margin</span> <br />
@@ -295,8 +317,8 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
 
                 {/* RIGHT PANEL: 60% (Scrolling Feed) */}
                 <div className="w-full md:w-3/5 bg-transparent relative">
-                    {FRICTION_POINTS.map((point) => (
-                        <div key={point.id} className="min-h-[80vh] flex flex-col justify-center p-12 md:p-24 border-b border-[#1a1a1a]/5">
+                    {FRICTION_POINTS.map((point, idx) => (
+                        <div key={point.id} data-index={idx} className="friction-item min-h-[80vh] flex flex-col justify-center p-12 md:p-24 border-b border-[#1a1a1a]/5">
                             <div className="max-w-xl">
                                 {/* 1. Number & Label */}
                                 <div className="flex items-center gap-4 mb-4">
@@ -351,6 +373,44 @@ const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNa
             </div>
         </section>
     );
+};
+
+const BookAuditButton: React.FC<{ onNavigate: (v: string) => void }> = ({ onNavigate }) => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const archSection = document.getElementById('architecture');
+      if (archSection) {
+        const rect = archSection.getBoundingClientRect();
+        // Show when architecture section top passes viewport top (scrolled past start)
+        if (rect.top < 0) {
+          setVisible(true);
+        } else {
+          setVisible(false);
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          onClick={() => onNavigate('contact')}
+          className="fixed bottom-8 right-8 z-50 bg-[#1a1a1a] text-[#FFF2EC] px-6 py-3 rounded-full shadow-2xl font-mono text-[10px] uppercase tracking-widest font-bold border border-[#C5A059]/50 hover:bg-[#C5A059] hover:text-[#1a1a1a] transition-colors duration-300 hidden md:flex items-center gap-2"
+        >
+          <span>[ BOOK AUDIT ]</span>
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
 };
 
 const App: React.FC = () => {
@@ -457,7 +517,7 @@ const App: React.FC = () => {
                         
                         <a 
                           href="#architecture" 
-                          onClick={(e) => { e.preventDefault(); handleGlobalNavigate('architecture'); }} 
+                          onClick={(e) => { e.preventDefault(); document.getElementById('architecture')?.scrollIntoView({behavior: 'smooth'}); }} 
                           className="relative group flex items-center gap-3 cursor-pointer"
                         >
                           <span className="font-mono text-xs uppercase tracking-widest text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 group-hover:border-b-2 group-hover:pb-1 transition-all duration-300 font-bold">
@@ -572,7 +632,7 @@ const App: React.FC = () => {
                           I engineer the exit. We replace human friction with digital code.
                         </p>
                         <button 
-                          onClick={() => handleGlobalNavigate('architecture')}
+                          onClick={() => document.getElementById('architecture')?.scrollIntoView({behavior: 'smooth'})}
                           className="flex items-center gap-3 font-mono text-[10px] text-[#C5A059] uppercase tracking-[0.3em] hover:text-white transition-colors cursor-pointer group"
                         >
                           [ VIEW PROTOCOL ]
@@ -585,12 +645,21 @@ const App: React.FC = () => {
                 {/* FRICTION SECTION (Global #02 - The Inline Audit V10) */}
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
                 
-                <section id="architecture"><BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} /></section>
-                <section className="py-32 px-6 md:px-12 lg:px-20 border-t border-black/10 bg-[#FFF2EC]">
-                   <Feature_Group7 />
-                </section>
-                <BookingCTA />
+                {/* ARCHITECTURE */}
+                <BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} />
+                
+                {/* AUTHORITY (Moved Up) */}
                 <TheArchitect />
+
+                {/* PROOF (Feature_Group7) */}
+                <Feature_Group7 />
+                
+                {/* BOOKING */}
+                <BookingCTA />
+
+                {/* FLOATING CTA */}
+                <BookAuditButton onNavigate={handleGlobalNavigate} />
+
               </motion.div>
             )}
 

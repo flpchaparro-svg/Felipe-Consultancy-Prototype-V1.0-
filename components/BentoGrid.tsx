@@ -59,7 +59,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   const activeService = SERVICES.find(s => s.id === activeId) || SERVICES[0];
 
   return (
-    <section id="architecture" className="py-20 px-6 lg:px-12 bg-[#FFF2EC] border-t border-[#1a1a1a]/10">
+    <section id="architecture" className="py-32 px-6 lg:px-12 bg-[#FFF2EC] border-t border-[#1a1a1a]/10">
       <div className="max-w-screen-2xl mx-auto">
         
         {/* 1. HEADER (With Explanatory Copy) */}
@@ -132,7 +132,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         {/* 3. BOTTOM GRID (7 Columns with System Grouping) */}
         <div className="relative">
           
-          {/* SYSTEM BRACKETS (Desktop Visual Grouping) */}
+          {/* SYSTEM BRACKETS (Desktop Visual Grouping) - HIDDEN ON MOBILE */}
           <div className="absolute inset-0 hidden lg:grid grid-cols-7 gap-2 -top-6 -bottom-4 pointer-events-none">
              {/* ACQUISITION (Cols 1-3) */}
              <div className="col-span-3 border-t border-x border-[#E21E3F]/20 bg-[#E21E3F]/5 relative rounded-t-sm">
