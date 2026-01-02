@@ -78,8 +78,13 @@ const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack, onNavigate }) => {
           </div>
 
           {/* RIGHT: GEODESIC VISUAL */}
-          <div className="h-full min-h-[500px] flex items-center justify-center lg:justify-end">
-            <ProtocolVisual_Geodesic />
+          <div className="h-full min-h-[500px] flex flex-col items-center justify-center lg:items-end lg:justify-center relative">
+            <div className="w-full h-[500px] relative">
+               <ProtocolVisual_Geodesic />
+            </div>
+            <div className="font-mono text-[9px] text-[#1a1a1a]/30 uppercase tracking-widest mt-4">
+               [ STRUCTURE_ALLOWS_IMPROVISATION ]
+            </div>
           </div>
 
         </div>
@@ -93,16 +98,16 @@ const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack, onNavigate }) => {
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
               <div>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block font-bold">01 // The Outcome</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block font-bold">01 // Clarity over Complexity</span>
                 <p className="font-sans text-lg text-[#1a1a1a]/70 leading-relaxed">
-                  Most consultants sell you their time. I sell a solved problem. This distinction changes everything. Because I am focused on the Outcome rather than the Hour, my incentive is efficiency, not filling a timesheet.
+                  If we can't explain the solution to a business owner in a pub, it’s too complex. We reject 'Black Box' magic.
                 </p>
               </div>
               
               <div>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block font-bold">02 // The Truth</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40 mb-4 block font-bold">02 // Human-First Engineering</span>
                 <p className="font-sans text-lg text-[#1a1a1a]/70 leading-relaxed">
-                  We operate on <strong>Truth over Comfort</strong>. I am not here to validate your current processes; I am here to improve them. If a foundation is cracked, I will tell you. We don't patch symptoms; we fix the root cause.
+                  Technology serves people, not the other way around. If a tool makes your staff's life harder, it is a failure of architecture.
                 </p>
               </div>
            </div>
