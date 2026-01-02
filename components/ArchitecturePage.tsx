@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Target, Database, Zap, Cpu, Layers, Users, BarChart3, ArrowRight, ArrowDownRight, Activity } from 'lucide-react';
 import GlobalFooter from './GlobalFooter';
-import ArchitectureVisual_Layers from './ArchitectureVisual_Layers';
+import HeroVisual_Suspension from './HeroVisual_Suspension';
 
 interface ArchitecturePageProps {
   onBack: () => void;
@@ -103,20 +104,30 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
               A 7-Pillar Architecture designed to remove human friction from your revenue cycle.
             </p>
           </div>
-          <div className="h-full flex items-center justify-center lg:justify-end">
-             <ArchitectureVisual_Layers />
+          <div className="h-full flex items-center justify-center lg:justify-end min-h-[500px]">
+             {/* REPLACED: NEW 3D SUSPENSION COMPONENT */}
+             <HeroVisual_Suspension />
           </div>
         </div>
 
         {/* SYSTEMS GRID */}
         <div className="space-y-32 mb-32">
           {systems.map((system) => (
-            <div key={system.id} className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-black/5 pt-12">
-              <div className="lg:col-span-4">
+            <div key={system.id} className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-t border-black/5 pt-12 relative group/system">
+              <div className="lg:col-span-4 relative flex flex-col">
                 <div className={`font-mono text-[10px] uppercase tracking-[0.25em] font-bold mb-6 ${system.accent}`}>{system.label}</div>
                 <h2 className="font-serif text-4xl mb-6">{system.title}</h2>
                 <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed max-w-md">{system.description}</p>
-                <ArrowDownRight className={`w-8 h-8 mt-8 ${system.accent} opacity-50`} />
+                
+                {/* Circuit Line Logic */}
+                <div className="mt-auto hidden lg:block relative h-12 w-full">
+                   <ArrowDownRight className={`w-8 h-8 ${system.accent} opacity-50 absolute bottom-0 left-0`} />
+                   {/* The Circuit Line */}
+                   <div className={`absolute top-1/2 left-10 right-[-48px] h-[1px] opacity-20 ${system.bgAccent}`} />
+                   <div className={`absolute top-1/2 right-[-48px] w-1 h-1 rounded-full ${system.bgAccent} opacity-40`} />
+                </div>
+                {/* Mobile Arrow */}
+                <ArrowDownRight className={`w-8 h-8 mt-8 lg:hidden ${system.accent} opacity-50`} />
               </div>
               
               <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -136,34 +147,50 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
 
                         {/* ANIMATION 2: SPINNING TURBINE (VELOCITY) */}
                         {pillar.id === 'v2' && (
-                          <motion.div 
-                            animate={{ rotate: 360 }} 
-                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                            className="w-32 h-32 border-2 border-dashed border-[#C5A059] rounded-full flex items-center justify-center"
-                          >
-                             <div className="w-24 h-24 border border-[#C5A059]/50 rounded-full" />
-                             <div className="absolute w-full h-1 bg-[#C5A059]/20" />
-                             <div className="absolute w-1 h-full bg-[#C5A059]/20" />
-                          </motion.div>
+                          <>
+                            <motion.div 
+                              animate={{ rotate: 360 }} 
+                              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                              className="w-32 h-32 border-2 border-dashed border-[#C5A059] rounded-full flex items-center justify-center"
+                            >
+                               <div className="w-24 h-24 border border-[#C5A059]/50 rounded-full" />
+                               <div className="absolute w-full h-1 bg-[#C5A059]/20" />
+                               <div className="absolute w-1 h-full bg-[#C5A059]/20" />
+                            </motion.div>
+                            
+                            {/* RPM OVERLAY */}
+                            <div className="absolute top-4 right-4 font-mono text-[10px] text-[#C5A059] text-right pointer-events-none">
+                                <div className="flex justify-end gap-4"><span>EFFICIENCY:</span><span className="font-bold">94%</span></div>
+                                <div className="flex justify-end gap-4 mt-1"><span>RPM:</span><span className="font-bold">4,200</span></div>
+                            </div>
+                          </>
                         )}
 
                         {/* ANIMATION 3: SCANNING RADAR (INTELLIGENCE) */}
                         {pillar.id === 'v3' && (
-                           <div className="w-full max-w-[200px] h-32 border-b border-black/20 relative overflow-hidden flex items-end justify-between px-2">
-                              {[1,2,3,4,5,6].map(i => (
-                                 <motion.div 
-                                   key={i} 
-                                   className="w-2 bg-black" 
-                                   animate={{ height: [10, 40 + Math.random()*50, 10] }} 
-                                   transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }} 
-                                 />
-                              ))}
-                              <motion.div 
-                                className="absolute top-0 left-0 w-full h-1 bg-black/10"
-                                animate={{ top: ['0%', '100%'] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                              />
-                           </div>
+                           <>
+                             <div className="w-full max-w-[200px] h-32 border-b border-black/20 relative overflow-hidden flex items-end justify-between px-2">
+                                {[1,2,3,4,5,6].map(i => (
+                                   <motion.div 
+                                     key={i} 
+                                     className="w-2 bg-black" 
+                                     animate={{ height: [10, 40 + Math.random()*50, 10] }} 
+                                     transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }} 
+                                   />
+                                ))}
+                                <motion.div 
+                                  className="absolute top-0 left-0 w-full h-1 bg-black/10"
+                                  animate={{ top: ['0%', '100%'] }}
+                                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                                />
+                             </div>
+                             
+                             {/* TARGETS LOCKED OVERLAY */}
+                             <div className="absolute top-4 left-4 font-mono text-[10px] text-[#1a1a1a] flex items-center pointer-events-none">
+                               <span className="animate-pulse mr-2 text-[#1a1a1a]">●</span>
+                               TARGETS_LOCKED: 03
+                             </div> 
+                           </>
                         )}
 
                         <div className="absolute bottom-6 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50" style={{ color: pillar.accent }}>
@@ -222,3 +249,4 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
 };
 
 export default ArchitecturePage;
+    

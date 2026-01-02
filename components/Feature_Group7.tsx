@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, AlertTriangle, ArrowRight, Activity, Globe, Zap, X, Terminal } from 'lucide-react';
@@ -129,9 +128,9 @@ const Feature_Group7: React.FC = () => {
               <motion.div 
                 className="relative z-10 flex flex-col items-center gap-4"
                 variants={{
-                  idle: { grayscale: 1, opacity: 0.5, scale: 1 },
+                  idle: { filter: "grayscale(100%)", opacity: 0.5, scale: 1 },
                   scan: { 
-                    grayscale: 0, 
+                    filter: "grayscale(0%)", 
                     opacity: 1, 
                     scale: 1.05, 
                     transition: { duration: 0.4, delay: 0.3 } // Hits early
