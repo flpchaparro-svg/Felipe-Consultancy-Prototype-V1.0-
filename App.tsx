@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import * as d3 from 'd3';
@@ -392,7 +391,9 @@ const App: React.FC = () => {
   return (
     <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC] min-h-screen flex flex-col">
       <D3Background /> 
-      <GlobalHeader currentView={currentView} onNavigate={handleGlobalNavigate} scrolled={scrolled} />
+      {currentView !== 'contact' && (
+        <GlobalHeader currentView={currentView} onNavigate={handleGlobalNavigate} scrolled={scrolled} />
+      )}
 
       <PageTransition currentView={currentView}>
         <main className="flex-grow">
