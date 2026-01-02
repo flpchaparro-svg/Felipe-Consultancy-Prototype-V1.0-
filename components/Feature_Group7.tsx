@@ -27,7 +27,7 @@ const TerminalLog: React.FC = () => {
     <div className="w-full bg-[#1a1a1a] p-6 border-t border-black/10 font-mono text-xs overflow-hidden">
       <div className="flex items-center gap-2 text-white/20 mb-4 border-b border-white/10 pb-2">
         <Terminal className="w-3 h-3 text-[#C5A059]" />
-        <span className="text-[#C5A059] uppercase tracking-widest">System_Log // Optimization_Sequence</span>
+        <span className="text-[#C5A059] uppercase tracking-widest">System_Log // Optimisation_Sequence</span>
       </div>
       <div className="space-y-2">
         {lines.map((line, i) => (
@@ -55,30 +55,30 @@ const Feature_Group7: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="w-full bg-[#1a1a1a] py-32 border-y border-white/10 relative z-20">
+    <section className="w-full bg-[#FFF2EC] py-32 border-y border-black/5 relative z-20">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
         
         {/* --- SECTION HEADER --- */}
         <div className="mb-16 max-w-2xl">
-          <span className="font-mono text-xs text-[#FFF2EC] tracking-widest mb-4 block uppercase font-bold">
+          <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">
             // PROOF_OF_WORK
           </span>
-          <h2 className="font-serif text-4xl md:text-6xl text-[#FFF2EC] leading-[0.95] mb-6">
+          <h2 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.95] mb-6">
             The System in <span className="italic text-[#E21E3F]">Action.</span>
           </h2>
-          <p className="font-sans text-lg text-[#FFF2EC]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">
+          <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">
             Don't just take my word for it. Analyze the telemetry from a recent deployment.
           </p>
         </div>
 
-        {/* --- THE TRIGGER CARD --- */}
+        {/* --- THE TRIGGER CARD (Dark Device on Cream Desk) --- */}
         <motion.div 
           initial="idle"
           whileHover="scan"
           whileInView="scan"
           viewport={{ once: true, amount: 0.5 }}
           onClick={() => setIsModalOpen(true)}
-          className="w-full bg-[#1a1a1a] border border-white/10 p-1 rounded-sm overflow-hidden relative group cursor-pointer hover:border-[#C5A059]/50 transition-colors duration-500 shadow-2xl"
+          className="w-full bg-[#1a1a1a] border border-black/10 p-1 rounded-sm overflow-hidden relative group cursor-pointer hover:border-[#C5A059]/50 transition-colors duration-500 shadow-2xl"
         >
           
           {/* THE FORENSIC SCANNER OVERLAY */}
