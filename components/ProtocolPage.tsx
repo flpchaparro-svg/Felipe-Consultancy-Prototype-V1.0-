@@ -82,9 +82,6 @@ const ProtocolPage: React.FC<ProtocolPageProps> = ({ onBack, onNavigate }) => {
             <div className="w-full h-[500px] relative">
                <ProtocolVisual_Geodesic />
             </div>
-            <div className="font-mono text-[9px] text-[#1a1a1a]/30 uppercase tracking-widest mt-4">
-               [ STRUCTURE_ALLOWS_IMPROVISATION ]
-            </div>
           </div>
 
         </div>

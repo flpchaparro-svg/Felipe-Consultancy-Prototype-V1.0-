@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useSpring, useAnimationFrame } from 'framer-motion';
 
@@ -109,10 +110,6 @@ const ProtocolVisual_Geodesic: React.FC = () => {
           })}
         </g>
       </svg>
-      
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[9px] text-[#1a1a1a]/30 uppercase tracking-widest pointer-events-none">
-         [ SYSTEM_TOPOLOGY // ROTATING ]
-      </div>
     </div>
   );
 };

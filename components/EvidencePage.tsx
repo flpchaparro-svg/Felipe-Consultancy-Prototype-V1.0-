@@ -1,6 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, XCircle, Gauge, Globe, Search, ArrowRight } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { ArrowLeft, ArrowRight, ShieldCheck, Activity, Database } from 'lucide-react';
+import GlobalFooter from './GlobalFooter';
 import EvidenceVisual_Compare from './EvidenceVisual_Compare';
 
 interface EvidencePageProps {
@@ -8,193 +10,125 @@ interface EvidencePageProps {
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const EvidencePage: React.FC<EvidencePageProps> = ({ onBack, onNavigate }) => {
+// --- HELPER: ANIMATED COUNTER ---
+const CountUp: React.FC<{ value: number, suffix?: string }> = ({ value, suffix = '' }) => {
+  const [count, setCount] = useState(0);
+  const ref = React.useRef(null);
+  const isInView = useInView(ref, { once: true });
 
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const duration = 2000;
+    const incrementTime = duration / value;
+    
+    const timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start >= value) clearInterval(timer);
+    }, incrementTime);
+    
+    return () => clearInterval(timer);
+  }, [value, isInView]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+};
+
+const EvidencePage: React.FC<EvidencePageProps> = ({ onBack, onNavigate }) => {
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }}
-      className="min-h-screen bg-[#FFF2EC] text-[#1a1a1a] pt-32 pb-0 px-0 relative z-[150] overflow-x-hidden flex flex-col"
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#FFF2EC] text-[#1a1a1a] pt-32 relative z-[150] overflow-x-hidden flex flex-col">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow">
         
-        {/* NAV BACK */}
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-24">
-          <button 
-            onClick={() => onNavigate('landing')}
-            className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors"
-          >
+          <button onClick={onBack} className="group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] hover:text-[#C5A059] transition-colors">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            / Return_to_Base
+            / Return_to_HQ
           </button>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-30">CASE_LOG: GROUP_7</span>
         </div>
 
-        {/* --- SECTION 1: THE PHILOSOPHY --- */}
-        <div className="mb-32 max-w-4xl">
-           <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ CASE_STUDY_LOGIC</span>
-           <h1 className="font-serif text-5xl md:text-7xl leading-[0.9] tracking-tight mb-8">
-             I don't just build. <br />
-             <span className="italic text-[#1a1a1a]/40">I fix.</span>
-           </h1>
-           <p className="font-sans text-xl text-[#1a1a1a]/70 leading-relaxed border-l-2 border-[#C5A059] pl-6 mb-8">
-             Throughout my career, I have driven feature improvements and engineered digital turnarounds for diverse clients. 
-             I don't look at a website as "Art"; I look at it as a bucket. If the bucket has holes (slow speed, bad SEO, confusing UX), 
-             pouring more water (ads) is a waste of money.
-           </p>
-           <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed">
-             Here is an example of a forensic turnaround executed right here in Sydney.
-           </p>
+        {/* HERO */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32 items-center">
+           <div>
+              <span className="font-mono text-xs text-[#0F766E] tracking-widest mb-6 block uppercase font-bold">/ ENGINEERING_AUDIT_001</span>
+              <h1 className="font-serif text-5xl md:text-7xl leading-[0.9] mb-8">
+                 Is your architecture <br/><span className="italic text-[#0F766E]">leaking?</span>
+              </h1>
+              <p className="font-sans text-xl text-[#1a1a1a]/60 leading-relaxed max-w-md border-l-2 border-[#0F766E] pl-6">
+                 We don't guess. We measure. Here is what happens when you replace "Opinion" with "Engineering."
+              </p>
+           </div>
+           <div>
+              {/* THE NEW VISUAL SLIDER */}
+              <EvidenceVisual_Compare />
+           </div>
         </div>
 
-        {/* --- SECTION 2: THE CASE STUDY (GROUP 7) --- */}
-        <div className="mb-12 border-t border-black/10 pt-12">
-           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
-              <div>
-                 <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#1a1a1a]/40 block mb-2">Project_01</span>
-                 <h2 className="font-serif text-4xl">Group 7 Security</h2>
+        {/* METRICS GRID (With Live Counters) */}
+        <div className="mb-32 grid grid-cols-1 md:grid-cols-3 gap-8">
+           <div className="p-8 border border-black/10 bg-white hover:border-[#0F766E] transition-colors group">
+              <Activity className="w-8 h-8 text-[#0F766E] mb-6" />
+              <div className="font-mono text-xs uppercase tracking-widest text-black/40 mb-2">Google Speed Index</div>
+              <div className="text-6xl font-serif text-[#1a1a1a] mb-2 group-hover:text-[#0F766E] transition-colors">
+                 <CountUp value={94} suffix="/100" />
               </div>
-              <div className="mt-4 md:mt-0 font-mono text-[10px] uppercase tracking-widest flex gap-4">
-                 <span className="bg-[#1a1a1a] text-white px-3 py-1">Migration</span>
-                 <span className="bg-[#1a1a1a] text-white px-3 py-1">Performance</span>
-                 <span className="bg-[#1a1a1a] text-white px-3 py-1">SEO</span>
-              </div>
+              <p className="text-sm text-black/50">Up from 42/100. Friction eliminated.</p>
            </div>
-
-           {/* THE VISUAL SLIDER */}
-           <div className="mb-24 shadow-2xl">
-              <EvidenceVisual_Compare 
-                beforeLabel="GROUP7SECURITY.COM (OLD)" 
-                afterLabel="GROUP7SECURITY.COM.AU (NEW)"
-              />
-           </div>
-
-           {/* THE FORENSIC ANALYSIS GRID */}
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
-              
-              {/* LEFT: THE DIAGNOSIS (BEFORE) */}
-              <div className="bg-red-50/50 p-10 border border-red-100">
-                 <div className="flex items-center gap-3 mb-8 text-[#E21E3F]">
-                    <XCircle className="w-6 h-6" />
-                    <h3 className="font-mono text-sm uppercase tracking-widest font-bold">The Problem (Before)</h3>
-                 </div>
-                 <ul className="space-y-8">
-                    <li className="flex gap-4">
-                       <Globe className="w-5 h-5 text-[#E21E3F] shrink-0" />
-                       <div>
-                          <h4 className="font-bold text-[#1a1a1a] text-sm mb-1">Domain Confusion (.com)</h4>
-                          <p className="text-sm text-[#1a1a1a]/60 leading-relaxed">
-                             The client was using a generic global domain. Google didn't know if they were in Sydney or Seattle. Zero local authority signal.
-                          </p>
-                       </div>
-                    </li>
-                    <li className="flex gap-4">
-                       <Search className="w-5 h-5 text-[#E21E3F] shrink-0" />
-                       <div>
-                          <h4 className="font-bold text-[#1a1a1a] text-sm mb-1">Keyword Void</h4>
-                          <p className="text-sm text-[#1a1a1a]/60 leading-relaxed">
-                             The content was generic "Corporate Speak." It didn't target specific services like "Mobile Patrols" or "Concierge Security," making them invisible to intent-based search.
-                          </p>
-                       </div>
-                    </li>
-                    <li className="flex gap-4">
-                       <Gauge className="w-5 h-5 text-[#E21E3F] shrink-0" />
-                       <div>
-                          <h4 className="font-bold text-[#1a1a1a] text-sm mb-1">Heavy Code Load</h4>
-                          <p className="text-sm text-[#1a1a1a]/60 leading-relaxed">
-                             Bloated assets and unoptimized scripts meant the site took 4+ seconds to load on mobile. Users bounced before seeing the offer.
-                          </p>
-                       </div>
-                    </li>
-                 </ul>
-              </div>
-
-              {/* RIGHT: THE INTERVENTION (AFTER) */}
-              <div className="bg-emerald-50/50 p-10 border border-emerald-100">
-                 <div className="flex items-center gap-3 mb-8 text-[#0F766E]">
-                    <CheckCircle2 className="w-6 h-6" />
-                    <h3 className="font-mono text-sm uppercase tracking-widest font-bold">The Engineer's Fix</h3>
-                 </div>
-                 <ul className="space-y-8">
-                    <li className="flex gap-4">
-                       <Globe className="w-5 h-5 text-[#0F766E] shrink-0" />
-                       <div>
-                          <h4 className="font-bold text-[#1a1a1a] text-sm mb-1">Localized Authority (.com.au)</h4>
-                          <p className="text-sm text-[#1a1a1a]/60 leading-relaxed">
-                             We migrated to a local domain, sending a hard signal to Google that this business serves Australia. Immediate trust lift.
-                          </p>
-                       </div>
-                    </li>
-                    <li className="flex gap-4">
-                       <Search className="w-5 h-5 text-[#0F766E] shrink-0" />
-                       <div>
-                          <h4 className="font-bold text-[#1a1a1a] text-sm mb-1">Semantic Architecture</h4>
-                          <p className="text-sm text-[#1a1a1a]/60 leading-relaxed">
-                             I restructured the sitemap to match user intent. Specific pages for "Security Guards Sydney" and "Retail Security" to capture long-tail traffic.
-                          </p>
-                       </div>
-                    </li>
-                    <li className="flex gap-4">
-                       <Gauge className="w-5 h-5 text-[#0F766E] shrink-0" />
-                       <div>
-                          <h4 className="font-bold text-[#1a1a1a] text-sm mb-1">Performance Tuning</h4>
-                          <p className="text-sm text-[#1a1a1a]/60 leading-relaxed">
-                             Stripped the bloat. Optimized images. The new site loads instantly, improving both SEO rankings and User Experience (UX).
-                          </p>
-                       </div>
-                    </li>
-                 </ul>
-              </div>
-
-           </div>
-
-           {/* METRICS VISUAL */}
-           <div className="border-t border-black/10 pt-16 mb-24">
-              <h3 className="font-serif text-3xl mb-8 text-center">The Optimization Impact</h3>
-              <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-24">
-                 {/* METRIC 1 */}
-                 <div className="text-center">
-                    <div className="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-50">PageSpeed Performance</div>
-                    <div className="text-5xl md:text-6xl font-serif text-[#0F766E] mb-2">94/100</div>
-                    <div className="text-xs text-[#E21E3F] line-through decoration-red-500/50 opacity-50">Was 42/100</div>
-                 </div>
-                 {/* METRIC 2 */}
-                 <div className="text-center">
-                    <div className="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-50">SEO Structure</div>
-                    <div className="text-5xl md:text-6xl font-serif text-[#0F766E] mb-2">100%</div>
-                    <div className="text-xs text-[#E21E3F] line-through decoration-red-500/50 opacity-50">Was Unstructured</div>
-                 </div>
-                 {/* METRIC 3 */}
-                 <div className="text-center">
-                    <div className="font-mono text-[10px] uppercase tracking-widest mb-2 opacity-50">Local Signals</div>
-                    <div className="text-5xl md:text-6xl font-serif text-[#0F766E] mb-2">Native</div>
-                    <div className="text-xs text-[#E21E3F] line-through decoration-red-500/50 opacity-50">Was Global</div>
-                 </div>
-              </div>
-           </div>
-
-        </div>
-
-        {/* BOTTOM CTA */}
-        <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
-           <h2 className="font-serif text-5xl md:text-6xl mb-8">Do you have a <br/> <span className="italic text-[#E21E3F]">Digital Bucket?</span></h2>
-           <p className="font-sans text-lg text-[#1a1a1a]/60 max-w-lg mb-12">
-             Don't pour money into a leaking website. Let's fix the foundation first.
-           </p>
            
+           <div className="p-8 border border-black/10 bg-white hover:border-[#0F766E] transition-colors group">
+              <Database className="w-8 h-8 text-[#0F766E] mb-6" />
+              <div className="font-mono text-xs uppercase tracking-widest text-black/40 mb-2">Data Integrity</div>
+              <div className="text-6xl font-serif text-[#1a1a1a] mb-2 group-hover:text-[#0F766E] transition-colors">
+                 <CountUp value={100} suffix="%" />
+              </div>
+              <p className="text-sm text-black/50">Tracking accuracy. Zero lost leads.</p>
+           </div>
+
+           <div className="p-8 border border-black/10 bg-white hover:border-[#0F766E] transition-colors group">
+              <ShieldCheck className="w-8 h-8 text-[#0F766E] mb-6" />
+              <div className="font-mono text-xs uppercase tracking-widest text-black/40 mb-2">Lead Velocity</div>
+              <div className="text-6xl font-serif text-[#1a1a1a] mb-2 group-hover:text-[#0F766E] transition-colors">
+                 <CountUp value={12} suffix="s" />
+              </div>
+              <p className="text-sm text-black/50">Time to first response (Automation).</p>
+           </div>
+        </div>
+
+        {/* --- THE VAULT BRIDGE (NEW) --- */}
+        <div className="py-24 border-t border-black/10 flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
+           <div>
+              <h3 className="font-serif text-4xl text-[#1a1a1a]">Need more data?</h3>
+              <p className="font-sans text-lg text-[#1a1a1a]/60 mt-2 max-w-lg">
+                 One result is luck. A pattern is engineering. Access the full repository of performance audits across Trade, Law, and SaaS.
+              </p>
+           </div>
            <button 
-             onClick={() => onNavigate('landing', 'booking')}
-             className="w-auto px-12 py-4 bg-[#1a1a1a] text-[#FFF2EC] relative overflow-hidden group border border-[#1a1a1a]"
+             onClick={() => onNavigate('evidence-vault')}
+             className="group flex items-center gap-4 px-8 py-4 border border-[#1a1a1a] hover:bg-[#1a1a1a] hover:text-[#FFF2EC] transition-all duration-300"
            >
-             <div className="absolute inset-0 bg-[#FFF2EC] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-             <span className="relative z-10 flex items-center justify-center gap-4 group-hover:text-[#1a1a1a] transition-colors duration-500 font-mono text-[10px] uppercase tracking-[0.2em]">
-               [ AUDIT_MY_ARCHITECTURE ]
-               <ArrowRight className="w-3 h-3" />
+             <span className="font-mono text-xs uppercase tracking-[0.2em] font-bold">
+               [ OPEN_CASE_VAULT ]
              </span>
+             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
            </button>
         </div>
 
+        {/* BOOKING CTA */}
+        <div className="bg-[#1a1a1a] text-[#FFF2EC] p-12 md:p-24 relative overflow-hidden">
+           <div className="relative z-10 flex flex-col items-center text-center">
+              <h2 className="font-serif text-5xl md:text-6xl mb-8">Stop leaking <span className="italic text-[#0F766E]">revenue.</span></h2>
+              <button 
+                onClick={() => onNavigate('landing', 'booking')}
+                className="px-8 py-4 bg-[#FFF2EC] text-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] hover:scale-105 transition-transform"
+              >
+                 [ SCHEDULE_DIAGNOSTIC ]
+              </button>
+           </div>
+        </div>
+
       </div>
+      <GlobalFooter onNavigate={onNavigate} />
     </motion.div>
   );
 };
