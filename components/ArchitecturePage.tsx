@@ -3,8 +3,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Target, Database, Zap, Cpu, Layers, Users, BarChart3, ArrowRight, ArrowDownRight } from 'lucide-react';
 import GlobalFooter from './GlobalFooter';
-// FIX: Strict relative import to prevent "Module not found" error
 import HeroVisual_Suspension from './HeroVisual_Suspension';
+import { VizAcquisition, VizVelocity, VizIntelligence } from './ArchitecturePageVisuals';
 
 interface ArchitecturePageProps {
   onBack: () => void;
@@ -26,7 +26,7 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
         { id: 'pillar1', icon: Target, title: 'Digital Revenue', subtitle: 'The Catchment', text: 'Most websites are brochures; I build conversion engines. A high-performance digital catchment that feeds the ecosystem.' },
         { id: 'pillar2', icon: Database, title: 'Capture Core', subtitle: 'The Nervous System', text: 'The single source of truth. If a lead isn\'t tracked, it doesn\'t exist. I build the CRM architecture that remembers every interaction.' },
         { id: 'pillar3', icon: Zap, title: 'Auto-Fulfillment', subtitle: 'The Hands', text: 'Decoupling revenue from headcount. We automate the "boring" administrative work so your team can focus on the profitable work.' },
-        // VISUAL CARD 1: DATA INGEST
+        // VISUAL CARD 1: ACQUISITION
         { 
           id: 'v1', 
           isVisual: true, 
@@ -47,7 +47,7 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
         { id: 'pillar4', icon: Cpu, title: 'AI Agents', subtitle: 'The Voice', text: 'Digital Employees. I build Agentic AI that can reason, speak, and qualify leads 24/7 on your behalf.' },
         { id: 'pillar5', icon: Layers, title: 'Media Logistics', subtitle: 'The Presence', text: 'An asset supply chain. We turn raw expertise into authority assets and distribute them automatically across every channel.' },
         { id: 'pillar6', icon: Users, title: 'Internal Adoption', subtitle: 'The Culture', text: 'Protocol synchronization. I engineer the behavioral shift using micro-learning to ensure your team actually adopts the tools.' },
-        // VISUAL CARD 2: TURBINE
+        // VISUAL CARD 2: VELOCITY
         { 
           id: 'v2', 
           isVisual: true, 
@@ -66,7 +66,7 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
       borderAccent: 'border-[#1a1a1a]',
       pillars: [
         { id: 'pillar7', icon: BarChart3, title: 'The Control Tower', subtitle: 'The Eyes', text: 'Vision locked. A centralized executive dashboard that gives you the confidence to steer the ship.' },
-        // VISUAL CARD 3: RADAR
+        // VISUAL CARD 3: INTELLIGENCE
         { 
           id: 'v3', 
           isVisual: true, 
@@ -100,7 +100,7 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
               I don't sell hours. <br />
               <span className="italic text-black/20">I sell outcomes.</span>
             </h1>
-            <p className="font-sans text-xl text-[#1a1a1a]/60 leading-relaxed max-w-xl border-l-2 border-[#C5A059] pl-6">
+            <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed max-w-xl border-l-2 border-[#C5A059] pl-6">
               Most agencies sell "Ingredients" (SEO, Design, Ads). I sell "Systems." <br/>
               A 7-Pillar Architecture designed to remove human friction from your revenue cycle.
             </p>
@@ -130,9 +130,15 @@ const ArchitecturePage: React.FC<ArchitecturePageProps> = ({ onBack, onNavigate 
               <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {system.pillars.map((pillar: any) => (
                   pillar.isVisual ? (
-                    <div key={pillar.id} className="group p-8 bg-[#1a1a1a]/5 border border-black/5 flex flex-col items-center justify-center relative overflow-hidden h-full min-h-[300px]">
-                        {/* Visual Logic Retained from previous context */}
-                        <div className="absolute bottom-6 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50" style={{ color: pillar.accent }}>
+                    <div key={pillar.id} className="group p-0 bg-[#1a1a1a]/5 border border-black/5 flex flex-col items-center justify-center relative overflow-hidden h-full min-h-[300px]">
+                        {/* ANIMATION CONTAINER */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity duration-700">
+                           {pillar.id === 'v1' && <VizAcquisition color="#E21E3F" />}
+                           {pillar.id === 'v2' && <VizVelocity color="#C5A059" />}
+                           {pillar.id === 'v3' && <VizIntelligence color="#1a1a1a" />}
+                        </div>
+                        
+                        <div className="absolute bottom-6 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50 z-10 bg-white/50 px-2 py-1 backdrop-blur-md rounded-sm" style={{ color: pillar.accent }}>
                            [ {pillar.subtitle} ]
                         </div>
                     </div>

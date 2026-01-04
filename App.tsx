@@ -517,9 +517,9 @@ const App: React.FC = () => {
       </PageTransition>
 
       {/* FOOTER & MODAL */}
-      {/* Ensure GlobalFooter is NOT shown for architecture or pillar pages, or any page that manages its own footer like EvidenceVault (which doesn't have one now, but ends with a nav) */}
-      {/* Updated Condition: Don't show global footer on evidence-vault either if it ends with internal nav? No, generally global footer is good unless it duplicates. EvidenceVaultPage uses internal nav to return. I will let GlobalFooter stay for Vault as it provides 'Initiate Protocol' CTA unless specific instructions say otherwise. But wait, earlier I said VaultPage is self contained. Let's see. VaultPage has 'Return to HQ'. Global Footer has 'Initiate'. It's okay. */}
-      {currentView !== 'architecture' && !currentView.startsWith('pillar') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
+      {/* GLOBAL FOOTER: Shown on landing, about, protocol, evidence, AND now Pillar pages (Pillars 1-7). 
+          Hidden on: Architecture (managed internally), Contact. */}
+      {currentView !== 'architecture' && currentView !== 'contact' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
       <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
     </div>
   );
