@@ -8,7 +8,7 @@ import {
   Target, ShoppingCart, UserX, // Tier 2 Icons
   Mic, Video, CalendarClock, // Tier 3 Icons
   Briefcase as Case, CheckSquare, Server, // Tier 4 Icons
-  Check // UI Icons
+  Check, Play, Loader2, Terminal // UI Icons
 } from 'lucide-react';
 import PillarVisual_Turbine from './PillarVisual_Turbine';
 
@@ -27,6 +27,121 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
     <span className="relative z-10 flex items-center justify-center gap-3">{children}</span>
   </button>
 );
+
+// --- LOGIC GATE FAQ DATA ---
+const LOGIC_FAQ = [
+  {
+    id: "AUTO_01",
+    input: "IF: Replaces_Human_Staff == TRUE?",
+    output: "RETURN: False. It replaces *tasks*, not people. It elevates your staff from 'Data Entry' to 'Data Management', removing the burnout-inducing repetitive work."
+  },
+  {
+    id: "AUTO_02",
+    input: "IF: API_Connection_Fails?",
+    output: "EXECUTE: Error_Handler. We build self-healing workflows. If a connection drops, the system pauses, queues the data, alerts our team, and retries automatically. Zero data loss."
+  },
+  {
+    id: "AUTO_03",
+    input: "QUERY: Security_Protocol_Level?",
+    output: "STATUS: Ephemeral. We use encrypted webhooks (HTTPS). Data is processed in-flight and rarely stored. We adhere to SOC2 principles for data transit."
+  },
+  {
+    id: "AUTO_04",
+    input: "IF: Legacy_Software (No API)?",
+    output: "ACTION: Deploy_Headless_Browser. We build custom scrapers or use RPA (Robotic Process Automation) to press buttons on legacy screens just like a human would."
+  },
+  {
+    id: "AUTO_05",
+    input: "QUERY: Max_Logic_Complexity?",
+    output: "VALUE: Infinite. We can chain 50+ conditional steps. 'If X happens, wait 2 days, check Y database, format PDF, then SMS Client Z.'"
+  },
+  {
+    id: "AUTO_06",
+    input: "COST: Monthly_Recurring_Fees?",
+    output: "ESTIMATE: Low. You pay for the infrastructure (Make/Zapier, usually ~$50/mo). You own the Intellectual Property of the workflow logic."
+  },
+  {
+    id: "AUTO_07",
+    input: "METRIC: Execution_Velocity?",
+    output: "SPEED: <200ms. Real-time fulfillment. Your customer receives their onboarding pack, invoice, and welcome video before they even close the browser tab."
+  }
+];
+
+const LogicGateItem = ({ item, index }: { item: typeof LOGIC_FAQ[0], index: number }) => {
+  const [status, setStatus] = useState<'IDLE' | 'RUNNING' | 'COMPLETE'>('IDLE');
+
+  const handleRun = () => {
+    if (status === 'COMPLETE') {
+        setStatus('IDLE');
+        return;
+    }
+    setStatus('RUNNING');
+    setTimeout(() => {
+        setStatus('COMPLETE');
+    }, 800 + Math.random() * 500); // Simulate processing time
+  };
+
+  return (
+    <div className="border border-white/10 bg-white/5 rounded-sm overflow-hidden mb-4 transition-all duration-300 hover:border-[#C5A059]/50">
+        {/* Header / Trigger Line */}
+        <div 
+            onClick={handleRun}
+            className="flex items-center justify-between p-6 cursor-pointer group hover:bg-white/5 transition-colors"
+        >
+            <div className="flex items-center gap-4 overflow-hidden">
+                {/* Run Button */}
+                <div className={`w-10 h-10 rounded-sm flex items-center justify-center shrink-0 transition-all duration-300 ${status === 'RUNNING' ? 'bg-[#C5A059] text-[#1a1a1a]' : status === 'COMPLETE' ? 'bg-[#0F766E] text-white' : 'bg-[#1a1a1a] text-[#C5A059] border border-[#C5A059]/30'}`}>
+                    {status === 'RUNNING' ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                     status === 'COMPLETE' ? <Check className="w-5 h-5" /> :
+                     <Play className="w-4 h-4 ml-0.5" />}
+                </div>
+                
+                {/* Code Input */}
+                <div className="font-mono text-sm md:text-base text-white/80 truncate">
+                    <span className="text-[#C5A059] mr-2">Step_{index + 1}:</span>
+                    {item.input}
+                </div>
+            </div>
+
+            {/* Status Badge */}
+            <div className="hidden md:block">
+                <span className={`font-mono text-[9px] uppercase tracking-widest px-2 py-1 rounded-sm ${status === 'IDLE' ? 'text-white/20' : 'text-white/60 bg-white/10'}`}>
+                    {status === 'IDLE' ? 'READY_TO_RUN' : status === 'RUNNING' ? 'PROCESSING...' : 'SUCCESS'}
+                </span>
+            </div>
+        </div>
+
+        {/* Progress Line */}
+        {status === 'RUNNING' && (
+            <div className="h-[2px] w-full bg-[#1a1a1a] relative overflow-hidden">
+                <motion.div 
+                    initial={{ x: '-100%' }}
+                    animate={{ x: '0%' }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="absolute inset-0 bg-[#C5A059]"
+                />
+            </div>
+        )}
+
+        {/* Output Console */}
+        <AnimatePresence>
+            {status === 'COMPLETE' && (
+                <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="bg-[#1a1a1a] border-t border-white/10 overflow-hidden"
+                >
+                    <div className="p-6 font-mono text-sm text-white/70 leading-relaxed border-l-2 border-[#0F766E]">
+                        <span className="text-[#0F766E] font-bold mr-2">&gt;&gt;</span>
+                        {item.output}
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </div>
+  );
+};
 
 const TIERS = {
   bridge: {
@@ -236,8 +351,8 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                </div>
              </div>
              
-             {/* RIGHT: CONTAINED VISUAL */}
-             <div className="relative w-full max-w-[350px] h-[300px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
+             {/* RIGHT: CONTAINED VISUAL - EXPANDED SIZE */}
+             <div className="relative w-full max-w-[500px] h-[450px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
                 {/* The visual sits inside this strictly sized box */}
                 <PillarVisual_Turbine />
              </div>
@@ -285,7 +400,6 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                  exit={{ opacity: 0, y: -10 }}
                  transition={{ duration: 0.4 }}
                >
-                  
                   {/* --- MIDDLE ROW: PERSONA CARDS --- */}
                   <div 
                     className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
@@ -314,7 +428,6 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -374,13 +487,11 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                           <div className="flex-grow">
                               <span className="font-mono text-[9px] text-black/30 uppercase tracking-widest block mb-6">Visual Architecture</span>
                               
-                              {/* MICRO-VISUALS */}
                               <div className="h-40 w-full mb-8 bg-white border border-black/5 rounded-sm flex items-center justify-center relative overflow-hidden shadow-inner">
                                   
                                   {/* TIER 1: CHAOS TO ORDER (Bridge) */}
                                   {activeTier === 'bridge' && (
                                     <div className="relative w-full h-full flex items-center justify-center">
-                                        {/* Chaos Particles Left */}
                                         {[0,1,2].map(i => (
                                             <motion.div 
                                                 key={i}
@@ -393,11 +504,7 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                                                 transition={{ duration: 2, repeat: Infinity, delay: i*0.5 }}
                                             />
                                         ))}
-                                        
-                                        {/* Funnel/Filter */}
                                         <div className="w-1 h-12 bg-black/10 mx-4" />
-
-                                        {/* Ordered Grid Right */}
                                         <div className="grid grid-cols-2 gap-2">
                                             {[0,1,2,3].map(i => (
                                                 <motion.div 
@@ -426,7 +533,6 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                                             transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                                         />
                                         <div className="w-2 h-2 bg-[#C5A059] rounded-full shadow-[0_0_10px_#C5A059]" />
-                                        {/* Blip */}
                                         <motion.div 
                                             className="absolute w-1.5 h-1.5 bg-red-500 rounded-full"
                                             animate={{ opacity: [0, 1, 0], x: [20, 30], y: [-20, -30] }}
@@ -438,11 +544,9 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                                   {/* TIER 3: MULTIPLIER (Content) */}
                                   {activeTier === 'content' && (
                                     <div className="relative w-full h-full flex items-center justify-center">
-                                        {/* Center Node */}
                                         <div className="w-8 h-8 bg-[#1a1a1a] rounded-full z-10 flex items-center justify-center text-white text-[8px]">
                                             IN
                                         </div>
-                                        {/* Spawning Nodes */}
                                         {[0, 1, 2, 3].map(i => (
                                             <motion.div 
                                                 key={i}
@@ -494,7 +598,6 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                               </ul>
                           </div>
 
-                          {/* ANCHORED BOTTOM CTA (FILL ANIMATION) */}
                           <FillButton 
                               onClick={() => onNavigate('landing', 'booking')}
                               className="w-full py-5 font-mono text-xs uppercase tracking-[0.2em] font-bold mt-auto"
@@ -507,6 +610,39 @@ const PillarPage_Automation: React.FC<PillarPageProps> = ({ onBack, onNavigate }
                   </div>
                </motion.div>
              </AnimatePresence>
+           </div>
+        </div>
+
+        {/* --- NEW SECTION: WORKFLOW LOGIC SIMULATOR --- */}
+        <div className="mb-32">
+           {/* Section Header */}
+           <div className="mb-16 border-b border-black/10 pb-8 flex items-end justify-between">
+              <div>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// SYSTEM_LOGIC_TEST</span>
+                <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Test the <span className="italic text-[#C5A059]">Workflow.</span></h2>
+              </div>
+              <div className="hidden md:flex items-center gap-2 font-mono text-[10px] text-black/30 uppercase tracking-widest">
+                 <Terminal className="w-4 h-4" />
+                 SIMULATION_MODE_ACTIVE
+              </div>
+           </div>
+
+           {/* Logic Gate Grid */}
+           <div className="bg-[#1a1a1a] p-8 md:p-12 rounded-sm shadow-2xl relative overflow-hidden">
+              {/* Background Tech Grid */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+              
+              <div className="relative z-10 grid grid-cols-1 gap-4">
+                 {LOGIC_FAQ.map((item, index) => (
+                    <LogicGateItem key={item.id} item={item} index={index} />
+                 ))}
+              </div>
+
+              {/* Bottom Decoration */}
+              <div className="mt-8 flex justify-between items-center text-white/20 font-mono text-[9px] uppercase tracking-widest">
+                 <span>Latency: 24ms</span>
+                 <span>Throughput: 100%</span>
+              </div>
            </div>
         </div>
 

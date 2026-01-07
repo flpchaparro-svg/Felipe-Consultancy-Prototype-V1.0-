@@ -9,7 +9,7 @@ import {
   Shuffle, Globe, Factory, // Tier 4 Icons
   User, Check // Additional UI Icons
 } from 'lucide-react';
-import PillarVisual_Network from './PillarVisual_Network';
+import PillarVisual_Magnet from './PillarVisual_Magnet';
 
 interface PillarPageProps {
   onBack: () => void;
@@ -26,6 +26,38 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
     <span className="relative z-10 flex items-center justify-center gap-3">{children}</span>
   </button>
 );
+
+// --- QA DATA ---
+const QA_DATA = [
+  {
+    q: "Why do I need a CRM if I have email?",
+    a: "Email is a silo; a CRM is a shared brain. Email traps data in one person's inbox. Our CRM architecture tracks every touchpoint, call, and note so your entire team has a single source of truth and never steps on each other's toes."
+  },
+  {
+    q: "Can you migrate my messy spreadsheets?",
+    a: "Yes. We perform a forensic data clean-up. We de-duplicate, standardize, and structure your CSV hell into a clean relational database before import. Garbage in, garbage out—so we ensure only clean data goes in."
+  },
+  {
+    q: "Does this system connect to my phone?",
+    a: "Absolutely. We deploy a mobile companion app so your sales team can log calls, dictate notes, and scan business cards immediately after a meeting. If it's not mobile, it won't get used."
+  },
+  {
+    q: "What happens to old, cold leads?",
+    a: "We set up 'Re-engagement Loops'. If a lead goes cold for 30 days, the system automatically nudges them with relevant content without you lifting a finger. We squeeze value from the leads you already paid for."
+  },
+  {
+    q: "Is my client data secure?",
+    a: "We build on enterprise-grade platforms (HubSpot/Salesforce) with strict role-based access control (RBAC). Sales reps only see what they need to see to close the deal; you see everything. Your data is encrypted and backed up."
+  },
+  {
+    q: "How long does deployment take?",
+    a: "A standard Capture Core pipeline is live in 5 days. Complex migrations with heavy historical data cleaning may take up to 10 days. We prioritize speed-to-value so you aren't stuck in 'implementation limbo'."
+  },
+  {
+    q: "Will my team actually use it?",
+    a: "We design for 'Minimum Viable Data Entry'. If it takes more than 3 clicks to log a deal, we automate it. We remove the administrative friction that causes staff rejection."
+  }
+];
 
 const TIERS = {
   capture: {
@@ -96,7 +128,7 @@ const TIERS = {
         examples: "Construction, Civil Eng.",
         painTitle: "The Tender Black Hole",
         painText: "Sending a $100k bid and forgetting to follow up because you are busy on the next one. You lose millions in 'Silent No's'.",
-        solution: "The 'Nudge Engine'. The second a bid is sent, the system schedules 3 automated follow-ups to close the loop."
+        solution: "The 'Nudge Engine'. The second the bid is sent, the system schedules 3 automated follow-ups to close the loop."
       }
     ]
   },
@@ -179,6 +211,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
   const [activePersonaIndex, setActivePersonaIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
+  const [activeQA, setActiveQA] = useState(0);
 
   // Reset persona and restart autoplay when tier changes
   useEffect(() => {
@@ -231,10 +264,10 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                </p>
              </div>
              
-             {/* RIGHT: CONTAINED VISUAL */}
-             <div className="relative w-full max-w-[350px] h-[300px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
+             {/* RIGHT: CONTAINED VISUAL - EXPANDED SIZE */}
+             <div className="relative w-full max-w-[500px] h-[450px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
                 {/* The visual sits inside this strictly sized box */}
-                <PillarVisual_Network />
+                <PillarVisual_Magnet />
              </div>
         </div>
 
@@ -276,7 +309,6 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                  exit={{ opacity: 0, y: -10 }}
                  transition={{ duration: 0.4 }}
                >
-                  
                   {/* --- MIDDLE ROW: PERSONA CARDS --- */}
                   <div 
                     className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
@@ -305,7 +337,6 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -495,6 +526,96 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                   </div>
                </motion.div>
              </AnimatePresence>
+           </div>
+        </div>
+
+        {/* --- NEW SECTION: TERMINAL Q&A (REVERSED & BLACK) --- */}
+        <div className="mb-32">
+           <div className="mb-16 border-b border-black/10 pb-8 flex items-end justify-between">
+              <div>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// SYSTEM_LOGS</span>
+                <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Core <span className="italic text-[#C5A059]">Interrogations.</span></h2>
+              </div>
+           </div>
+
+           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-black/10 shadow-sm">
+              
+              {/* LEFT: QUERY LIST (Questions) - Left Aligned Text */}
+              <div className="lg:col-span-5 bg-white border-r border-black/10 flex flex-col order-first lg:order-first">
+                 {QA_DATA.map((item, i) => {
+                    const isActive = activeQA === i;
+                    return (
+                        <button 
+                          key={i}
+                          onMouseEnter={() => setActiveQA(i)}
+                          onClick={() => setActiveQA(i)}
+                          className="w-full px-8 py-6 border-b border-black/5 last:border-b-0 group relative overflow-hidden flex items-center justify-between gap-4 text-left"
+                        >
+                           {/* BLACK FILL LAYER (Wipes Left to Right) */}
+                           <div className={`absolute inset-0 bg-black transition-transform duration-700 origin-left ease-[cubic-bezier(0.19,1,0.22,1)] ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
+                           
+                           {/* TEXT CONTENT (Left Aligned) */}
+                           <div className="relative z-10 flex flex-col items-start text-left">
+                               <span className={`font-mono text-[10px] uppercase tracking-widest transition-colors duration-700 mb-1 ${isActive ? 'text-[#C5A059] font-bold' : 'text-black/30 group-hover:text-[#C5A059] group-hover:font-bold'}`}>
+                                 {i < 9 ? `0${i + 1}` : i + 1}
+                               </span>
+                               <span className={`font-serif text-lg leading-tight transition-colors duration-700 ${isActive ? 'text-white' : 'text-[#1a1a1a] group-hover:text-white'}`}>
+                                 {item.q}
+                               </span>
+                           </div>
+
+                           {/* ACTIVE ARROW (Right Side - Pointing to Terminal) */}
+                           <div className={`relative z-10 transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0'}`}>
+                              <ArrowRight className="w-4 h-4 text-[#C5A059]" /> 
+                           </div>
+                        </button>
+                    );
+                 })}
+              </div>
+
+              {/* RIGHT: DATA OUTPUT (PURE BLACK TERMINAL) - ANSWER */}
+              <div className="lg:col-span-7 bg-[#000000] text-[#FFF2EC] p-12 lg:p-16 flex flex-col justify-center min-h-[400px] relative overflow-hidden order-last lg:order-last">
+                 <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeQA}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.6, ease: "circOut" }}
+                      className="relative z-10 w-full"
+                    >
+                       {/* QUESTION (Left Aligned inside Terminal to connect with list flow) */}
+                       <div className="flex flex-col items-start mb-12 pr-12">
+                          <div className="flex items-center gap-3 mb-4 opacity-50">
+                             <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
+                                QUERY // {activeQA < 9 ? `0${activeQA + 1}` : activeQA + 1}
+                             </span>
+                          </div>
+                          <h3 className="font-serif text-3xl md:text-4xl text-white leading-tight text-left">
+                             {QA_DATA[activeQA].q}
+                          </h3>
+                       </div>
+                       
+                       {/* SEPARATOR (Visual Bridge) */}
+                       <div className="w-full h-[1px] bg-white/10 mb-12 relative">
+                          <div className="absolute left-0 top-[-2px] w-12 h-[5px] bg-[#C5A059]" />
+                       </div>
+                       
+                       {/* ANSWER (Left Aligned inside Terminal) */}
+                       <div className="flex flex-col items-start pr-12">
+                          <div className="flex items-center gap-3 mb-4 opacity-50">
+                             <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
+                                OPTIMIZED_RESPONSE
+                             </span>
+                          </div>
+                          <p className="font-sans text-xl font-light text-[#FFF2EC]/70 leading-relaxed text-left">
+                             {QA_DATA[activeQA].a}
+                          </p>
+                       </div>
+                    </motion.div>
+                 </AnimatePresence>
+              </div>
+
            </div>
         </div>
 

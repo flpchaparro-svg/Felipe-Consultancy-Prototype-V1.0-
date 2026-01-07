@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 
 const PillarVisual_Network: React.FC = () => {
@@ -11,6 +12,7 @@ const PillarVisual_Network: React.FC = () => {
 
     let width = canvas.width = canvas.parentElement?.clientWidth || 600;
     let height = canvas.height = 600;
+    const padding = 10; // Padding to prevent clipping
     
     // Configuration
     const nodeCount = 40;
@@ -30,27 +32,36 @@ const PillarVisual_Network: React.FC = () => {
     // Init Nodes
     for (let i = 0; i < nodeCount; i++) {
       nodes.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
+        x: padding + Math.random() * (width - padding * 2),
+        y: padding + Math.random() * (height - padding * 2),
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 2 + 1
+        size: Math.random() * 2.5 + 2 // Increased size for visibility
       });
     }
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
       
+      // Update dimensions if resized (though usually handled by event listener)
+      // Note: Changing canvas width/height clears context, so we do it in resize handler, 
+      // but we need current width/height for bounds.
+      
       // Draw Central Hub
+      // Re-calculate core center in case of resize
+      const currentCoreX = width / 2;
+      const currentCoreY = height / 2;
+
       ctx.beginPath();
-      ctx.arc(coreX, coreY, 6, 0, Math.PI * 2);
+      ctx.arc(currentCoreX, currentCoreY, 8, 0, Math.PI * 2); // Slightly larger core
       ctx.fillStyle = '#C5A059'; // Gold
       ctx.fill();
       
       // Pulse Effect for Core
       ctx.beginPath();
-      ctx.arc(coreX, coreY, 20 + Math.sin(Date.now() / 500) * 5, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(197, 160, 89, 0.2)';
+      ctx.arc(currentCoreX, currentCoreY, 24 + Math.sin(Date.now() / 500) * 5, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(197, 160, 89, 0.3)'; // Increased opacity
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
       nodes.forEach(node => {
@@ -58,9 +69,9 @@ const PillarVisual_Network: React.FC = () => {
         node.x += node.vx;
         node.y += node.vy;
 
-        // Bounce off walls
-        if (node.x < 0 || node.x > width) node.vx *= -1;
-        if (node.y < 0 || node.y > height) node.vy *= -1;
+        // Bounce off walls with padding
+        if (node.x < padding || node.x > width - padding) node.vx *= -1;
+        if (node.y < padding || node.y > height - padding) node.vy *= -1;
 
         // Draw Node
         ctx.beginPath();
@@ -69,16 +80,17 @@ const PillarVisual_Network: React.FC = () => {
         ctx.fill();
 
         // Connect to Core
-        const dx = coreX - node.x;
-        const dy = coreY - node.y;
+        const dx = currentCoreX - node.x;
+        const dy = currentCoreY - node.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < 250) {
           ctx.beginPath();
           ctx.moveTo(node.x, node.y);
-          ctx.lineTo(coreX, coreY);
+          ctx.lineTo(currentCoreX, currentCoreY);
+          // Increased opacity and line width
           ctx.strokeStyle = `rgba(26, 26, 26, ${1 - dist / 250})`;
-          ctx.lineWidth = 0.5;
+          ctx.lineWidth = 1.2; 
           ctx.stroke();
         }
 
@@ -88,12 +100,13 @@ const PillarVisual_Network: React.FC = () => {
             const ndy = node.y - otherNode.y;
             const ndist = Math.sqrt(ndx * ndx + ndy * ndy);
 
-            if (ndist < 80) {
+            if (ndist < 90) {
                 ctx.beginPath();
                 ctx.moveTo(node.x, node.y);
                 ctx.lineTo(otherNode.x, otherNode.y);
-                ctx.strokeStyle = `rgba(26, 26, 26, ${0.2 * (1 - ndist / 80)})`;
-                ctx.lineWidth = 0.2;
+                // Increased opacity and line width
+                ctx.strokeStyle = `rgba(26, 26, 26, ${0.4 * (1 - ndist / 90)})`;
+                ctx.lineWidth = 0.8;
                 ctx.stroke();
             }
         });
@@ -102,21 +115,26 @@ const PillarVisual_Network: React.FC = () => {
       requestAnimationFrame(animate);
     };
 
-    animate();
+    const animId = requestAnimationFrame(animate);
 
     const handleResize = () => {
-      width = canvas.width = canvas.parentElement?.clientWidth || 600;
-      // height remains constant or can be adjusted
+      if (canvas.parentElement) {
+        width = canvas.width = canvas.parentElement.clientWidth;
+        height = canvas.height = canvas.parentElement.clientHeight;
+      }
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animId);
+    };
 
   }, []);
 
   return (
-    <div className="w-full h-[500px] flex items-center justify-center overflow-hidden cursor-crosshair relative">
+    <div className="w-full h-full flex items-center justify-center overflow-hidden cursor-crosshair relative">
       <canvas ref={canvasRef} className="w-full h-full" />
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[9px] text-[#1a1a1a]/30 uppercase tracking-widest pointer-events-none">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[9px] text-[#1a1a1a]/50 uppercase tracking-widest pointer-events-none">
         [ DATA_TOPOLOGY // SYNCHRONIZED ]
       </div>
     </div>

@@ -8,7 +8,7 @@ import {
   Users, FileCheck, Rocket, // Tier 2 Icons
   Lock, Book, Building, // Tier 3 Icons
   Wrench, Activity, Headphones, // Tier 4 Icons
-  Check // UI Icons
+  Check, Mic, ChevronDown, Terminal, Cpu // UI Icons
 } from 'lucide-react';
 import PillarVisual_Brain from './PillarVisual_Brain';
 
@@ -27,6 +27,135 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
     <span className="relative z-10 flex items-center justify-center gap-3">{children}</span>
   </button>
 );
+
+// --- AUDIO LOG DATA ---
+const AUDIO_LOGS = [
+  {
+    id: "LOG_01",
+    question: "Can the AI handle angry customers?",
+    answer: "Emotion detection is native. If sentiment drops below a safety threshold, the Agent apologizes with empathy and instantly escalates the call to a human manager via SMS, ensuring brand protection.",
+    duration: "140ms"
+  },
+  {
+    id: "LOG_02",
+    question: "Does it sound robotic?",
+    answer: "No. We use ultra-low latency models (ElevenLabs/Deepgram) that include breath pauses, 'uh-huhs', and natural cadence. In blind tests, 85% of callers do not realize they are speaking to code.",
+    duration: "180ms"
+  },
+  {
+    id: "LOG_03",
+    question: "What prevents hallucinations?",
+    answer: "RAG (Retrieval-Augmented Generation). The AI is strictly fenced to *only* answer from your uploaded Knowledge Base. If the answer isn't in your docs, it politely declines to guess.",
+    duration: "120ms"
+  },
+  {
+    id: "LOG_04",
+    question: "Can it book into my calendar?",
+    answer: "Yes. It has direct API access to Cal.com, Acuity, or HubSpot. It checks your real-time availability and inserts the meeting directly while still on the phone.",
+    duration: "90ms"
+  },
+  {
+    id: "LOG_05",
+    question: "Is it expensive to run?",
+    answer: "It costs roughly $0.20 per minute of talk time. Compared to a human receptionist at $30/hour ($0.50/min) who misses 30% of calls, the ROI is immediate and scalable.",
+    duration: "150ms"
+  },
+  {
+    id: "LOG_06",
+    question: "Does it work for non-English speakers?",
+    answer: "Instantly. The agent detects the incoming language (Spanish, Mandarin, French, etc.) and switches its speech synthesis and processing model to match the caller in real-time.",
+    duration: "110ms"
+  },
+  {
+    id: "LOG_07",
+    question: "How long does training take?",
+    answer: "We ingest your SOPs, website, and past call logs. A basic agent is live in 48 hours. A complex, fully integrated enterprise agent typically requires a 10-day sprint.",
+    duration: "160ms"
+  }
+];
+
+const CognitiveLogItem = ({ item, index }: { item: typeof AUDIO_LOGS[0], index: number }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div 
+      className={`border-b border-black/10 transition-colors duration-300 ${isOpen ? 'bg-white' : 'hover:bg-white/60'}`}
+    >
+        <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full py-6 px-4 md:px-8 flex items-start md:items-center gap-6 text-left group"
+        >
+            {/* ID Badge */}
+            <div className={`hidden md:flex flex-col items-center justify-center w-12 h-12 border rounded-sm transition-colors duration-300 shrink-0 ${isOpen ? 'border-[#C5A059] bg-[#C5A059] text-white' : 'border-black/10 text-black/30 group-hover:border-black/30'}`}>
+                <span className="font-mono text-[10px] font-bold">0{index + 1}</span>
+            </div>
+
+            {/* Content */}
+            <div className="flex-grow">
+                <div className="flex items-center gap-3 mb-2">
+                    <span className={`font-mono text-[9px] uppercase tracking-widest ${isOpen ? 'text-[#C5A059]' : 'text-black/30'}`}>
+                        QUERY_PROTOCOL // {item.id}
+                    </span>
+                    {isOpen && (
+                        <span className="px-1.5 py-0.5 bg-[#C5A059]/10 text-[#C5A059] text-[8px] font-bold rounded uppercase tracking-wider">
+                            Active
+                        </span>
+                    )}
+                </div>
+                <h3 className={`font-serif text-xl md:text-2xl transition-colors duration-300 ${isOpen ? 'text-[#1a1a1a]' : 'text-[#1a1a1a]/70 group-hover:text-[#1a1a1a]'}`}>
+                    {item.question}
+                </h3>
+            </div>
+
+            {/* Action Icon */}
+            <div className={`shrink-0 transition-transform duration-500 ${isOpen ? 'rotate-180 text-[#C5A059]' : 'text-black/20 group-hover:text-black/60'}`}>
+                <ChevronDown className="w-5 h-5" />
+            </div>
+        </button>
+
+        {/* Expanded Answer */}
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                >
+                    <div className="px-4 md:px-8 pb-8 pt-0 pl-4 md:pl-[88px]">
+                        <div className="p-6 bg-[#1a1a1a] text-[#FFF2EC] rounded-sm relative overflow-hidden shadow-inner">
+                            {/* Tech Decor */}
+                            <div className="absolute top-0 right-0 p-4 opacity-10">
+                                <Activity className="w-16 h-16" />
+                            </div>
+                            
+                            <div className="relative z-10 flex gap-4">
+                                <div className="shrink-0 mt-1">
+                                    <Terminal className="w-4 h-4 text-[#C5A059]" />
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-widest block mb-2">
+                                            System_Response:
+                                        </span>
+                                        <p className="font-sans text-lg font-light leading-relaxed opacity-90">
+                                            {item.answer}
+                                        </p>
+                                    </div>
+                                    <div className="pt-4 border-t border-white/10 flex gap-6 font-mono text-[9px] text-white/40 uppercase tracking-widest">
+                                        <span>Latency: {item.duration}</span>
+                                        <span>Confidence: 99.8%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </div>
+  );
+};
 
 const TIERS = {
   concierge: {
@@ -236,8 +365,8 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                </div>
              </div>
              
-             {/* RIGHT: CONTAINED VISUAL */}
-             <div className="relative w-full max-w-[350px] h-[300px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
+             {/* RIGHT: CONTAINED VISUAL - EXPANDED SIZE */}
+             <div className="relative w-full max-w-[500px] h-[450px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
                 {/* The visual sits inside this strictly sized box */}
                 <PillarVisual_Brain />
              </div>
@@ -285,7 +414,6 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                  exit={{ opacity: 0, y: -10 }}
                  transition={{ duration: 0.4 }}
                >
-                  
                   {/* --- MIDDLE ROW: PERSONA CARDS --- */}
                   <div 
                     className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
@@ -314,7 +442,6 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -380,7 +507,6 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                                   {/* TIER 1: GATEKEEPER FILTER (Concierge) */}
                                   {activeTier === 'concierge' && (
                                     <div className="relative w-full h-full flex items-center justify-center">
-                                        {/* Incoming Particles */}
                                         {[0, 1, 2].map(i => (
                                             <motion.div 
                                                 key={i}
@@ -392,7 +518,6 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                                                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.6 }}
                                             />
                                         ))}
-                                        {/* The Gate */}
                                         <div className="h-16 w-1 bg-[#1a1a1a] mx-auto relative">
                                             <div className="absolute top-1/2 -left-2 w-5 h-1 bg-[#1a1a1a]" />
                                         </div>
@@ -405,7 +530,6 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                                         <div className="w-12 h-12 border border-[#C5A059] rounded-full flex items-center justify-center z-10 bg-white">
                                             <Brain className="w-6 h-6 text-[#C5A059]" />
                                         </div>
-                                        {/* Satellites */}
                                         {[0, 1, 2, 3].map(i => (
                                             <motion.div 
                                                 key={i}
@@ -480,6 +604,26 @@ const PillarPage_Cognitive: React.FC<PillarPageProps> = ({ onBack, onNavigate })
                   </div>
                </motion.div>
              </AnimatePresence>
+           </div>
+        </div>
+
+        {/* --- NEW SECTION: AGENT LOGIC LOGS (Redesigned) --- */}
+        <div className="mb-32">
+           <div className="mb-16 border-b border-black/10 pb-8 flex items-end justify-between">
+              <div>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// DATABASE_QUERY</span>
+                <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Agent Interaction <span className="italic text-[#C5A059]">Logs.</span></h2>
+              </div>
+              <div className="hidden md:flex items-center gap-2 font-mono text-[10px] text-black/30 uppercase tracking-widest">
+                 <Mic className="w-4 h-4" />
+                 AUDIO_ARCHIVE_ACTIVE
+              </div>
+           </div>
+
+           <div className="bg-white border border-black/10 shadow-sm">
+              {AUDIO_LOGS.map((item, index) => (
+                 <CognitiveLogItem key={item.id} item={item} index={index} />
+              ))}
            </div>
         </div>
 

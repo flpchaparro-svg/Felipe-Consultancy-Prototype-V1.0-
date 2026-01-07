@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -48,9 +49,6 @@ const PillarVisual_Radar: React.FC = () => {
           />
       ))}
 
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[9px] text-[#1a1a1a]/30 uppercase tracking-widest pointer-events-none">
-        [ SENSOR_ARRAY // SCANNING ]
-      </div>
     </div>
   );
 };

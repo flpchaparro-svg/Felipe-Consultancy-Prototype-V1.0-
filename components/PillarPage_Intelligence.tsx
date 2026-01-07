@@ -8,9 +8,9 @@ import {
   Droplets, EyeOff, MousePointerClick, // Tier 2 Icons
   Flag, Repeat, ShieldAlert, // Tier 3 Icons
   Layers, Scale, Globe, // Tier 4 Icons
-  Check // UI Icons
+  Check, Terminal, Cpu // UI Icons
 } from 'lucide-react';
-import PillarVisual_Radar from './PillarVisual_Radar';
+import PillarVisual_Dashboard from './PillarVisual_Dashboard';
 
 interface PillarPageProps {
   onBack: () => void;
@@ -27,6 +27,127 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
     <span className="relative z-10 flex items-center justify-center gap-3">{children}</span>
   </button>
 );
+
+// --- INTELLIGENCE QA DATA ---
+const INTELLIGENCE_QA = [
+  {
+    id: "INT_01",
+    q: "Why do I need a dashboard if I have Xero?",
+    a: "Xero is a rearview mirror; it shows you what happened last month. A Control Tower is a windshield; it combines Finance, Marketing, and Ops data to show you where you are going tomorrow."
+  },
+  {
+    id: "INT_02",
+    q: "Can you actually predict future revenue?",
+    a: "Yes. By tracking 'Leading Indicators' (New Leads, Deal Velocity) rather than just 'Lagging Indicators' (Invoices Sent), we can mathematically forecast cashflow 90 days out with >90% accuracy."
+  },
+  {
+    id: "INT_03",
+    q: "Is the data real-time?",
+    a: "Near real-time. Marketing and Sales data typically syncs every 15 minutes. Financial reconciliation syncs nightly. You will know your exact position before you have your morning coffee."
+  },
+  {
+    id: "INT_04",
+    q: "Does it connect to Google/Meta Ads?",
+    a: "Seamlessly. We pull live ad-spend via API and match it against actual CRM revenue. You see the true ROAS (Return on Ad Spend) and CPA (Cost Per Acquisition) instantly."
+  },
+  {
+    id: "INT_05",
+    q: "Who watches the dashboard?",
+    a: "The system watches itself. We configure 'Anomaly Alerts'. If your margin drops below 20% or ad costs spike, you get a Slack notification. Otherwise, it runs silently."
+  },
+  {
+    id: "INT_06",
+    q: "Is my financial data secure?",
+    a: "We use a 'Read-Only' architecture. The system pulls data into a secure, encrypted warehouse (BigQuery) for visualization, but it cannot write or alter your actual bank/Xero records."
+  },
+  {
+    id: "INT_07",
+    q: "How long does it take to build?",
+    a: "A standard Executive Pulse dashboard is deployed in a 14-day sprint. Week 1 is data pipeline connection and cleaning. Week 2 is visualization and alert configuration."
+  }
+];
+
+const IntelligenceQA = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div className="w-full bg-transparent border-y border-black/10">
+       <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
+          
+          {/* LEFT: QUESTIONS LIST */}
+          <div className="lg:col-span-5 border-r border-black/10 flex flex-col">
+             {INTELLIGENCE_QA.map((item, index) => {
+                const isActive = activeIndex === index;
+                return (
+                   <button
+                     key={item.id}
+                     onClick={() => setActiveIndex(index)}
+                     onMouseEnter={() => setActiveIndex(index)}
+                     className="relative w-full px-8 py-6 text-left group overflow-hidden border-b border-black/5 last:border-b-0 flex items-center justify-between gap-4"
+                   >
+                      {/* GOLD WIPE BACKGROUND - Smoother Transition (1s) */}
+                      <div 
+                        className={`absolute inset-0 bg-[#C5A059] transition-transform duration-1000 origin-left ease-[cubic-bezier(0.23,1,0.32,1)] ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} 
+                      />
+
+                      {/* CONTENT */}
+                      <div className="relative z-10 flex items-baseline gap-4 pr-4">
+                         <span className={`font-mono text-[9px] uppercase tracking-widest transition-colors duration-700 ${isActive ? 'text-[#1a1a1a] font-bold' : 'text-[#C5A059] group-hover:text-[#1a1a1a] group-hover:font-bold'}`}>
+                            Q. 0{index + 1}
+                         </span>
+                         <span className={`font-serif text-lg leading-tight transition-colors duration-700 ${isActive ? 'text-[#1a1a1a]' : 'text-[#1a1a1a]/60 group-hover:text-[#1a1a1a]'}`}>
+                            {item.q}
+                         </span>
+                      </div>
+                      
+                      {/* ACTIVE INDICATOR */}
+                      <div className={`relative z-10 transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0 text-[#1a1a1a]' : 'opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-[#1a1a1a]'}`}>
+                         <ArrowRight className="w-4 h-4" />
+                      </div>
+                   </button>
+                );
+             })}
+          </div>
+
+          {/* RIGHT: ANSWER TERMINAL - BLACK BG */}
+          <div className="lg:col-span-7 bg-[#1a1a1a] text-[#FFF2EC] p-12 lg:p-16 flex flex-col justify-center relative overflow-hidden">
+             
+             {/* Scanning Line Animation REMOVED */}
+
+             <div className="relative z-10">
+                <AnimatePresence mode="wait">
+                   <motion.div
+                     key={activeIndex}
+                     initial={{ opacity: 0, x: 20 }}
+                     animate={{ opacity: 1, x: 0 }}
+                     exit={{ opacity: 0, x: -20 }}
+                     transition={{ duration: 0.4, ease: "circOut" }}
+                   >
+                      <div className="flex items-center gap-3 mb-8 opacity-60">
+                         <Cpu className="w-4 h-4 text-[#C5A059]" />
+                         <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
+                            QUERY_RESOLVED // {INTELLIGENCE_QA[activeIndex].id}
+                         </span>
+                      </div>
+                      
+                      <h3 className="font-serif text-3xl md:text-4xl lg:text-5xl leading-tight text-[#FFF2EC] mb-8">
+                         {INTELLIGENCE_QA[activeIndex].q}
+                      </h3>
+                      
+                      <div className="w-16 h-1 bg-[#C5A059] mb-8" />
+                      
+                      <p className="font-sans text-xl font-light text-[#FFF2EC]/70 leading-relaxed border-l border-[#C5A059] pl-6">
+                         {INTELLIGENCE_QA[activeIndex].a}
+                      </p>
+                   </motion.div>
+                </AnimatePresence>
+             </div>
+          </div>
+
+       </div>
+    </div>
+  );
+};
 
 const TIERS = {
   pulse: {
@@ -221,14 +342,17 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
              
              {/* LEFT: CONTENT */}
              <div>
-               <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_07 // VISION</span>
+               <div className="flex items-center gap-3 mb-6">
+                  <div className="w-2 h-2 rounded-full bg-[#E21E3F] animate-pulse" />
+                  <span className="font-mono text-xs text-[#E21E3F] tracking-widest block uppercase font-bold">SYSTEM_07 // VISION</span>
+               </div>
                <h1 className="font-serif text-5xl md:text-7xl leading-[0.9] tracking-tight mb-8">
-                 Intelligence <br />
-                 <span className="italic text-[#E21E3F]">Architecture.</span>
+                 Predictive <br />
+                 <span className="italic text-[#E21E3F]">Command.</span>
                </h1>
                <p className="font-sans text-lg text-[#1a1a1a]/70 max-w-xl border-l-2 border-[#C5A059] pl-6 mb-8">
-                 The Eyes of the Business. <br/>
-                 We replace "Gut Feeling" with a <strong>Control Tower</strong> that shows you exactly where your profit is coming from.
+                 We replace "End of Month" reports with <strong>Right Now</strong> reality. <br/>
+                 A centralized Command Center that alerts you to revenue drag <em>before</em> it hurts the bottom line.
                </p>
                <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40">
                   <span>Activate Sensors</span>
@@ -236,10 +360,10 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
                </div>
              </div>
              
-             {/* RIGHT: CONTAINED VISUAL */}
-             <div className="relative w-full max-w-[350px] h-[300px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
+             {/* RIGHT: CONTAINED VISUAL - EXPANDED SIZE */}
+             <div className="relative w-full max-w-[600px] h-[450px] mx-auto opacity-100 flex items-center justify-center overflow-hidden rounded-sm border border-[#1a1a1a]/10 shadow-2xl">
                 {/* The visual sits inside this strictly sized box */}
-                <PillarVisual_Radar />
+                <PillarVisual_Dashboard />
              </div>
         </div>
 
@@ -285,7 +409,6 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
                  exit={{ opacity: 0, y: -10 }}
                  transition={{ duration: 0.4 }}
                >
-                  
                   {/* --- MIDDLE ROW: PERSONA CARDS --- */}
                   <div 
                     className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
@@ -314,7 +437,6 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -493,6 +615,18 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
                </motion.div>
              </AnimatePresence>
            </div>
+        </div>
+
+        {/* --- NEW SECTION: INTELLIGENCE QA --- */}
+        <div className="mb-32">
+           <div className="mb-16 border-b border-black/10 pb-8 flex items-end justify-between">
+              <div>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// SYSTEM_LOGS</span>
+                <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Intelligence <span className="italic text-[#C5A059]">Interrogations.</span></h2>
+              </div>
+           </div>
+
+           <IntelligenceQA />
         </div>
 
       </div>

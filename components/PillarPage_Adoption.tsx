@@ -8,7 +8,7 @@ import {
   Coffee, Package, TrendingUp, // Tier 2 Icons
   Briefcase, AlertTriangle, Calculator, // Tier 3 Icons
   Clock, Store, ShieldCheck, // Tier 4 Icons
-  Check // UI Icons
+  Check, Repeat, RefreshCw, Activity, Lock // UI Icons
 } from 'lucide-react';
 import PillarVisual_Helix from './PillarVisual_Helix';
 
@@ -27,6 +27,156 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
     <span className="relative z-10 flex items-center justify-center gap-3">{children}</span>
   </button>
 );
+
+// --- CULTURE QA DATA ---
+const CULTURE_QA = [
+  {
+    id: "01",
+    pattern: "FEAR_OF_INCOMPETENCE",
+    q: "Why do staff hate new software?",
+    a: "They don't hate the tool; they hate feeling stupid. We replace 2-hour seminars with 60-second micro-lessons that make them feel like experts instantly."
+  },
+  {
+    id: "02",
+    pattern: "PASSIVE_RESISTANCE",
+    q: "How do you ensure they watch the training?",
+    a: "We stop sending emails. We embed 'Point-of-Action' triggers directly inside the workflow. They learn exactly what they need, exactly when they need it."
+  },
+  {
+    id: "03",
+    pattern: "THE_SKEPTIC_LEADER",
+    q: "What if a key manager resists?",
+    a: "We identify 'Cultural Architects' early. We flip the loudest skeptic into the system champion by giving them ownership of the architecture."
+  },
+  {
+    id: "04",
+    pattern: "STATIC_DECAY",
+    q: "Does this replace my SOP manual?",
+    a: "Static PDFs are where knowledge goes to die. We build a living, searchable video cortex that evolves as fast as your business does."
+  },
+  {
+    id: "05",
+    pattern: "VELOCITY_LAG",
+    q: "How long until the team is proficient?",
+    a: "Traditional mastery takes 6 months. With 'Just-in-Time' guidance, we cut time-to-competency to 14 days. New hires contribute on Day 1."
+  },
+  {
+    id: "06",
+    pattern: "BLIND_COMPLIANCE",
+    q: "Can we track who has learned what?",
+    a: "Forensic visibility. Our dashboards track every view and completion, generating a live 'Competency Score' for every single employee."
+  },
+  {
+    id: "07",
+    pattern: "ONBOARDING_DRAG",
+    q: "What happens when new staff join?",
+    a: "Zero-friction induction. The system detects the new account and auto-assigns their personalized curriculum. You don't lift a finger."
+  }
+];
+
+const FlipCard = ({ item, index }: { item: typeof CULTURE_QA[0], index: number }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <div className="h-[360px] w-full perspective-1000 group cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
+      <motion.div
+        className="relative w-full h-full transition-all duration-500"
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        {/* --- FRONT FACE (THE RESISTANCE / DARK) --- */}
+        <div 
+            className="absolute inset-0 w-full h-full bg-[#1a1a1a] border border-[#333] p-8 flex flex-col justify-between overflow-hidden shadow-2xl"
+            style={{ 
+                backfaceVisibility: 'hidden', 
+                WebkitBackfaceVisibility: 'hidden',
+                zIndex: isFlipped ? 0 : 2
+            }}
+        >
+           {/* 'Alive' Status Light */}
+           <div className="absolute top-6 right-6 flex items-center gap-2">
+              <div className="font-mono text-[9px] text-[#E21E3F] uppercase tracking-widest opacity-80">
+                 Recording_Friction
+              </div>
+              <motion.div 
+                className="w-2 h-2 bg-[#E21E3F] rounded-full"
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+           </div>
+
+           {/* ID & Type */}
+           <div className="relative z-10 pt-2">
+              <span className="font-mono text-[9px] text-white/40 block mb-2 tracking-[0.2em]">CASE_FILE_0{index + 1}</span>
+              <div className="inline-block border border-[#E21E3F] px-2 py-1 bg-[#E21E3F]/10">
+                 <span className="font-mono text-[9px] text-[#E21E3F] uppercase tracking-widest font-bold">
+                    {item.pattern}
+                 </span>
+              </div>
+           </div>
+           
+           {/* The Question */}
+           <div className="relative z-10">
+              <h3 className="font-serif text-3xl md:text-4xl text-white leading-tight">
+                 {item.q}
+              </h3>
+           </div>
+           
+           {/* Bottom Action Hint */}
+           <div className="relative z-10 border-t border-white/10 pt-6 flex justify-between items-center group-hover:border-white/30 transition-colors">
+              <span className="font-mono text-[9px] text-white/40 uppercase tracking-[0.2em] group-hover:text-white transition-colors">
+                 [ Click_To_Decode ]
+              </span>
+              <Lock className="w-4 h-4 text-white/40 group-hover:text-[#E21E3F] transition-colors" />
+           </div>
+
+           {/* Background Grid Pattern (Subtle Texture) */}
+           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] opacity-20 pointer-events-none" />
+        </div>
+
+        {/* --- BACK FACE (THE ADOPTION / CREAM) --- */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-[#FFF2EC] border border-[#C5A059] p-8 flex flex-col justify-between shadow-2xl"
+          style={{ 
+            transform: 'rotateY(180deg)',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            zIndex: isFlipped ? 2 : 0
+          }}
+        >
+           {/* Top Label */}
+           <div className="relative z-10 flex justify-between items-start">
+              <div className="bg-[#C5A059] text-white px-2 py-1 inline-block">
+                 <span className="font-mono text-[9px] uppercase tracking-widest font-bold">
+                    SOLUTION_VERIFIED
+                 </span>
+              </div>
+              <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
+           </div>
+
+           {/* The Answer */}
+           <div className="relative z-10">
+              <div className="w-8 h-[2px] bg-[#1a1a1a] mb-6" />
+              <p className="font-serif text-xl md:text-2xl text-[#1a1a1a] leading-relaxed">
+                 {item.a}
+              </p>
+           </div>
+
+           {/* Bottom Metadata */}
+           <div className="relative z-10 border-t border-[#C5A059]/30 pt-6">
+              <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-[0.2em] font-bold">
+                 PROTOCOL: SHIFT_BEHAVIOR
+              </span>
+           </div>
+
+           {/* Texture */}
+           <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-multiply pointer-events-none" />
+        </div>
+      </motion.div>
+    </div>
+  );
+};
 
 const TIERS = {
   media: {
@@ -236,8 +386,8 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                </div>
              </div>
              
-             {/* RIGHT: CONTAINED VISUAL */}
-             <div className="relative w-full max-w-[300px] h-[300px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
+             {/* RIGHT: CONTAINED VISUAL - EXPANDED SIZE */}
+             <div className="relative w-full max-w-[500px] h-[450px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
                 {/* The visual sits inside this strictly sized box */}
                 <PillarVisual_Helix />
              </div>
@@ -314,7 +464,6 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -468,6 +617,26 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                   </div>
                </motion.div>
              </AnimatePresence>
+           </div>
+        </div>
+
+        {/* --- NEW SECTION: BEHAVIORAL SHIFT MATRIX (Q&A) --- */}
+        <div className="mb-32">
+           <div className="mb-16 border-b border-black/10 pb-8 flex items-end justify-between">
+              <div>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// PSYCHOLOGY_PROFILE</span>
+                <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Culture <span className="italic text-[#C5A059]">Calibration.</span></h2>
+              </div>
+              <div className="hidden md:flex items-center gap-2 font-mono text-[10px] text-black/30 uppercase tracking-widest">
+                 <RefreshCw className="w-4 h-4" />
+                 MINDSET_SHIFT_ACTIVE
+              </div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {CULTURE_QA.map((item, index) => (
+                 <FlipCard key={item.id} item={item} index={index} />
+              ))}
            </div>
         </div>
 

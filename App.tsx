@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import * as d3 from 'd3';
@@ -230,79 +231,134 @@ const FrictionVisual: React.FC<{ type: string }> = ({ type }) => {
   return <div ref={containerRef} className="w-full h-full" />;
 };
 
-// ... (Rest of existing Helpers: FrictionAuditSection, BookAuditButton) ...
-// Keeping existing helper code as is, only updating the App component return structure.
-
 const FrictionAuditSection: React.FC<{ onNavigate: (v:string)=>void }> = ({ onNavigate }) => {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const [activePoint, setActivePoint] = useState(1);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
 
-    useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const idx = Number(entry.target.getAttribute('data-index'));
-                    if (!isNaN(idx)) setActivePoint(idx + 1);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        const items = document.querySelectorAll('.friction-item');
-        items.forEach(el => observer.observe(el));
-
-        return () => observer.disconnect();
-    }, []);
+    const [activeIndex, setActiveIndex] = useState(0);
     
-    // ... data ...
+    useMotionValueEvent(scrollYProgress, "change", (latest) => {
+        // Map scroll 0-1 to index 0-4 (5 items total)
+        const idx = Math.min(Math.floor(latest * 5), 4);
+        setActiveIndex(idx);
+    });
+
     const FRICTION_POINTS = [
       { id: 'leakage', number: '01', label: 'CRITICAL_FAILURE', title: 'Lead Evaporation', stat: '-$500 / DAY', body: "Demand hits your site and vanishes. Your current form logic is a sieve, not a catcher. You are paying for leads that expire in the inbox." },
       { id: 'silos', number: '02', label: 'INEFFICIENCY', title: 'The Double-Entry Tax', stat: '15 HRS / WK', body: "Sales types it. Ops types it again. Finance types it a third time. You are paying triple wages for the same data entry errors." },
       { id: 'trap', number: '03', label: 'BOTTLENECK', title: 'Admin Paralysis', stat: 'GROWTH CAP', body: "You are the 'Chief Admin Officer'. You spend 40% of your week fixing invoices and scheduling instead of steering the ship." },
-      { id: 'blind', number: '04', label: 'HIGH_RISK', title: 'Profit Blindness', stat: 'UNKNOWN', body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar." }
+      { id: 'blind', number: '04', label: 'HIGH_RISK', title: 'Profit Blindness', stat: 'UNKNOWN', body: "You know your Revenue, but not your Real-Time Margin. You are flying a 747 through a storm with no radar." },
+      { id: 'cta', number: '05', label: 'THE_FIX', title: 'Stop the Bleeding', stat: 'DEPLOY', body: "You have identified the friction. Now let's deploy the architecture to remove it permanently." }
     ];
 
+    const activePoint = FRICTION_POINTS[activeIndex];
+
     return (
-        <section ref={sectionRef} className="relative bg-[#FFF2EC] z-30 border-t border-[#1a1a1a]/5">
-            <MagneticField />
-            <div className="max-w-[1450px] mx-auto flex flex-col md:flex-row relative z-10 border-x border-[#1a1a1a]/5 bg-[#FFF2EC]/80 backdrop-blur-sm">
-                <div className="w-full md:w-2/5 h-auto md:h-screen sticky top-0 flex flex-col justify-center px-12 md:px-20 border-r border-[#1a1a1a]/5">
-                    <div className="max-w-md">
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold opacity-70">02 // THE FRICTION AUDIT</span>
-                            <span className="font-mono text-xl font-bold text-[#E21E3F]">0{activePoint} / 04</span>
-                        </div>
-                        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-8">Where your <br /><span className="text-[#E21E3F]">margin</span> <br /><span className="italic text-[#E21E3F]">evaporates.</span></h2>
-                        <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">Your business isn't broken, but it is leaking. These are the 4 silent fracture points where profit disappears before it hits your bank.</p>
+        <section ref={containerRef} className="relative h-[500vh] bg-[#FFF2EC]">
+            {/* STICKY CONTAINER FOR SPLIT SCREEN */}
+            <div className="sticky top-0 h-screen flex flex-col md:flex-row overflow-hidden">
+                
+                {/* LEFT: CONTEXT PANEL */}
+                <div className="w-full md:w-2/5 h-[35vh] md:h-full bg-[#FFF2EC] border-b md:border-b-0 md:border-r border-[#1a1a1a]/10 flex flex-col justify-center px-8 md:px-16 lg:px-20 z-20 relative transition-colors duration-500">
+                    <MagneticField />
+                    <div className="relative z-10 max-w-md">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={activePoint.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <div className="flex items-center justify-between mb-6">
+                                    <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold opacity-70">
+                                        {activePoint.id === 'cta' ? 'NEXT_STEPS' : 'DETECTED_FRICTION'}
+                                    </span>
+                                    <span className="font-mono text-xl font-bold text-[#E21E3F]">
+                                        {activePoint.number} / 05
+                                    </span>
+                                </div>
+                                <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1a1a1a] leading-[0.9] tracking-tighter mb-8">
+                                    {activePoint.id === 'cta' ? (
+                                        <>Stop the <br/><span className="italic text-[#C5A059]">Bleeding.</span></>
+                                    ) : (
+                                        activePoint.title
+                                    )}
+                                </h2>
+                                <p className="font-sans text-lg text-[#1a1a1a]/60 leading-relaxed border-l-2 border-[#E21E3F]/30 pl-6">
+                                    {activePoint.body}
+                                </p>
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </div>
-                <div className="w-full md:w-3/5 bg-transparent relative">
-                    {FRICTION_POINTS.map((point, idx) => (
-                        <div key={point.id} data-index={idx} className="friction-item min-h-[80vh] flex flex-col justify-center p-12 md:p-24 border-b border-[#1a1a1a]/5">
-                            <div className="max-w-xl">
-                                <div className="flex items-center gap-4 mb-4">
-                                   <span className="font-serif italic text-4xl opacity-20">{point.number}</span>
-                                   <span className="font-mono text-xs text-red-600 border border-red-600/20 px-2 py-1 rounded-full font-bold">[{point.label}]</span>
+
+                {/* RIGHT: CARD STACK (Sticky Cross-Fade) */}
+                <div className="w-full md:w-3/5 h-[65vh] md:h-full bg-[#FAFAFA] relative overflow-hidden">
+                    {FRICTION_POINTS.map((point, i) => {
+                        // Calculate fade ranges based on index (0 to 4)
+                        const start = (i - 0.25) * 0.2;
+                        const fadeInEnd = i * 0.2;
+                        const fadeOutStart = (i + 0.75) * 0.2;
+                        const end = (i + 1) * 0.2;
+
+                        // First item starts visible, Last item stays visible
+                        const rangeInput = i === 0 ? [0, 0.15, 0.2] : i === 4 ? [0.75, 0.8, 1] : [start, fadeInEnd, fadeOutStart, end];
+                        const rangeOutput = i === 0 ? [1, 1, 0] : i === 4 ? [0, 1, 1] : [0, 1, 1, 0];
+                        
+                        const opacity = useTransform(scrollYProgress, rangeInput, rangeOutput);
+
+                        return (
+                            <motion.div 
+                                key={point.id}
+                                style={{ opacity }}
+                                className="absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-20 pointer-events-none"
+                            >
+                                <div className="w-full max-w-lg pointer-events-auto">
+                                    {point.id === 'cta' ? (
+                                        <div className="w-full bg-[#1a1a1a] text-[#FFF2EC] p-12 border border-black/5 shadow-2xl relative overflow-hidden text-center">
+                                            <div className="absolute top-0 left-0 w-full h-1 bg-[#C5A059]" />
+                                            <div className="mb-8 flex justify-center">
+                                                <div className="w-20 h-20 rounded-full border border-[#C5A059] flex items-center justify-center">
+                                                    <div className="w-1.5 h-1.5 bg-[#C5A059] rounded-full animate-ping" />
+                                                </div>
+                                            </div>
+                                            <h3 className="font-serif text-4xl leading-tight mb-8">
+                                                Ready to <span className="italic text-[#C5A059]">Architect</span><br/> the solution?
+                                            </h3>
+                                            <button 
+                                                onClick={() => onNavigate('architecture')} 
+                                                className="group relative inline-flex items-center justify-center px-10 py-5 bg-[#C5A059] text-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] font-bold overflow-hidden transition-all duration-300 hover:bg-white"
+                                            >
+                                                <span className="relative z-10 flex items-center gap-3">
+                                                    [ EXPLORE_SYSTEMS ] <ArrowRight className="w-4 h-4" />
+                                                </span>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-white p-12 border border-black/5 shadow-xl relative">
+                                            <div className="mb-8 flex justify-center">
+                                                <div className="w-40 h-40 relative flex items-center justify-center border border-black/5 rounded-full bg-[#FAFAFA]">
+                                                    <FrictionVisual type={point.id} />
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-end border-b-2 border-[#E21E3F] pb-4">
+                                                <span className="font-mono text-xs text-[#E21E3F] uppercase tracking-widest font-bold">
+                                                    [{point.label}]
+                                                </span>
+                                                <span className="font-serif text-4xl text-[#1a1a1a]">
+                                                    {point.stat}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                <h3 className="font-serif text-4xl md:text-5xl mb-4 text-[#1a1a1a] tracking-tight leading-none">{point.title}</h3>
-                                <div className="font-mono text-xl text-red-600 font-bold mb-6">{point.stat}</div>
-                                <p className="font-sans text-lg md:text-xl opacity-70 mb-10 border-l-2 border-red-600/20 pl-6 leading-relaxed font-light">{point.body}</p>
-                                <div className="w-full h-48 mt-12 relative flex items-center justify-center">
-                                    <div className="absolute inset-0 bg-transparent border-t border-b border-[#1a1a1a]/5" />
-                                    <FrictionVisual type={point.id} />
-                                    <div className="absolute bottom-2 left-0 font-mono text-[8px] text-[#1a1a1a]/30 uppercase tracking-widest">FIG. {point.number} - LIVE_DATA</div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    <div className="h-[80vh] flex items-center justify-center p-12 md:p-24 bg-[#FFF2EC]">
-                        <div className="text-center max-w-2xl">
-                            <h3 className="font-serif text-4xl md:text-6xl text-[#1a1a1a] leading-[0.9] mb-12">You have seen the <span className="text-[#E21E3F] italic">leak.</span> <br/>Now see the <span className="text-[#C5A059] italic">fix.</span></h3>
-                            <button onClick={() => onNavigate('architecture')} className="group relative inline-flex items-center justify-center px-10 py-5 bg-[#1a1a1a] text-[#FFF2EC] border border-[#1a1a1a] font-mono text-xs uppercase tracking-[0.2em] font-bold overflow-hidden transition-all duration-300">
-                                <div className="absolute inset-0 bg-[#C5A059] translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                                <span className="relative z-10 group-hover:text-[#1a1a1a] transition-colors duration-500">[ EXPLORE_ARCHITECTURE ]</span>
-                            </button>
-                        </div>
-                    </div>
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

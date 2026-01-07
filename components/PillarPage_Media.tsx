@@ -8,9 +8,9 @@ import {
   Search, Award, Linkedin, // Tier 2 Icons (Authority)
   Layers, Instagram, Calendar, // Tier 3 Icons (Distribution)
   Zap, Ticket, Split, // Tier 4 Icons (Terminal)
-  Check // UI Icons
+  Check, Play, Clapperboard, Settings // UI Icons
 } from 'lucide-react';
-import PillarVisual_Broadcast from './PillarVisual_Broadcast';
+import PillarVisual_MediaGrid from './PillarVisual_MediaGrid';
 
 interface PillarPageProps {
   onBack: () => void;
@@ -27,6 +27,175 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
     <span className="relative z-10 flex items-center justify-center gap-3">{children}</span>
   </button>
 );
+
+// --- DIRECTOR MONITOR DATA ---
+const SCENES = [
+  {
+    id: "SCENE_01",
+    timecode: "00:01:14:02",
+    label: "PRODUCTION_CREW",
+    q: "Do I need a professional camera crew?",
+    a: "Negative. We utilize 'Remote Direction'. You film on your iPhone 15 Pro using our specific lighting guide. Our post-production team grades the footage to look like cinema. Authority comes from the content, not the camera."
+  },
+  {
+    id: "SCENE_02",
+    timecode: "00:04:22:18",
+    label: "TIME_COMMITMENT",
+    q: "How much time does this require?",
+    a: "One hour per month. You sit down, read the teleprompter scripts we write, and record. We handle editing, captioning, resizing, and distribution. Your job is to be the talent; our job is the logistics."
+  },
+  {
+    id: "SCENE_03",
+    timecode: "00:08:05:00",
+    label: "B2B_RELEVANCE",
+    q: "Will this work for B2B?",
+    a: "Especially for B2B. LinkedIn video is the highest trust-building asset available. While your competitors post boring text PDFs, you appear in the feed with high-value, face-to-camera insights."
+  },
+  {
+    id: "SCENE_04",
+    timecode: "00:12:30:11",
+    label: "SCRIPTING_LOGIC",
+    q: "Who writes the scripts?",
+    a: "We do. We interview you once to extract your expertise, then our copywriters turn that raw data into viral-structured scripts (Hook, Value, CTA) designed for maximum retention."
+  },
+  {
+    id: "SCENE_05",
+    timecode: "00:15:45:22",
+    label: "CAMERA_SHY",
+    q: "What if I hate being on camera?",
+    a: "We deploy 'Synthetic Avatars' (HeyGen). We clone your voice and likeness once, and then generate infinite video content from text without you ever needing to film again."
+  },
+  {
+    id: "SCENE_06",
+    timecode: "00:19:10:05",
+    label: "APPROVAL_FLOW",
+    q: "Can I review content before it posts?",
+    a: "Mandatory. We use Frame.io for approvals. You receive a link, leave precise timestamped comments like 'Cut this pause' or 'Change this graphic', and we revise instantly."
+  },
+  {
+    id: "SCENE_07",
+    timecode: "00:24:00:00",
+    label: "SEO_IMPACT",
+    q: "Does this help my Google ranking?",
+    a: "Massively. We transcribe every video into a blog post and embed the YouTube link. This creates 'Dwell Time' on your site, signaling to Google that your page is high-value."
+  }
+];
+
+const DirectorMonitor = () => {
+  const [activeScene, setActiveScene] = useState(0);
+  const [isStatic, setIsStatic] = useState(false);
+
+  const handleSwitch = (index: number) => {
+    if (index === activeScene) return;
+    setIsStatic(true);
+    setTimeout(() => {
+      setActiveScene(index);
+      setIsStatic(false);
+    }, 300); // Static duration
+  };
+
+  const scene = SCENES[activeScene];
+
+  return (
+    <div className="w-full max-w-5xl mx-auto">
+       {/* MONITOR FRAME */}
+       <div className="relative aspect-video bg-[#111] border-8 border-[#1a1a1a] rounded-sm shadow-2xl overflow-hidden mb-8 group">
+          
+          {/* SCREEN CONTENT */}
+          <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center bg-[#0a0a0a]">
+             
+             {/* Background Grid */}
+             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
+             
+             {/* CONTENT */}
+             <AnimatePresence mode="wait">
+               {!isStatic && (
+                 <motion.div
+                   key={scene.id}
+                   initial={{ opacity: 0, scale: 1.05 }}
+                   animate={{ opacity: 1, scale: 1 }}
+                   exit={{ opacity: 0 }}
+                   transition={{ duration: 0.4 }}
+                   className="relative z-10"
+                 >
+                    <span className="font-mono text-[#C5A059] text-xs uppercase tracking-[0.2em] mb-4 block">
+                       Script_Query: {scene.label}
+                    </span>
+                    <h3 className="font-serif text-3xl md:text-5xl text-white mb-8 leading-tight max-w-3xl">
+                       "{scene.q}"
+                    </h3>
+                    <div className="flex items-start gap-4 border-l-2 border-[#E21E3F] pl-6">
+                       <span className="font-mono text-[#E21E3F] text-xs font-bold pt-1">DIR:</span>
+                       <p className="font-sans text-lg md:text-xl text-white/70 leading-relaxed max-w-2xl">
+                          {scene.a}
+                       </p>
+                    </div>
+                 </motion.div>
+               )}
+             </AnimatePresence>
+
+             {/* STATIC OVERLAY */}
+             <AnimatePresence>
+                {isStatic && (
+                   <motion.div 
+                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                     className="absolute inset-0 bg-white/10 z-50 backdrop-blur-sm flex items-center justify-center"
+                   >
+                      <div className="w-full h-full bg-[url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif')] opacity-10 bg-cover mix-blend-overlay" />
+                   </motion.div>
+                )}
+             </AnimatePresence>
+
+             {/* HUD ELEMENTS */}
+             <div className="absolute top-6 left-6 flex items-center gap-4 text-[10px] font-mono text-white/40 tracking-widest pointer-events-none">
+                <span className="text-[#E21E3F] font-bold flex items-center gap-2">
+                   <div className="w-2 h-2 bg-[#E21E3F] rounded-full animate-pulse" /> REC
+                </span>
+                <span>ISO 800</span>
+                <span>RAW 4K</span>
+                <span>{scene.timecode}</span>
+             </div>
+
+             {/* Safe Area Markers */}
+             <div className="absolute top-6 right-6 w-4 h-4 border-t border-r border-white/20" />
+             <div className="absolute bottom-6 left-6 w-4 h-4 border-b border-l border-white/20" />
+             <div className="absolute bottom-6 right-6 w-4 h-4 border-b border-r border-white/20" />
+             
+             {/* Center Crosshair */}
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 opacity-20 pointer-events-none">
+                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white" />
+                <div className="absolute left-1/2 top-0 h-full w-[1px] bg-white" />
+             </div>
+          </div>
+       </div>
+
+       {/* SWITCHER DECK (CONTROLS) */}
+       <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+          {SCENES.map((s, i) => (
+             <button
+               key={s.id}
+               onClick={() => handleSwitch(i)}
+               className={`h-16 flex flex-col items-center justify-center border transition-all duration-200 group relative overflow-hidden ${
+                 activeScene === i 
+                   ? 'bg-[#1a1a1a] border-[#E21E3F]' 
+                   : 'bg-white border-black/10 hover:bg-black/5'
+               }`}
+             >
+                <span className={`font-mono text-[10px] font-bold mb-1 ${activeScene === i ? 'text-[#E21E3F]' : 'text-black/30'}`}>
+                   CAM_{i+1}
+                </span>
+                <div className={`w-8 h-1 rounded-full transition-colors ${activeScene === i ? 'bg-[#E21E3F]' : 'bg-black/10 group-hover:bg-[#C5A059]'}`} />
+                
+                {/* Active Light */}
+                {activeScene === i && (
+                   <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#E21E3F] rounded-full shadow-[0_0_5px_#E21E3F]" />
+                )}
+             </button>
+          ))}
+       </div>
+    </div>
+  );
+};
 
 const TIERS = {
   synthetic: {
@@ -221,7 +390,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
              
              {/* LEFT: CONTENT */}
              <div>
-               <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_05 // PRESENCE</span>
+               <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-6 block uppercase font-bold">/ SYSTEM_05 // BROADCAST</span>
                <h1 className="font-serif text-5xl md:text-7xl leading-[0.9] tracking-tight mb-8">
                  Media <br />
                  <span className="italic text-[#E21E3F]">Logistics.</span>
@@ -231,21 +400,21 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                  We turn one hour of expertise into a month of <strong>Omnipresence</strong> through supply chain engineering.
                </p>
                <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a]/40">
-                  <span>Select your Channel</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <Play className="w-4 h-4 fill-black/20" />
+                  <span>Select Broadcast Channel</span>
                </div>
              </div>
              
-             {/* RIGHT: CONTAINED VISUAL */}
-             <div className="relative w-full max-w-[350px] h-[300px] mx-auto opacity-90 flex items-center justify-center overflow-hidden">
+             {/* RIGHT: THE MEDIA GRID VISUAL (Now on Cream) */}
+             <div className="relative w-full max-w-[600px] h-[500px] mx-auto opacity-100 flex items-center justify-center overflow-hidden">
                 {/* The visual sits inside this strictly sized box */}
-                <PillarVisual_Broadcast />
+                <PillarVisual_MediaGrid />
              </div>
         </div>
 
         {/* --- UNIFIED DASHBOARD CONTAINER --- */}
         <div className="mb-12">
-           <h2 className="font-serif text-4xl md:text-5xl mb-6 text-[#1a1a1a]">Choose your Broadcast.</h2>
+           <h2 className="font-serif text-4xl md:text-5xl mb-6 text-[#1a1a1a]">Select Broadcast Channel.</h2>
         </div>
 
         <div className="border border-black/10 bg-white shadow-sm mb-32">
@@ -314,7 +483,6 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                                       e.g. {p.examples}
                                   </p>
                                   
-                                  {/* Progress Bar for Auto-Rotation */}
                                   {isActive && isAutoPlaying && !isHovering && (
                                       <div className="absolute bottom-0 left-0 w-full h-1 bg-[#C5A059]/20">
                                           <motion.div 
@@ -337,7 +505,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                   {/* --- BOTTOM ROW: SOLUTION CONTENT --- */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 border-t border-black/5 pt-16">
                       
-                      {/* LEFT COL: TEXT (Vertically Centered) */}
+                      {/* LEFT COL: TEXT */}
                       <div className="flex flex-col justify-center">
                           <AnimatePresence mode="wait">
                               <motion.div
@@ -348,7 +516,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                                 transition={{ duration: 0.3 }}
                               >
                                   <div className="mb-10">
-                                    <span className="text-[#E21E3F] font-mono text-[9px] uppercase tracking-widest font-bold mb-3 block">Diagnosis // The Pain Point</span>
+                                    <span className="text-[#E21E3F] font-mono text-[9px] uppercase tracking-widest font-bold mb-3 block">Diagnosis // The Signal Loss</span>
                                     <h2 className="font-serif text-4xl md:text-5xl mb-6 text-[#1a1a1a] leading-tight">
                                         {currentPersona.painTitle}
                                     </h2>
@@ -359,7 +527,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
 
                                   <div className="bg-[#1a1a1a] p-8 text-[#FFF2EC] relative overflow-hidden rounded-sm">
                                       <div className="absolute top-0 left-0 w-1 h-full bg-[#C5A059]" />
-                                      <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-widest block mb-4 font-bold">The Solution Protocol</span>
+                                      <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-widest block mb-4 font-bold">The Broadcast Protocol</span>
                                       <p className="font-sans text-lg leading-relaxed">
                                           {currentPersona.solution}
                                       </p>
@@ -393,7 +561,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                                             {[1, 0.6, 0.8, 0.4, 1, 0.7].map((h, i) => (
                                                 <motion.div 
                                                     key={i}
-                                                    className="h-1 bg-black/20 rounded-full"
+                                                    className="h-1 bg-[#1a1a1a]/20 rounded-full"
                                                     animate={{ width: [10, h * 40, 10] }}
                                                     transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
                                                 />
@@ -409,7 +577,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                                             {[0.3, 0.5, 0.4, 0.7, 0.6, 1].map((h, i) => (
                                                 <motion.div 
                                                     key={i}
-                                                    className={`w-full rounded-t-sm ${i === 5 ? 'bg-[#C5A059]' : 'bg-black/10'}`}
+                                                    className={`w-full rounded-t-sm ${i === 5 ? 'bg-[#C5A059]' : 'bg-[#1a1a1a]/10'}`}
                                                     initial={{ height: 0 }}
                                                     animate={{ height: `${h * 100}%` }}
                                                     transition={{ duration: 1, delay: i * 0.2 }}
@@ -417,7 +585,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                                             ))}
                                         </div>
                                         <div className="absolute top-4 right-12 bg-white px-2 py-1 shadow-sm border border-black/10 rounded-sm">
-                                            <div className="w-16 h-2 bg-black/10 rounded-full mb-1" />
+                                            <div className="w-16 h-2 bg-[#1a1a1a]/10 rounded-full mb-1" />
                                             <div className="w-10 h-2 bg-[#C5A059] rounded-full" />
                                         </div>
                                     </div>
@@ -458,7 +626,7 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                                         <div className="relative z-10 bg-white p-4 border border-black/10 rounded-sm shadow-sm flex items-center gap-4">
                                             <Rocket className="w-6 h-6 text-[#1a1a1a]" />
                                             <div className="space-y-2">
-                                                <div className="w-20 h-2 bg-black/10 rounded-full" />
+                                                <div className="w-20 h-2 bg-[#1a1a1a]/10 rounded-full" />
                                                 <div className="w-12 h-2 bg-[#C5A059] rounded-full" />
                                             </div>
                                         </div>
@@ -494,6 +662,22 @@ const PillarPage_Media: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => 
                </motion.div>
              </AnimatePresence>
            </div>
+        </div>
+
+        {/* --- NEW SECTION: THE DIRECTOR'S MONITOR (Q&A) --- */}
+        <div className="mb-32">
+           <div className="mb-16 border-b border-black/10 pb-8 flex items-end justify-between">
+              <div>
+                <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// PRODUCTION_LOGS</span>
+                <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Media <span className="italic text-[#C5A059]">Interrogations.</span></h2>
+              </div>
+              <div className="hidden md:flex items-center gap-2 font-mono text-[10px] text-black/30 uppercase tracking-widest">
+                 <Clapperboard className="w-4 h-4" />
+                 SCENE_SELECTION_ACTIVE
+              </div>
+           </div>
+
+           <DirectorMonitor />
         </div>
 
       </div>

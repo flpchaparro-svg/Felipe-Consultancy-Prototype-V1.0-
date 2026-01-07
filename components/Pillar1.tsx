@@ -26,6 +26,76 @@ const FillButton = ({ children, onClick, className = "" }: { children: React.Rea
   </button>
 );
 
+// --- FAQ DATA ---
+const FAQS = [
+  {
+    q: "How fast is a Velocity deployment?",
+    a: "Our standard sprint is strictly 7 days from content lock. We bypass the 'Design Discovery' limbo by using pre-validated, high-conversion architectures that just need your brand skin."
+  },
+  {
+    q: "Do I own the source code?",
+    a: "100%. Unlike agencies that trap you in proprietary CMS ecosystems, we build on global standards (WordPress, Shopify, Next.js). Handover includes full repository access and admin keys."
+  },
+  {
+    q: "Can this integrate with my CRM?",
+    a: "Seamlessly. This isn't a brochure; it's a data catchment. We engineer native API bridges to HubSpot, Salesforce, or Pipedrive so every lead lands directly in your pipeline."
+  },
+  {
+    q: "What about SEO performance?",
+    a: "It's baked in, not bolted on. We architect the site with semantic HTML5, schema markup, and sub-second load times (Core Web Vitals) to ensure Google favors your domain immediately."
+  },
+  {
+    q: "Can you migrate my legacy data?",
+    a: "Yes. We perform forensic data extraction from your old system. Customer lists, order history, and blog content are sanitized and mapped to the new architecture with zero data loss."
+  },
+  {
+    q: "Is hosting included?",
+    a: "We deploy to enterprise-grade edge networks (Vercel, Kinsta, AWS). We can manage the infrastructure for peak uptime, or hand the keys to your internal IT team."
+  },
+  {
+    q: "What happens after launch?",
+    a: "We don't ghost you. Every deployment includes a 30-day 'Hyper-Care' period where we monitor traffic telemetry and patch any friction points in real-time."
+  }
+];
+
+const FAQItem = ({ q, a, index }: { q: string, a: string, index: number }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-t border-black/10 first:border-t-0">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full py-8 flex justify-between items-start text-left group"
+      >
+        <div className="flex items-baseline gap-6 pr-8">
+           <span className="font-mono text-[9px] text-[#C5A059] uppercase tracking-widest min-w-[20px] pt-2">0{index + 1}</span>
+           <span className={`font-serif text-2xl md:text-3xl transition-colors duration-300 ${isOpen ? 'text-[#C5A059]' : 'text-[#1a1a1a] group-hover:text-[#C5A059]'}`}>
+             {q}
+           </span>
+        </div>
+        <div className={`shrink-0 w-8 h-8 flex items-center justify-center border rounded-full transition-all duration-300 mt-1 ${isOpen ? 'border-[#C5A059] bg-[#C5A059] text-white rotate-45' : 'border-black/10 group-hover:border-[#C5A059] text-black/40'}`}>
+           <span className="text-lg leading-none">+</span>
+        </div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "circOut" }}
+            className="overflow-hidden pl-0 md:pl-11"
+          >
+            <p className="pb-10 font-sans text-lg text-[#1a1a1a]/60 leading-relaxed max-w-3xl">
+              {a}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 const TIERS = {
   velocity: {
     id: 'velocity',
@@ -223,8 +293,8 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
              </p>
           </div>
           
-          {/* Right: Visual Animation (Restored) */}
-          <div className="relative w-full max-w-[350px] h-[350px] mx-auto opacity-90">
+          {/* Right: Visual Animation - INCREASED SIZE TO 450px */}
+          <div className="relative w-full max-w-[450px] h-[450px] mx-auto opacity-90 flex items-center justify-center">
              <PillarVisual_Catchment />
           </div>
         </div>
@@ -366,7 +436,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                         </div>
                                     </div>
                                   )}
-                                  {/* [Other Tier Animations kept identical to your file] */}
+                                  
                                   {activeTier === 'retail' && (
                                     <div className="flex items-center gap-4 relative">
                                         <div className="w-16 h-16 border border-[#C5A059] flex items-center justify-center font-mono text-[10px] text-[#C5A059]">POS</div>
@@ -411,6 +481,21 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
              </AnimatePresence>
            </div>
         </div>
+
+        {/* --- FAQ SECTION --- */}
+        <div className="mb-32">
+           <div className="mb-16 border-b border-black/10 pb-8">
+              <span className="font-mono text-xs text-[#E21E3F] tracking-widest mb-4 block uppercase font-bold">// PROTOCOL_FAQ</span>
+              <h2 className="font-serif text-4xl md:text-5xl text-[#1a1a1a]">Operational <span className="italic text-[#C5A059]">Queries.</span></h2>
+           </div>
+           
+           <div className="grid grid-cols-1 gap-0 border-b border-black/10">
+              {FAQS.map((faq, index) => (
+                 <FAQItem key={index} q={faq.q} a={faq.a} index={index} />
+              ))}
+           </div>
+        </div>
+
       </div>
     </motion.div>
   );
