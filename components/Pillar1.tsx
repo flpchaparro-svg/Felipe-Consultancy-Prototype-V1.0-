@@ -16,7 +16,7 @@ interface PillarPageProps {
 }
 
 // --- HELPER COMPONENT: FILL BUTTON ---
-const FillButton = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
+const FillButton: React.FC<{ children: React.ReactNode; onClick?: () => void; className?: string }> = ({ children, onClick, className = "" }) => (
   <button 
     onClick={onClick} 
     className={`relative overflow-hidden group bg-[#C5A059] text-white border border-[#C5A059] ${className}`}
@@ -58,7 +58,7 @@ const FAQS = [
   }
 ];
 
-const FAQItem = ({ q, a, index }: { q: string, a: string, index: number }) => {
+const FAQItem: React.FC<{ q: string; a: string; index: number }> = ({ q, a, index }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -441,7 +441,7 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                     <div className="flex items-center gap-4 relative">
                                         <div className="w-16 h-16 border border-[#C5A059] flex items-center justify-center font-mono text-[10px] text-[#C5A059]">POS</div>
                                         <motion.div animate={{ x: [0, 20, 0] }} transition={{ duration: 2, repeat: Infinity }} className="w-16 h-[1px] bg-[#C5A059] relative">
-                                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#C5A059]" />
+                                            <div className="absolute right-0 top-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#C5A059]" />
                                         </motion.div>
                                         <div className="w-16 h-16 bg-[#C5A059] text-white flex items-center justify-center font-mono text-[10px]">WEB</div>
                                     </div>

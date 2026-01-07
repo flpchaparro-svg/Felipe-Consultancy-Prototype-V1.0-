@@ -18,7 +18,7 @@ interface PillarPageProps {
 }
 
 // --- HELPER COMPONENT: FILL BUTTON ---
-const FillButton = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
+const FillButton: React.FC<{ children: React.ReactNode; onClick?: () => void; className?: string }> = ({ children, onClick, className = "" }) => (
   <button 
     onClick={onClick} 
     className={`relative overflow-hidden group bg-[#C5A059] text-white border border-[#C5A059] ${className}`}
@@ -74,7 +74,7 @@ const AUDIO_LOGS = [
   }
 ];
 
-const CognitiveLogItem = ({ item, index }: { item: typeof AUDIO_LOGS[0], index: number }) => {
+const CognitiveLogItem: React.FC<{ item: typeof AUDIO_LOGS[0]; index: number }> = ({ item, index }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

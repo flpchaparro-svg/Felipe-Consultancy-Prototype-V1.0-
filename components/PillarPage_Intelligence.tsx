@@ -18,7 +18,7 @@ interface PillarPageProps {
 }
 
 // --- HELPER COMPONENT: FILL BUTTON ---
-const FillButton = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
+const FillButton: React.FC<{ children: React.ReactNode; onClick?: () => void; className?: string }> = ({ children, onClick, className = "" }) => (
   <button 
     onClick={onClick} 
     className={`relative overflow-hidden group bg-[#C5A059] text-white border border-[#C5A059] ${className}`}
@@ -603,11 +603,11 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
 
                           {/* ANCHORED BOTTOM CTA (FILL ANIMATION) */}
                           <FillButton 
-                              onClick={() => onNavigate('landing', 'booking')}
-                              className="w-full py-5 font-mono text-xs uppercase tracking-[0.2em] font-bold mt-auto"
+                              onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe", "_blank")}
+                              className="px-12 py-6 w-auto font-mono text-xs uppercase tracking-[0.2em] font-bold"
                           >
-                              [ INITIALIZE_PROTOCOL ]
-                              <ArrowRight className="w-3 h-3 ml-2" />
+                              [ BOOK A 15-MIN CALL ]
+                              <ArrowRight className="w-4 h-4 ml-2" />
                           </FillButton>
                       </div>
 
@@ -627,6 +627,20 @@ const PillarPage_Intelligence: React.FC<PillarPageProps> = ({ onBack, onNavigate
            </div>
 
            <IntelligenceQA />
+        </div>
+
+        {/* --- CTA SECTION --- */}
+        <div className="border-t border-black/10 py-32 flex flex-col items-center text-center">
+           <h2 className="font-serif text-5xl md:text-6xl mb-8 text-[#1a1a1a]">
+             Still have <span className="italic text-[#C5A059]">questions?</span>
+           </h2>
+           <FillButton 
+             onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe", "_blank")}
+             className="px-12 py-6 w-auto font-mono text-xs uppercase tracking-[0.2em] font-bold"
+           >
+             [ BOOK A 15-MIN CALL ]
+             <ArrowRight className="w-4 h-4 ml-2" />
+           </FillButton>
         </div>
 
       </div>

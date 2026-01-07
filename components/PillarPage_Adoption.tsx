@@ -18,7 +18,7 @@ interface PillarPageProps {
 }
 
 // --- HELPER COMPONENT: FILL BUTTON ---
-const FillButton = ({ children, onClick, className = "" }: { children: React.ReactNode, onClick?: () => void, className?: string }) => (
+const FillButton: React.FC<{ children: React.ReactNode; onClick?: () => void; className?: string }> = ({ children, onClick, className = "" }) => (
   <button 
     onClick={onClick} 
     className={`relative overflow-hidden group bg-[#C5A059] text-white border border-[#C5A059] ${className}`}
@@ -74,7 +74,7 @@ const CULTURE_QA = [
   }
 ];
 
-const FlipCard = ({ item, index }: { item: typeof CULTURE_QA[0], index: number }) => {
+const FlipCard: React.FC<{ item: typeof CULTURE_QA[0]; index: number }> = ({ item, index }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
@@ -486,7 +486,6 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                   {/* --- BOTTOM ROW: SOLUTION CONTENT --- */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 border-t border-black/5 pt-16">
                       
-                      {/* LEFT COL: TEXT (Vertically Centered) */}
                       <div className="flex flex-col justify-center">
                           <AnimatePresence mode="wait">
                               <motion.div
@@ -517,16 +516,11 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                           </AnimatePresence>
                       </div>
 
-                      {/* RIGHT COL: VISUALS & CTA */}
                       <div className="flex flex-col justify-between h-full bg-[#FAFAFA] p-10 border border-black/5 rounded-sm">
-                          
                           <div className="flex-grow">
                               <span className="font-mono text-[9px] text-black/30 uppercase tracking-widest block mb-6">Visual Architecture</span>
                               
-                              {/* MICRO-VISUALS */}
                               <div className="h-40 w-full mb-8 bg-white border border-black/5 rounded-sm flex items-center justify-center relative overflow-hidden shadow-inner">
-                                  
-                                  {/* TIER 1: MEDIA (Audio Waves) */}
                                   {activeTier === 'media' && (
                                     <div className="flex items-center gap-1 h-12">
                                         {[1, 2, 4, 3, 5, 4, 2, 1, 3, 5, 2].map((h, i) => (
@@ -540,7 +534,6 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                                     </div>
                                   )}
 
-                                  {/* TIER 2: MATRIX (QR Code / Grid) */}
                                   {activeTier === 'matrix' && (
                                     <div className="grid grid-cols-4 gap-1 p-4 bg-white">
                                         {[...Array(16)].map((_, i) => (
@@ -556,7 +549,6 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                                     </div>
                                   )}
 
-                                  {/* TIER 3: VISUALS (Flowchart) */}
                                   {activeTier === 'visuals' && (
                                     <div className="relative w-full h-full flex items-center justify-center">
                                         <div className="w-8 h-8 border border-[#1a1a1a] flex items-center justify-center mb-8">
@@ -571,7 +563,6 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                                     </div>
                                   )}
 
-                                  {/* TIER 4: ANALYST (Brain Node) */}
                                   {activeTier === 'analyst' && (
                                     <div className="relative w-full h-full flex items-center justify-center">
                                         <motion.div 
@@ -604,16 +595,11 @@ const PillarPage_Adoption: React.FC<PillarPageProps> = ({ onBack, onNavigate }) 
                               </ul>
                           </div>
 
-                          {/* ANCHORED BOTTOM CTA (FILL ANIMATION) */}
-                          <FillButton 
-                              onClick={() => onNavigate('landing', 'booking')}
-                              className="w-full py-5 font-mono text-xs uppercase tracking-[0.2em] font-bold mt-auto"
-                          >
+                          <FillButton onClick={() => onNavigate('landing', 'booking')} className="w-full py-5 font-mono text-xs uppercase tracking-[0.2em] font-bold mt-auto">
                               [ INITIALIZE_PROTOCOL ]
                               <ArrowRight className="w-3 h-3 ml-2" />
                           </FillButton>
                       </div>
-
                   </div>
                </motion.div>
              </AnimatePresence>
