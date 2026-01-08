@@ -34,7 +34,7 @@ const SYSTEM_STYLES: Record<string, {
     cardBg: 'bg-[#1a1a1a]', 
     cardBorder: 'border-[#E21E3F]/30',
     cardText: 'text-white', 
-    accent: 'text-[#C5A059]', // Unified Gold
+    accent: 'text-[#E21E3F]', // CHANGED: Unified Red for numbers/icons
     
     // Display Box
     displayBg: 'bg-[#1a1a1a]', 
@@ -76,7 +76,7 @@ const SYSTEM_STYLES: Record<string, {
     cardBg: 'bg-[#1a1a1a]',
     cardBorder: 'border-white/20',
     cardText: 'text-white',
-    accent: 'text-[#C5A059]', // Unified Gold
+    accent: 'text-white', // CHANGED: White for numbers/icons
     
     // Display Box
     displayBg: 'bg-[#1a1a1a]', 
@@ -263,6 +263,12 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                      viewport={{ once: true, margin: "-10%" }}
                      className="lg:hidden absolute inset-0 z-0 flex flex-col justify-end"
                    >
+                       {/* MOBILE LOADING BAR - ANIMATED ON HOVER (TOP) */}
+                       <div className="absolute top-0 left-0 w-full h-1 bg-white/10 z-20">
+                          <div 
+                            className={`h-full ${style.indicatorColor} w-0 group-hover:w-full transition-all duration-1000 ease-out`}
+                          />
+                       </div>
                        
                        {/* Full Background Animation */}
                        <div className="absolute inset-0 z-0 opacity-100">
@@ -319,17 +325,6 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                              </span>
                            </motion.button>
                        </div>
-
-                       {/* MOBILE LOADING BAR - ANIMATED ON SCROLL */}
-                       <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10 z-20">
-                          <motion.div 
-                            className={`h-full ${style.indicatorColor}`}
-                            initial={{ width: "0%" }}
-                            whileInView={{ width: "100%" }}
-                            viewport={{ once: true, amount: 0.5 }}
-                            transition={{ duration: 1.5, ease: "circOut" }}
-                          />
-                       </div>
                    </motion.div>
 
                    {/* =======================================================
@@ -353,20 +348,20 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                        
                        {/* Hover Glow */}
                        <div className={`absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity pointer-events-none ${style.indicatorColor} z-20`} />
-                       
-                       {/* Active Loading Bar */}
-                       {isActive && (
-                          <div className="absolute bottom-0 left-0 w-full h-[2px] bg-white/5 relative z-10">
-                             <motion.div 
-                               layoutId="active-bar"
-                               initial={{ width: '0%' }}
-                               animate={{ width: '100%' }}
-                               transition={{ duration: 4, ease: "linear" }}
-                               className={`h-full ${style.indicatorColor}`}
-                             />
-                          </div>
-                       )}
                    </div>
+
+                   {/* Active Loading Bar - DESKTOP ONLY - MOVED TO ABSOLUTE BOTTOM */}
+                   {isActive && (
+                      <div className="hidden lg:block absolute bottom-0 left-0 w-full h-[2px] bg-white/5 z-30">
+                         <motion.div 
+                           key={activeId}
+                           initial={{ width: '0%' }}
+                           animate={{ width: '100%' }}
+                           transition={{ duration: 4, ease: "linear" }}
+                           className={`h-full ${style.indicatorColor}`}
+                         />
+                      </div>
+                   )}
 
                 </div>
               );
