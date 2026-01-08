@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ShieldCheck, Database, Zap, Activity, ArrowRight, CheckCircle2, X } from 'lucide-react';
 import EvidenceVisual_Compare from './EvidenceVisual_Compare';
 
@@ -24,7 +24,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
     window.scrollTo(0, 0);
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [activeStudy, setActiveStudy] = React.useState<any | null>(null);
 
   const caseAudits = [
     {
@@ -34,7 +34,8 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
       impact: '100% Lead Capture',
       desc: 'A high-volume trades business was missing 40% of inbound demand due to human bandwidth caps. We deployed the "Capture Core" protocol with SMS automation, achieving total demand retention in 7 days.',
       icon: Zap,
-      metrics: ['Decay Rate: 0%', 'Response Time: <30s', 'Growth: +22% MoM']
+      metrics: ['Decay Rate: 0%', 'Response Time: <30s', 'Growth: +22% MoM'],
+      bg: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1200'
     },
     {
       id: 'AUDIT_02',
@@ -43,7 +44,8 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
       impact: '-15 hrs/wk Admin',
       desc: 'Replacing manual data triage with a secure AI-Agentic bridge. The system reads, classifies, and routes legal inquiries into the CRM with 99.4% accuracy, freeing the executive team for high-value litigation.',
       icon: Database,
-      metrics: ['Accuracy: 99.4%', 'Logic Gates: 42', 'ROI: 14x']
+      metrics: ['Accuracy: 99.4%', 'Logic Gates: 42', 'ROI: 14x'],
+      bg: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1200'
     },
     {
       id: 'AUDIT_03',
@@ -52,7 +54,8 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
       impact: 'Real-Time ROI Visibility',
       desc: 'Moving an executive team from gut-feeling spreadsheets to a unified Intelligence Dashboard. We aggregated 5 marketing channels and the finance stack into a single source of truth for forecasting.',
       icon: Activity,
-      metrics: ['Silos Merged: 5', 'Forecast Bias: <2%', 'Latency: Real-time']
+      metrics: ['Silos Merged: 5', 'Forecast Bias: <2%', 'Latency: Real-time'],
+      bg: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200'
     }
   ];
 
@@ -161,7 +164,8 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
               <motion.div 
                 key={audit.id}
                 variants={itemVariants as any}
-                className="bg-[#FFF2EC] p-12 flex flex-col justify-between hover:bg-white transition-colors duration-500 group min-h-[550px]"
+                onClick={() => setActiveStudy(audit)}
+                className="bg-[#FFF2EC] p-12 flex flex-col justify-between hover:bg-white transition-colors duration-500 group min-h-[550px] cursor-pointer"
               >
                 <div>
                   <div className="flex justify-between items-start mb-12">
@@ -200,7 +204,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
           </div>
         </section>
 
-        {/* CALL TO ACTION - WITH SPACING FIX */}
+        {/* CALL TO ACTION */}
         <section className="py-32 flex flex-col items-center text-center mb-24">
           <h2 className="font-serif text-5xl md:text-7xl mb-12 italic max-w-4xl leading-tight">Your company is the next <span className="text-[#C5A059]">evidence log.</span></h2>
           
@@ -225,10 +229,68 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
         </div>
       </div>
 
-      {/* MODAL (Kept as is but logic streamlined) */}
-      <div className="relative z-50">
-        {/* Logic for EvidenceVisual_Compare modal would go here if needed, removed for brevity as it was inside Feature_Group7 previously */}
-      </div>
+      {/* MODAL */}
+      <AnimatePresence>
+        {activeStudy && (
+          <div className="fixed inset-0 z-[500] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setActiveStudy(null)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-md" 
+            />
+            <motion.div 
+              initial={{ scale: 0.98, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.98, opacity: 0, y: 10 }}
+              className="bg-white w-full max-w-4xl relative z-10 rounded-none border border-black/20 max-h-[90vh] flex flex-col"
+            >
+              <button 
+                onClick={() => setActiveStudy(null)} 
+                className="absolute top-4 right-4 text-black/40 hover:text-[#C5A059] transition-colors z-50 p-2 bg-white/80 backdrop-blur rounded-full"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              
+              <div className="overflow-y-auto p-12">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                  <div className="md:col-span-7">
+                    <span className="font-mono text-[10px] text-[#E21E3F] tracking-[0.4em] uppercase mb-4 block font-bold">Deployment_Verified // {activeStudy.id}</span>
+                    <h3 className="font-serif text-5xl lg:text-6xl mb-6 tracking-tighter">{activeStudy.client}</h3>
+                    <p className="text-xl text-black/70 italic mb-8 leading-relaxed font-light border-l-2 border-[#C5A059] pl-6">
+                      "{activeStudy.desc}"
+                    </p>
+                    {activeStudy.bg && (
+                      <div className="aspect-video bg-[#1a1a1a] flex items-center justify-center group relative cursor-pointer border border-black/10 overflow-hidden rounded-none">
+                        <img src={activeStudy.bg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 transition-opacity duration-700 group-hover:opacity-40" />
+                        <span className="font-mono text-[10px] text-[#C5A059] animate-pulse tracking-[0.2em] relative z-10">[ INITIATE_WALKTHROUGH ]</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="md:col-span-5 border-l border-black/10 pl-12 flex flex-col justify-center">
+                    <h4 className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] mb-10 text-black/30">Verified Metrics</h4>
+                    <ul className="space-y-8">
+                      {activeStudy.metrics.map((m: string, i: number) => (
+                        <li key={i} className="flex items-center gap-6 group">
+                          <div className="w-1.5 h-1.5 bg-[#E21E3F] group-hover:rotate-45 transition-transform duration-300"></div>
+                          <span className="font-sans font-medium text-xl tracking-tight text-[#1a1a1a]">{m}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <a 
+                      href="https://meetings-ap1.hubspot.com/felipe" 
+                      target="_blank" 
+                      className="group relative mt-16 flex items-center justify-center py-5 px-8 bg-transparent border border-black text-black font-mono text-[10px] uppercase tracking-[0.3em] transition-all duration-500 rounded-none overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                      <span className="relative z-10 transition-colors duration-500 group-hover:text-white">[ REPLICATE THIS ARCHITECTURE ]</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </motion.div>
   );

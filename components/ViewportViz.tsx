@@ -221,6 +221,7 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type, color = '#C5A059' }) =>
           timer = d3.timer((elapsed) => {
               g.selectAll('*').remove();
               for(let i=0; i<bars; i++) {
+                  // HEIGHT MODIFIED: Made simpler/smaller
                   const h = 40 + Math.sin(i * 0.4 + elapsed * 0.003) * 30 + Math.sin(i * 0.1 - elapsed * 0.002) * 20;
                   const x = i * barW;
                   const centerY = height/2;
@@ -229,8 +230,8 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type, color = '#C5A059' }) =>
                    .attr('width', barW - 4).attr('height', h)
                    .attr('fill', 'none')
                    .attr('stroke', strokeColor)
-                   .attr('stroke-width', 1.5)
-                   .attr('opacity', 0.6);
+                   .attr('stroke-width', 1.0) // REDUCED from 1.5
+                   .attr('opacity', 0.4);     // REDUCED from 0.6
               }
           });
       };
@@ -251,8 +252,8 @@ const ViewportViz: React.FC<ViewportVizProps> = ({ type, color = '#C5A059' }) =>
                    .attr('d', line(points as any))
                    .attr('fill', 'none')
                    .attr('stroke', strokeColor)
-                   .attr('stroke-width', 1.5)
-                   .attr('opacity', 0.3 + (i * 0.05));
+                   .attr('stroke-width', 1.0) // REDUCED from 1.5
+                   .attr('opacity', 0.2 + (i * 0.05)); // REDUCED BASE from 0.3
               }
           });
       };

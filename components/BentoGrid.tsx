@@ -155,7 +155,10 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
         </div>
 
         {/* 2. DESKTOP TOP DISPLAY (Visualizer) - HIDDEN ON MOBILE/TABLET */}
-        <div className={`hidden lg:block relative w-full h-[450px] rounded-sm shadow-2xl overflow-hidden group border mb-12 transition-colors duration-500 ${activeStyle.displayBg} ${activeStyle.displayBorder}`}>
+        <div 
+          onClick={() => onServiceClick(activeService)}
+          className={`hidden lg:block relative w-full h-[450px] rounded-sm shadow-2xl overflow-hidden group border mb-12 transition-colors duration-500 cursor-pointer ${activeStyle.displayBg} ${activeStyle.displayBorder}`}
+        >
              
              {/* Display Loading Bar (Top) */}
              <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-30">
@@ -193,7 +196,10 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                    
                    {/* DESKTOP BUTTON */}
                    <button
-                     onClick={() => onServiceClick(activeService)}
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       onServiceClick(activeService);
+                     }}
                      className={`group relative px-8 py-4 font-mono text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden border transition-colors ${activeStyle.buttonBorder} ${activeStyle.buttonText}`}
                    >
                      <div className={`absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1) ${activeStyle.buttonHoverBg}`} />

@@ -24,6 +24,32 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
 
   if (!service) return null;
 
+  // --- THEME LOGIC ---
+  const sysGroup = service.systemGroup || 'ACQUISITION_SYS';
+  
+  let theme = {
+    accent: '#E21E3F',      // Red (Acquisition)
+    vizColor: '#E21E3F',    // Red Visual
+    bgAlpha: 'rgba(226, 30, 63, 0.05)',
+    borderAlpha: 'rgba(226, 30, 63, 0.2)'
+  };
+
+  if (sysGroup === 'VELOCITY_SYS') {
+    theme = {
+      accent: '#C5A059',    // Gold (Velocity)
+      vizColor: '#C5A059',  // Gold Visual
+      bgAlpha: 'rgba(197, 160, 89, 0.05)',
+      borderAlpha: 'rgba(197, 160, 89, 0.2)'
+    };
+  } else if (sysGroup === 'INTELLIGENCE_SYS') {
+    theme = {
+      accent: '#1a1a1a',    // Black (Intelligence - Ink on Cream)
+      vizColor: '#FFFFFF',  // White Visual (on Dark Header)
+      bgAlpha: 'rgba(26, 26, 26, 0.05)',
+      borderAlpha: 'rgba(26, 26, 26, 0.2)'
+    };
+  }
+
   const handlePillarNavigation = () => {
     const mapping: Record<string, string> = {
       'pillar-1': 'pillar1',
@@ -45,7 +71,7 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12 overflow-y-auto">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12 overflow-hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -59,13 +85,12 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.98 }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="relative w-full max-w-5xl bg-[#FFF2EC] text-[#1a1a1a] shadow-2xl rounded-sm overflow-hidden z-[101]"
+            className="relative w-full max-w-5xl bg-[#FFF2EC] text-[#1a1a1a] shadow-2xl rounded-sm z-[101] flex flex-col max-h-full lg:max-h-[90vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col">
-              {/* Header Visual */}
-              <div className="h-48 bg-[#1a1a1a] relative border-b border-black/10 overflow-hidden">
-                 <ViewportViz type={service.visualPrompt} />
+            {/* Header Visual - Fixed at Top */}
+            <div className="h-48 bg-[#1a1a1a] relative border-b border-black/10 shrink-0">
+                 <ViewportViz type={service.visualPrompt} color={theme.vizColor} />
                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent opacity-60" />
                  <button 
                   onClick={onClose}
@@ -73,18 +98,22 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
                 >
                   <X className="w-6 h-6" />
                 </button>
-              </div>
+            </div>
 
-              <div className="p-8 lg:p-16">
+            {/* Scrollable Content */}
+            <div className="overflow-y-auto flex-grow p-8 lg:p-16">
                 
-                {/* --- NEW DIAGNOSTIC CHECK --- */}
+                {/* --- DIAGNOSTIC CHECK --- */}
                 {service.symptom && (
-                  <div className="mb-12 p-6 border border-[#E21E3F]/20 bg-[#E21E3F]/5 flex flex-col md:flex-row items-start gap-6 rounded-sm">
-                    <div className="mt-1 w-8 h-8 rounded-full border border-[#E21E3F] flex items-center justify-center shrink-0 bg-white">
-                      <div className="w-3 h-3 bg-[#E21E3F] rounded-full animate-pulse" />
+                  <div 
+                    className="mb-12 p-6 border flex flex-col md:flex-row items-start gap-6 rounded-sm"
+                    style={{ backgroundColor: theme.bgAlpha, borderColor: theme.borderAlpha }}
+                  >
+                    <div className="mt-1 w-8 h-8 rounded-full border flex items-center justify-center shrink-0 bg-white" style={{ borderColor: theme.accent }}>
+                      <div className="w-3 h-3 rounded-full animate-pulse" style={{ backgroundColor: theme.accent }} />
                     </div>
                     <div className="flex-grow">
-                      <div className="font-mono text-[10px] text-[#E21E3F] uppercase tracking-[0.2em] font-bold mb-2">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] font-bold mb-2" style={{ color: theme.accent }}>
                         System_Diagnostic
                       </div>
                       <p className="font-serif text-xl md:text-2xl text-[#1a1a1a] italic leading-tight">
@@ -92,7 +121,10 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
                       </p>
                     </div>
                     <div className="self-center md:self-start shrink-0">
-                       <span className="px-3 py-1 bg-[#E21E3F] text-white text-[9px] font-mono uppercase tracking-widest font-bold rounded-full">
+                       <span 
+                         className="px-3 py-1 text-white text-[9px] font-mono uppercase tracking-widest font-bold rounded-full"
+                         style={{ backgroundColor: theme.accent }}
+                       >
                          Problem Detected
                        </span>
                     </div>
@@ -100,7 +132,10 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
                 )}
 
                 <div className="mb-12">
-                  <span className="text-[#E21E3F] text-[10px] font-mono tracking-[0.4em] font-bold mb-4 block uppercase">
+                  <span 
+                    className="text-[10px] font-mono tracking-[0.4em] font-bold mb-4 block uppercase"
+                    style={{ color: theme.accent }}
+                  >
                     System_Blueprint_2025 // {service.systemGroup || 'CORE'}
                   </span>
                   <h2 className="text-5xl lg:text-7xl font-serif font-light leading-none mb-4">
@@ -125,7 +160,7 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
                     <ul className="space-y-4">
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center gap-3">
-                          <ChevronRight className="w-4 h-4 text-[#E21E3F]" />
+                          <ChevronRight className="w-4 h-4" style={{ color: theme.accent }} />
                           <span className="text-sm font-semibold tracking-widest uppercase">{feature}</span>
                         </li>
                       ))}
@@ -151,7 +186,6 @@ const Modal: React.FC<ModalProps> = ({ service, isOpen, onClose, onViewPillar })
                     </div>
                   </button>
                 </div>
-              </div>
             </div>
           </motion.div>
         </div>
