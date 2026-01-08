@@ -10,7 +10,91 @@ interface BentoGridProps {
   onServiceClick: (service: ServiceDetail) => void;
 }
 
-const TechnicalLabel: React.FC<{ active: boolean; text: string }> = ({ active, text }) => {
+// --- CONFIG: COLOR THEMES PER SYSTEM ---
+const SYSTEM_STYLES: Record<string, {
+  // Card Styles
+  cardBg: string;
+  cardBorder: string;
+  cardText: string; // Title text on small cards
+  accent: string;   // Numbers and icons
+  // Display Styles
+  displayBg: string;
+  displayTitle: string; // Main H3 on Display
+  displayDesc: string;  // Paragraph on Display
+  displayBorder: string;
+  // Interactive Elements
+  indicatorColor: string; // The color code (hex/class) for bars/dots
+  buttonBorder: string;
+  buttonText: string;
+  buttonHoverBg: string;
+  buttonHoverText: string;
+}> = {
+  'ACQUISITION_SYS': {
+    // RED THEME (Pillars 1, 2, 3)
+    cardBg: 'bg-[#1a1a1a]', 
+    cardBorder: 'border-[#E21E3F]/30',
+    cardText: 'text-white', 
+    accent: 'text-[#C5A059]', // Unified Gold
+    
+    // Display Box
+    displayBg: 'bg-[#1a1a1a]', 
+    displayTitle: 'text-white', 
+    displayDesc: 'text-white/80', 
+    displayBorder: 'border-[#E21E3F]/50',
+    
+    // Elements
+    indicatorColor: 'bg-[#E21E3F]',
+    // BUTTON: Gold Fill Default -> White Hover
+    buttonBorder: 'border-[#C5A059] bg-[#C5A059]', 
+    buttonText: 'text-[#1a1a1a]', 
+    buttonHoverBg: 'bg-white',
+    buttonHoverText: 'group-hover:text-[#1a1a1a]'
+  },
+  'VELOCITY_SYS': {
+    // GOLD THEME (Pillars 4, 5, 6)
+    cardBg: 'bg-[#1a1a1a]',
+    cardBorder: 'border-[#C5A059]/30',
+    cardText: 'text-white', 
+    accent: 'text-[#C5A059]', // Unified Gold
+    
+    // Display Box
+    displayBg: 'bg-[#1a1a1a]', 
+    displayTitle: 'text-white', 
+    displayDesc: 'text-white/80', 
+    displayBorder: 'border-[#C5A059]/50',
+    
+    // Elements
+    indicatorColor: 'bg-[#C5A059]',
+    // BUTTON: Gold Fill Default -> White Hover
+    buttonBorder: 'border-[#C5A059] bg-[#C5A059]', 
+    buttonText: 'text-[#1a1a1a]', 
+    buttonHoverBg: 'bg-white',
+    buttonHoverText: 'group-hover:text-[#1a1a1a]'
+  },
+  'INTELLIGENCE_SYS': {
+    // WHITE THEME (Pillar 7)
+    cardBg: 'bg-[#1a1a1a]',
+    cardBorder: 'border-white/20',
+    cardText: 'text-white',
+    accent: 'text-[#C5A059]', // Unified Gold
+    
+    // Display Box
+    displayBg: 'bg-[#1a1a1a]', 
+    displayTitle: 'text-white', 
+    displayDesc: 'text-white/80', 
+    displayBorder: 'border-white/40',
+    
+    // Elements
+    indicatorColor: 'bg-white',
+    // BUTTON: Gold Fill Default -> White Hover
+    buttonBorder: 'border-[#C5A059] bg-[#C5A059]',
+    buttonText: 'text-[#1a1a1a]',
+    buttonHoverBg: 'bg-white',
+    buttonHoverText: 'group-hover:text-[#1a1a1a]'
+  }
+};
+
+const TechnicalLabel: React.FC<{ active: boolean; text: string; accentColor: string }> = ({ active, text, accentColor }) => {
   const [displayText, setDisplayText] = useState(text);
 
   useEffect(() => {
@@ -24,7 +108,7 @@ const TechnicalLabel: React.FC<{ active: boolean; text: string }> = ({ active, t
         } else {
           clearInterval(interval);
         }
-      }, 30); // Faster typing for technical feel
+      }, 30); 
       return () => clearInterval(interval);
     } else {
       setDisplayText(text);
@@ -32,7 +116,7 @@ const TechnicalLabel: React.FC<{ active: boolean; text: string }> = ({ active, t
   }, [active, text]);
   
   return (
-    <div className={`font-mono text-[8px] uppercase tracking-[0.1em] transition-colors duration-500 h-3 truncate ${active ? 'text-[#E21E3F]' : 'text-black/30'}`}>
+    <div className={`font-mono text-[8px] uppercase tracking-[0.1em] transition-opacity duration-500 h-3 truncate ${accentColor} ${active ? 'opacity-100' : 'opacity-50'}`}>
       {displayText}
     </div>
   );
@@ -42,27 +126,22 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
   const [activeId, setActiveId] = useState<string>(SERVICES[0].id);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // Auto-rotate on mobile only
-  useEffect(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-    if (!isMobile) return;
-    const interval = setInterval(() => {
-      setActiveId(prev => {
-        const currentIndex = SERVICES.findIndex(s => s.id === prev);
-        const nextIndex = (currentIndex + 1) % SERVICES.length;
-        return SERVICES[nextIndex].id;
-      });
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
   const activeService = SERVICES.find(s => s.id === activeId) || SERVICES[0];
+  const activeSystemGroup = activeService.systemGroup || 'ACQUISITION_SYS';
+  const activeStyle = SYSTEM_STYLES[activeSystemGroup] || SYSTEM_STYLES['ACQUISITION_SYS'];
+
+  // Calculate Viz Color based on system
+  const getVizColor = (group: string) => {
+      if (group === 'ACQUISITION_SYS') return '#E21E3F'; // Red
+      if (group === 'VELOCITY_SYS') return '#C5A059';   // Gold
+      return '#FFFFFF'; // White for Intelligence
+  };
 
   return (
     <section id="architecture" className="py-32 px-6 lg:px-12 bg-[#FFF2EC] border-t border-[#1a1a1a]/10">
       <div className="max-w-screen-2xl mx-auto">
         
-        {/* 1. HEADER (With Explanatory Copy) */}
+        {/* 1. HEADER */}
         <div className="mb-16 text-center max-w-4xl mx-auto">
             <span className="font-mono text-xs text-[#1a1a1a] tracking-[0.4em] mb-6 block uppercase font-bold">
               <span className="text-[#E21E3F]">/</span> PROCESS ARCHITECTURE
@@ -75,19 +154,22 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
             </p>
         </div>
 
-        {/* 2. TOP DISPLAY (Visualizer) */}
-        <div className="relative w-full h-[400px] bg-[#1a1a1a] rounded-sm shadow-2xl overflow-hidden group border border-black/20 mb-12">
-             <ViewportViz type={activeService.visualPrompt} />
-             <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)] z-10" />
+        {/* 2. DESKTOP TOP DISPLAY (Visualizer) - HIDDEN ON MOBILE/TABLET */}
+        <div className={`hidden lg:block relative w-full h-[450px] rounded-sm shadow-2xl overflow-hidden group border mb-12 transition-colors duration-500 ${activeStyle.displayBg} ${activeStyle.displayBorder}`}>
              
-             {/* Status Label */}
-             <div className="absolute top-6 left-6 flex items-center gap-3 z-20">
-               <div className="w-2 h-2 rounded-full bg-[#E21E3F] animate-pulse shadow-[0_0_8px_#E21E3F]" />
-               <span className="text-[10px] font-mono text-[#E21E3F] tracking-[0.3em] uppercase">
-                 Active_Protocol // {activeService.id}
-               </span>
+             {/* Display Loading Bar (Top) */}
+             <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-30">
+               <motion.div 
+                 key={activeService.id} // Key forces reset on change
+                 initial={{ width: '0%' }}
+                 animate={{ width: '100%' }}
+                 transition={{ duration: 4, ease: "linear" }}
+                 className={`h-full ${activeStyle.indicatorColor} shadow-[0_0_10px_currentColor]`}
+               />
              </div>
 
+             <ViewportViz type={activeService.visualPrompt} color={getVizColor(activeSystemGroup)} />
+             
              {/* Content Overlay */}
              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-20 pointer-events-none flex flex-col items-start justify-end h-full">
                <AnimatePresence mode="wait">
@@ -99,26 +181,23 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
                    transition={{ duration: 0.3 }}
                    className="max-w-4xl pointer-events-auto"
                  >
-                   <div className="mb-2 font-mono text-[9px] text-[#C5A059] uppercase tracking-widest">
+                   <div className={`mb-2 font-mono text-[9px] uppercase tracking-widest ${activeStyle.accent} opacity-80`}>
                       [{activeService.systemGroup || 'SYSTEM_UNDEFINED'}]
                    </div>
-                   <h3 className="text-white text-3xl md:text-5xl font-serif mb-4 leading-none tracking-tighter">
+                   <h3 className={`text-3xl md:text-5xl font-serif mb-4 leading-none tracking-tighter ${activeStyle.displayTitle}`}>
                       {activeService.title}
                    </h3>
-                   <p className="text-white/70 text-base md:text-lg font-sans font-light leading-relaxed mb-8 max-w-xl hidden md:block">
+                   <p className={`text-base md:text-lg font-sans font-light leading-relaxed mb-8 max-w-xl hidden md:block ${activeStyle.displayDesc}`}>
                      {activeService.description}
                    </p>
                    
-                   {/* THE GOLD BUTTON (With Slide-Up White Fill) */}
+                   {/* DESKTOP BUTTON */}
                    <button
                      onClick={() => onServiceClick(activeService)}
-                     className="group relative px-8 py-4 bg-[#C5A059] text-[#1a1a1a] font-mono text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden"
+                     className={`group relative px-8 py-4 font-mono text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden border transition-colors ${activeStyle.buttonBorder} ${activeStyle.buttonText}`}
                    >
-                     {/* The Slide-Up Fill Layer (White) */}
-                     <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1)" />
-                     
-                     {/* The Content */}
-                     <span className="relative z-10 flex items-center gap-3">
+                     <div className={`absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1) ${activeStyle.buttonHoverBg}`} />
+                     <span className={`relative z-10 flex items-center gap-3 transition-colors ${activeStyle.buttonHoverText}`}>
                         [ EXPLORE PILLAR ]
                         <LucideIcons.ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                      </span>
@@ -129,10 +208,10 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
              </div>
         </div>
 
-        {/* 3. BOTTOM GRID (7 Columns with System Grouping) */}
+        {/* 3. GRID (7 Cards) - ADAPTIVE LAYOUT */}
         <div className="relative">
           
-          {/* SYSTEM BRACKETS (Desktop Visual Grouping) - HIDDEN ON MOBILE */}
+          {/* SYSTEM BRACKETS (Desktop Visual Grouping) */}
           <div className="absolute inset-0 hidden lg:grid grid-cols-7 gap-2 -top-6 -bottom-4 pointer-events-none">
              {/* ACQUISITION (Cols 1-3) */}
              <div className="col-span-3 border-t border-x border-[#E21E3F]/20 bg-[#E21E3F]/5 relative rounded-t-sm">
@@ -154,69 +233,140 @@ const BentoGrid: React.FC<BentoGridProps> = ({ onServiceClick }) => {
              </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 lg:gap-2 relative z-10">
             {SERVICES.map((service, idx) => {
               const isActive = activeId === service.id;
-              const isHovered = hoveredId === service.id;
               
+              const sysGroup = service.systemGroup || 'ACQUISITION_SYS';
+              const style = SYSTEM_STYLES[sysGroup];
+
               return (
                 <div 
                   key={service.id}
                   onMouseEnter={() => { setActiveId(service.id); setHoveredId(service.id); }}
                   onMouseLeave={() => setHoveredId(null)}
                   onClick={() => onServiceClick(service)}
-                  className={`relative p-4 border transition-all duration-300 cursor-pointer min-h-[160px] flex flex-col justify-between group rounded-sm overflow-hidden ${
-                    isActive 
-                      ? 'bg-[#1a1a1a] border-[#C5A059] shadow-xl -translate-y-2' 
-                      : 'bg-white border-black/10 hover:border-black/30'
-                  }`}
+                  className={`
+                    relative transition-all duration-300 cursor-pointer flex flex-col justify-end group rounded-sm overflow-hidden border
+                    ${style.cardBg} ${style.cardBorder}
+                    ${isActive ? 'shadow-2xl -translate-y-2 z-10 scale-[1.02] border-opacity-100' : 'hover:brightness-110 hover:scale-[1.01] border-opacity-30'}
+                    /* Heights for mobile vs desktop */
+                    min-h-[500px] lg:min-h-[160px]
+                  `}
                 >
-                   <div className="flex justify-between items-start mb-2">
-                     <span className={`text-[9px] font-mono font-bold tracking-widest block ${isActive ? 'text-[#C5A059]' : 'text-black/30'}`}>
-                        0{idx + 1}
-                     </span>
-                     <LucideIcons.ArrowDownRight className={`w-3 h-3 ${isActive ? 'text-[#C5A059]' : 'text-black/20'}`} />
+                   {/* =======================================================
+                       MOBILE CONTENT (Visible < lg) - FULL DISPLAY STYLE
+                   ======================================================= */}
+                   <motion.div 
+                     initial={{ opacity: 0 }}
+                     whileInView={{ opacity: 1 }}
+                     viewport={{ once: true, margin: "-10%" }}
+                     className="lg:hidden absolute inset-0 z-0 flex flex-col justify-end"
+                   >
+                       
+                       {/* Full Background Animation */}
+                       <div className="absolute inset-0 z-0 opacity-100">
+                           <ViewportViz type={service.visualPrompt} color={getVizColor(sysGroup)} />
+                           {/* Gradient Overlay for Text Readability - LIGHTER GRADIENT */}
+                           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/20 to-transparent" />
+                       </div>
+
+                       {/* Content Layer */}
+                       <div className="relative z-10 p-8 w-full flex flex-col items-start pb-12">
+                           
+                           {/* System Label - Animated */}
+                           <motion.div 
+                             initial={{ y: 20, opacity: 0 }}
+                             whileInView={{ y: 0, opacity: 1 }}
+                             transition={{ duration: 0.5, delay: 0.1 }}
+                             className={`mb-3 font-mono text-[9px] uppercase tracking-widest ${style.accent} opacity-90`}
+                           >
+                              [{sysGroup}]
+                           </motion.div>
+
+                           {/* Big Title - Animated */}
+                           <motion.h3 
+                             initial={{ y: 20, opacity: 0 }}
+                             whileInView={{ y: 0, opacity: 1 }}
+                             transition={{ duration: 0.5, delay: 0.2 }}
+                             className={`text-4xl font-serif mb-4 leading-none tracking-tighter text-white drop-shadow-md`}
+                           >
+                              {service.title}
+                           </motion.h3>
+
+                           {/* Description - Animated */}
+                           <motion.p 
+                             initial={{ y: 20, opacity: 0 }}
+                             whileInView={{ y: 0, opacity: 1 }}
+                             transition={{ duration: 0.5, delay: 0.3 }}
+                             className="text-sm font-sans font-light leading-relaxed mb-8 text-white/90 max-w-md drop-shadow-sm"
+                           >
+                             {service.description}
+                           </motion.p>
+                           
+                           {/* Mobile Button - Matches Desktop Display Button */}
+                           <motion.button
+                             initial={{ y: 20, opacity: 0 }}
+                             whileInView={{ y: 0, opacity: 1 }}
+                             transition={{ duration: 0.5, delay: 0.4 }}
+                             whileTap={{ scale: 0.95 }}
+                             className={`group relative px-8 py-4 font-mono text-[10px] uppercase tracking-[0.3em] font-bold overflow-hidden border transition-colors w-full md:w-auto ${style.buttonBorder} ${style.buttonText}`}
+                           >
+                             <div className={`absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 cubic-bezier(0.23, 1, 0.32, 1) ${style.buttonHoverBg}`} />
+                             <span className={`relative z-10 flex items-center justify-center gap-3 transition-colors ${style.buttonHoverText}`}>
+                                [ EXPLORE PILLAR ]
+                                <LucideIcons.ArrowRight className="w-4 h-4" />
+                             </span>
+                           </motion.button>
+                       </div>
+
+                       {/* MOBILE LOADING BAR - ANIMATED ON SCROLL */}
+                       <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10 z-20">
+                          <motion.div 
+                            className={`h-full ${style.indicatorColor}`}
+                            initial={{ width: "0%" }}
+                            whileInView={{ width: "100%" }}
+                            viewport={{ once: true, amount: 0.5 }}
+                            transition={{ duration: 1.5, ease: "circOut" }}
+                          />
+                       </div>
+                   </motion.div>
+
+                   {/* =======================================================
+                       DESKTOP CONTENT (Visible >= lg) - COMPACT CARD
+                   ======================================================= */}
+                   <div className="hidden lg:flex flex-col justify-between h-full relative z-10 p-4 w-full">
+                       
+                       <div className="flex justify-between items-start mb-2">
+                         <span className={`text-[9px] font-mono font-bold tracking-widest block ${style.accent}`}>
+                            0{idx + 1}
+                         </span>
+                         <LucideIcons.ArrowDownRight className={`w-3 h-3 ${style.accent} opacity-50 group-hover:opacity-100`} />
+                       </div>
+
+                       <div>
+                         <h4 className={`text-xs md:text-sm font-serif uppercase tracking-wider leading-tight mb-2 ${style.cardText}`}>
+                           {service.title}
+                         </h4>
+                         <TechnicalLabel active={isActive} text={service.technicalLabel} accentColor={style.accent} />
+                       </div>
+                       
+                       {/* Hover Glow */}
+                       <div className={`absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity pointer-events-none ${style.indicatorColor} z-20`} />
+                       
+                       {/* Active Loading Bar */}
+                       {isActive && (
+                          <div className="absolute bottom-0 left-0 w-full h-[2px] bg-white/5 relative z-10">
+                             <motion.div 
+                               layoutId="active-bar"
+                               initial={{ width: '0%' }}
+                               animate={{ width: '100%' }}
+                               transition={{ duration: 4, ease: "linear" }}
+                               className={`h-full ${style.indicatorColor}`}
+                             />
+                          </div>
+                       )}
                    </div>
-
-                   <div className="relative z-10">
-                     <h4 className={`text-xs md:text-sm font-serif uppercase tracking-wider leading-tight mb-2 ${isActive ? 'text-white' : 'text-[#1a1a1a]'}`}>
-                       {service.title}
-                     </h4>
-                     <TechnicalLabel active={isActive} text={service.technicalLabel} />
-                   </div>
-                   
-                   {/* MOBILE PROGRESS BAR */}
-                   {isActive && (
-                      <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#333] lg:hidden">
-                         <motion.div 
-                           initial={{ width: '0%' }}
-                           animate={{ width: '100%' }}
-                           transition={{ duration: 4, ease: "linear" }}
-                           className="h-full bg-[#C5A059]"
-                         />
-                      </div>
-                   )}
-
-                   {/* DESKTOP ACTIVE BAR */}
-                   {isActive && (
-                      <motion.div layoutId="active-bar" className="hidden lg:block absolute bottom-0 left-0 h-[2px] bg-[#C5A059] w-full" />
-                   )}
-
-                   {/* LIVE WIRE (Hover Connector to Next Pillar) */}
-                   {/* Only show if hovered, active, and not the last item */}
-                   <AnimatePresence>
-                     {isActive && idx < SERVICES.length - 1 && (
-                       <motion.div 
-                         initial={{ opacity: 0, x: -10 }}
-                         animate={{ opacity: 1, x: 0 }}
-                         exit={{ opacity: 0, x: 10 }}
-                         className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 z-50 items-center pointer-events-none"
-                       >
-                          <div className="w-4 h-[1px] bg-[#C5A059]" />
-                          <LucideIcons.ChevronRight className="w-3 h-3 text-[#C5A059] -ml-1" />
-                       </motion.div>
-                     )}
-                   </AnimatePresence>
 
                 </div>
               );

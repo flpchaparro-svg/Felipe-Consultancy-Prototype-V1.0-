@@ -444,6 +444,29 @@ const App: React.FC = () => {
     window.scrollTo(0,0);
   };
 
+  const handleServiceClick = (service: ServiceDetail) => {
+    // If mobile/tablet (< 1024px), navigate directly to pillar page.
+    if (window.innerWidth < 1024) {
+      const mapping: Record<string, string> = {
+        'pillar-1': 'pillar1',
+        'pillar-2': 'pillar2',
+        'pillar-3': 'pillar3',
+        'pillar-4': 'pillar4',
+        'pillar-5': 'pillar5',
+        'pillar-6': 'pillar6',
+        'pillar-7': 'pillar7'
+      };
+      const pillarId = mapping[service.id];
+      if (pillarId) {
+        handleGlobalNavigate(pillarId);
+      }
+    } else {
+      // Desktop: Open Modal
+      setSelectedService(service);
+      setIsModalOpen(true);
+    }
+  };
+
   return (
     <div className="bg-[#FFF2EC] selection:bg-[#1a1a1a] selection:text-[#FFF2EC] min-h-screen flex flex-col">
       <D3Background /> 
@@ -543,7 +566,7 @@ const App: React.FC = () => {
                 </motion.section>
 
                 <FrictionAuditSection onNavigate={handleGlobalNavigate} />
-                <BentoGrid onServiceClick={(s) => { setSelectedService(s); setIsModalOpen(true); }} />
+                <BentoGrid onServiceClick={handleServiceClick} />
                 <TheArchitect />
                 <Feature_Group7 />
                 <BookingCTA />
