@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
   <head>
@@ -34,7 +35,7 @@
         transform: translateY(120%);
         opacity: 0;
         animation: slideUp 1.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        letter-spacing: 0.15em; /* Refined from 0.3em for clinical precision */
+        letter-spacing: 0.15em; 
       }
 
       @keyframes slideUp {
@@ -48,7 +49,7 @@
       .animate-extend-line { width: 0; animation: extendLine 4s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
       @keyframes extendLine { to { width: 4rem; } }
 
-      /* GOLD REVENUE SHINE - Refined for Growth Symbolism */
+      /* GOLD REVENUE SHINE */
       @keyframes lensSweep {
         0% { background-position: 150% 0; }
         35% { background-position: -50% 0; }
@@ -72,7 +73,7 @@
         color: transparent;
         animation: lensSweep 8s cubic-bezier(0.3, 0, 0.2, 1) infinite;
         display: inline-block;
-        letter-spacing: 0.05em; /* Tight breathing space for italic text */
+        letter-spacing: 0.05em;
       }
 
       /* PRESTIGE FLICKER */
@@ -115,20 +116,28 @@
         transform: scaleX(1); 
       }
 
-      /* CAROUSEL MASK */
       .carousel-mask {
         mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
       }
 
-      /* BLEND MODE UTILITY */
       .mix-blend-luminosity {
         mix-blend-mode: luminosity;
       }
 
+      /* CUSTOM SCROLLBARS */
       ::-webkit-scrollbar { width: 6px; }
       ::-webkit-scrollbar-track { background: var(--bg); }
       ::-webkit-scrollbar-thumb { background: var(--ink); }
+
+      /* UTILITY: Hide Scrollbar but keep functionality */
+      .hide-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
     </style>
     <script type="importmap">
     {
