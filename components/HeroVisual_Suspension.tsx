@@ -5,7 +5,7 @@ import { useAnimationFrame } from 'framer-motion';
 const CUBE_SIZE = 60;
 const STACK_GAP = 65; 
 const FL = 850; 
-const CUBE_COUNT = 5;
+const CUBE_COUNT = 7;
 
 // --- MATH HELPERS ---
 const rotateX = (x: number, y: number, z: number, angle: number) => {
@@ -69,9 +69,8 @@ const HeroVisual_Suspension: React.FC = () => {
 
     const { currentSway, rotation, coreRotation } = state.current;
     
-    // 2. Render Stack (5 Cubes)
-    // We pivot around the Center Cube (Index 2) for a "Levitating" feel
-    const pivotIndex = 2; 
+    // 2. Render Structure (7 Cubes forming a "7")
+    const pivotIndex = 2; // The Diamond/Core remains at the center of the stem
 
     for (let i = 0; i < CUBE_COUNT; i++) {
         const r = CUBE_SIZE / 2;
@@ -88,15 +87,34 @@ const HeroVisual_Suspension: React.FC = () => {
             [0,4], [1,5], [2,6], [3,7]
         ];
 
-        const yOffset = (i - pivotIndex) * STACK_GAP; // Relative to center
+        // --- CALCULATE POSITION ---
+        let cx = 0;
+        let cy = 0;
+
+        if (i <= 4) {
+            // STEM (Indices 0, 1, 2, 3, 4)
+            // Diagonal Slant: Top Right (0) to Bottom Left (4)
+            const slant = 25; 
+            cy = (i - pivotIndex) * STACK_GAP; // 2 is center (0)
+            cx = (pivotIndex - i) * slant;     // 0 moves right (+), 4 moves left (-)
+        } else {
+            // TOP BAR (Indices 5, 6)
+            // Attaches to Top of Stem (Index 0) and extends LEFT
+            const c0y = (0 - pivotIndex) * STACK_GAP; // Y of Cube 0
+            const c0x = (pivotIndex - 0) * 25;        // X of Cube 0
+            
+            const barOffset = i - 4; // 1 for Cube 5, 2 for Cube 6
+            cy = c0y;
+            cx = c0x - (barOffset * STACK_GAP);
+        }
 
         // Transform Cube
         const projected = verts.map(v => {
-            let px = v.x;
-            let py = v.y + yOffset;
+            let px = v.x + cx;
+            let py = v.y + cy;
             let pz = v.z;
 
-            // Rigid Sway (Rotate whole column around Z axis)
+            // Rigid Sway (Rotate whole structure around (0,0) pivot)
             const swayed = rotateZ(px, py, pz, -currentSway); 
             px = swayed.x; py = swayed.y; pz = swayed.z;
 
@@ -118,8 +136,8 @@ const HeroVisual_Suspension: React.FC = () => {
         }
 
         // --- RENDER CORE (Wireframe Gold Octahedron/Diamond inside Index 2) ---
-        if (i === 2 && coreRef.current) {
-            const cr = CUBE_SIZE * 0.35; // Size: 35% of the box (Smaller as requested)
+        if (i === pivotIndex && coreRef.current) {
+            const cr = CUBE_SIZE * 0.35; // Size: 35% of the box
             
             // Octahedron Vertices (Diamond Shape)
             const coreVerts = [
@@ -139,16 +157,15 @@ const HeroVisual_Suspension: React.FC = () => {
             ];
 
             const projectedCore = coreVerts.map(v => {
-               // 1. Position in stack (0 for index 2)
-               let py = v.y + yOffset; 
-               let px = v.x;
+               // 1. Position in stack (0 for index 2 because cx,cy are 0)
+               let px = v.x + cx;
+               let py = v.y + cy;
                let pz = v.z;
 
-               // 2. Apply Sway (So it stays inside the swaying box)
+               // 2. Apply Sway (Stays locked inside the swaying box)
                const swayed = rotateZ(px, py, pz, -currentSway);
                
                // 3. Apply Independent Spin (Counter-Rotation)
-               // rotateY with `coreRotation` which is negative
                const spun = rotateY(swayed.x, swayed.y, swayed.z, coreRotation);
                
                return project(spun.x, spun.y, spun.z);
@@ -187,8 +204,8 @@ const HeroVisual_Suspension: React.FC = () => {
              style={{ filter: 'blur(8px)', transition: 'transform 0.1s linear' }} 
            />
 
-           {/* WIREFRAME CUBES (Black) */}
-           {[0, 1, 2, 3, 4].map(i => (
+           {/* WIREFRAME CUBES (Black) - 7 Cubes */}
+           {[0, 1, 2, 3, 4, 5, 6].map(i => (
              <path 
                key={i}
                ref={(el) => { cubeRefs.current[i] = el; }}
