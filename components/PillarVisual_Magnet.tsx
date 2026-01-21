@@ -387,16 +387,6 @@ const PillarVisual_Magnet: React.FC = () => {
   return (
     <div className="w-full h-full flex items-center justify-center overflow-hidden relative bg-[#FFF2EC] border border-[#1a1a1a]/5 rounded-sm">
       <canvas ref={canvasRef} className="block" />
-      
-      {/* Label */}
-      <div className="absolute top-6 left-6 pointer-events-none">
-         <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-[#C5A059] animate-pulse" />
-            <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#C5A059]">
-               DATA_SYNTHESIS
-            </span>
-         </div>
-      </div>
     </div>
   );
 };
